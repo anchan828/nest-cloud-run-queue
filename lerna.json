@@ -1,0 +1,10 @@
+{
+  "packages": ["packages/*"],
+  "command": {
+    "publish": {
+      "ignoreChanges": ["**/dist/**/*"],
+      "message": "chore: publish %s [ci skip]"
+    }
+  },
+  "version": "0.0.0"
+}

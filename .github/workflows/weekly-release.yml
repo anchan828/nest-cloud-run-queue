@@ -1,0 +1,39 @@
+name: Weekly Release
+
+on:
+  schedule:
+    - cron: "0 4 * * 0"
+      branches:
+        - master
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Checkout master
+        run: git checkout master
+      - uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: Install npm packages
+        run: npm ci
+      - name: Bootstrap monorepo packages
+        run: |
+          npm run bootstrap
+          npm run build
+      - name: Publish monorepo packages
+        if: github.repository != 'anchan828/nest-lerna-template'
+        run: |
+          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+          git config --global user.email "${USERNAME}@gmail.com"
+          git config --global user.name "${USERNAME}"
+          git remote set-url origin "https://${USERNAME}:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git"
+          npm run publish
+        env:
+          USERNAME: anchan828
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
