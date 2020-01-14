@@ -7,7 +7,7 @@ import { CloudRunPubSubService } from "./publish.service";
 describe("CloudRunPubSubPublisherModule", () => {
   it("should compile with register", async () => {
     const app = await Test.createTestingModule({
-      imports: [CloudRunPubSubPublisherModule.register({})],
+      imports: [CloudRunPubSubPublisherModule.register()],
     }).compile();
     expect(app).toBeDefined();
 
