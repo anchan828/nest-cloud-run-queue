@@ -118,7 +118,7 @@ bootstrap();
 
 Then you can get service url
 
-![](https://i.gyazo.com/26a5ba90ed55466db3e21127e64d1289.png)
+![](https://gyazo.com/c5e7078c58ce3e9bef45387fdb31e2bf.png)
 
 ### 4. Create subscription (push) for topic
 
