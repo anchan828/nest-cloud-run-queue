@@ -1,0 +1,42 @@
+{
+  "author": "anchan828 <anchan828@gmail.com>",
+  "bugs": {
+    "url": "https://github.com/anchan828/nest-cloud-run-pubsub/issues"
+  },
+  "description": "> TODO: description",
+  "directories": {
+    "dist": "dist"
+  },
+  "files": [
+    "dist"
+  ],
+  "homepage": "https://github.com/anchan828/nest-cloud-run-pubsub/tree/master/packages/worker#readme",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "name": "@anchan828/nest-cloud-run-pubsub-worker",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anchan828/nest-cloud-run-pubsub.git"
+  },
+  "scripts": {
+    "build": "node ../../node_modules/typescript/bin/tsc -p tsconfig.build.json",
+    "build:watch": "node ../../node_modules/typescript/bin/tsc --watch",
+    "copy:license": "cp ../../LICENSE ./",
+    "lint": "node ../../node_modules/eslint/bin/eslint --ignore-path ../../.eslintignore '**/*.ts' '**/*.spec.ts'",
+    "lint:fix": "npm run lint -- --fix",
+    "prepublishOnly": "rm -rf dist && npm run build && rm -f dist/*.tsbuildinfo && npm run copy:license",
+    "test": "node ../../node_modules/jest/bin/jest --coverage --logHeapUsage --runInBand",
+    "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand --logHeapUsage",
+    "test:watch": "node ../../node_modules/jest/bin/jest --watch",
+    "watch": "node ../../node_modules/typescript/bin/tsc -w"
+  },
+  "types": "./dist/index.d.ts",
+  "version": "0.0.0",
+  "dependencies": {
+    "@anchan828/nest-cloud-run-pubsub-common": "^0.0.0",
+    "class-validator": "0.11.0"
+  },
+  "devDependencies": {
+    "@anchan828/nest-cloud-run-pubsub-publisher": "^0.0.0"
+  }
+}

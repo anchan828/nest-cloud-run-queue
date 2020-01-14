@@ -20,6 +20,8 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
+      - name: Run docker-compose
+        run: docker-compose up -d
       - name: Install npm packages
         run: npm ci
       - name: Lint

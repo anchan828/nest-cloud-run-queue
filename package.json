@@ -1,5 +1,5 @@
 {
-  "name": "@anchan828/template-packages",
+  "name": "@anchan828/nest-cloud-run-pubsub-packages",
   "private": true,
   "version": "0.0.0",
   "description": "",
@@ -16,21 +16,21 @@
     "publish": "lerna publish --yes patch",
     "publish:minor": "lerna publish --yes minor",
     "publish:major": "lerna publish --yes major",
-    "test": "lerna run test",
+    "test": "lerna run test && ts-node scripts/merge-coverage.ts",
     "new": "ts-node scripts/new-package.ts",
     "postnew": "ts-node scripts/generate-vs-launch.ts",
     "watch": "lerna run --parallel watch"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/anchan828/nest-lerna-template.git"
+    "url": "git+https://github.com/anchan828/nest-cloud-run-pubsub.git"
   },
   "author": "anchan828 <anchan828@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/anchan828/nest-lerna-template/issues"
+    "url": "https://github.com/anchan828/nest-cloud-run-pubsub/issues"
   },
-  "homepage": "https://github.com/anchan828/nest-lerna-template",
+  "homepage": "https://github.com/anchan828/nest-cloud-run-pubsub",
   "devDependencies": {
     "@commitlint/cli": "8.3.4",
     "@commitlint/config-conventional": "8.3.4",
