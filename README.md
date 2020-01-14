@@ -78,7 +78,6 @@ export class WorkerAppModule {}
 @CloudRunPubSubWorker("Worker name")
 class Worker {
   @CloudRunPubSubWorkerProcess()
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   public async process(message: string | object, attributes: Record<string, any>, raw: PubSubRootDto): Promise<void> {
     console.log("Message: " + JSON.stringify(message));
     console.log("Attributes: " + JSON.stringify(attributes));
