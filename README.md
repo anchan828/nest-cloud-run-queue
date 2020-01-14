@@ -16,7 +16,7 @@ Create two applications using these packages.
 
 ## Getting started
 
-NOTE: You may want to do tutorial for using Pub/Sub with Cloud Run before using this packages.
+NOTE: You may want to do tutorial for using Pub/Sub with Cloud Run before using them.
 https://cloud.google.com/run/docs/tutorials/pubsub
 
 ### 1. Create topic
