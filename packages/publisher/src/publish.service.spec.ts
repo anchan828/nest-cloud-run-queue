@@ -29,10 +29,22 @@ describe("CloudRunPubSubService", () => {
       await expect(service.publish({ data: "data", name: "test" })).rejects.toThrowError(ERROR_TOPIC_NOT_FOUND);
     });
 
+    it("should publish message without data", async () => {
+      const topicName = await createTopicAndSubscription(service["pubsub"]);
+      await expect(service.publish({ name: "test" }, { topic: topicName })).resolves.toEqual(expect.any(String));
+    });
+
     it("should publish message", async () => {
-      const topicName = await createTopicAndSubscription(service.pubsub);
+      const topicName = await createTopicAndSubscription(service["pubsub"]);
+      await expect(service.publish({ data: { test: "test" }, name: "test" }, { topic: topicName })).resolves.toEqual(
+        expect.any(String),
+      );
+    });
+
+    it("should publish message with attributes", async () => {
+      const topicName = await createTopicAndSubscription(service["pubsub"]);
       await expect(
-        service.publish({ data: { test: "test" }, name: "test" }, {}, { topic: topicName }),
+        service.publish({ attributes: { attr: "attr" }, data: { test: "test" }, name: "test" }, { topic: topicName }),
       ).resolves.toEqual(expect.any(String));
     });
   });

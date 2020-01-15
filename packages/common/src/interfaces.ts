@@ -16,5 +16,5 @@ export type CloudRunPubSubWorkerName = string;
 export type CloudRunPubSubMessageData<T> = T;
 export interface CloudRunPubSubMessage<T extends object | string = object | string> {
   name: CloudRunPubSubWorkerName;
-  data: CloudRunPubSubMessageData<T>;
+  data?: CloudRunPubSubMessageData<T>;
 }
