@@ -15,4 +15,4 @@ export type CloudRunPubSubPublisherModuleAsyncOptions = ModuleAsyncOptions<Cloud
 
 export type CloudRunPubSubPublisherModuleOptionsFactory = ModuleOptionsFactory<CloudRunPubSubPublisherModuleOptions>;
 
-export type PublishData<T extends string | object> = CloudRunPubSubMessage<T> & { attributes?: Attributes };
+export type PublishData<T> = CloudRunPubSubMessage<T> & { attributes?: Attributes };

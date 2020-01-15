@@ -11,10 +11,7 @@ export class CloudRunPubSubService {
     @Inject(CLOUD_RUN_PUBSUB) private readonly pubsub: PubSub,
   ) {}
 
-  public async publish<T extends string | object>(
-    message: PublishData<T>,
-    options?: PublishOptions & { topic?: string },
-  ): Promise<string> {
+  public async publish<T>(message: PublishData<T>, options?: PublishOptions & { topic?: string }): Promise<string> {
     const { attributes, ...json } = message;
     const topicName = this.getTopicName(options);
     const topic = this.pubsub.topic(topicName, options);

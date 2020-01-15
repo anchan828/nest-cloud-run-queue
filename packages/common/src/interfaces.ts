@@ -13,8 +13,7 @@ export interface ModuleOptionsFactory<T extends ModuleOptions = ModuleOptions> {
 }
 
 export type CloudRunPubSubWorkerName = string;
-export type CloudRunPubSubMessageData<T> = T;
-export interface CloudRunPubSubMessage<T extends object | string = object | string> {
+export interface CloudRunPubSubMessage<T = any> {
   name: CloudRunPubSubWorkerName;
-  data?: CloudRunPubSubMessageData<T>;
+  data?: T;
 }

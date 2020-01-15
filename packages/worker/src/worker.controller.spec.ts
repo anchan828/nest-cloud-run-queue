@@ -7,7 +7,7 @@ import { PubSubRootDto } from "./message.dto";
 import { CloudRunPubSubWorkerController } from "./worker.controller";
 import { CloudRunPubSubWorkerModule } from "./worker.module";
 
-function toBase64(json: CloudRunPubSubMessage | string): string {
+function toBase64(json: object | string): string {
   if (typeof json === "object") {
     json = JSON.stringify(json);
   }
