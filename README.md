@@ -9,10 +9,10 @@ Using Pub/Sub and Nest framework with Cloud Run.
 
 Create two applications using these packages.
 
-| Package                                    | Description                                                                |
-| :----------------------------------------- | :------------------------------------------------------------------------- |
-| @anchan828/nest-cloud-run-pubsub-publisher | This is used by application of sending a Pub/Sub message to the topic.     |
-| @anchan828/nest-cloud-run-pubsub-worker    | This is used by application of receiving a Pub/Sub message from the topic. |
+| Package                                                                                                                | Description                                                                |
+| :--------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------- |
+| [@anchan828/nest-cloud-run-pubsub-publisher](https://www.npmjs.com/package/@anchan828/nest-cloud-run-pubsub-publisher) | This is used by application of sending a Pub/Sub message to the topic.     |
+| [@anchan828/nest-cloud-run-pubsub-worker](https://www.npmjs.com/package/@anchan828/nest-cloud-run-pubsub-worker)       | This is used by application of receiving a Pub/Sub message from the topic. |
 
 ## Getting started
 
