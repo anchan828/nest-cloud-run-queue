@@ -1,0 +1,14 @@
+version: "3.4"
+
+services:
+  gcloud-pubsub-emulator:
+    image: messagebird/gcloud-pubsub-emulator
+    ports:
+      - "8681:8681"
+    depends_on:
+      - receiver
+  receiver:
+    build:
+      context: ./receiver
+    ports:
+      - "4363:4363"
