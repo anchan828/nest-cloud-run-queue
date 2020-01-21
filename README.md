@@ -5,6 +5,8 @@
 
 Using Pub/Sub and Nest framework with Cloud Run.
 
+![](https://repository-images.githubusercontent.com/233642584/f7bba780-3c42-11ea-82b4-15ddc2651db8)
+
 ## Demo
 
 See [https://github.com/anchan828/nest-cloud-run-pubsub-demo](https://github.com/anchan828/nest-cloud-run-pubsub-demo#readme)
