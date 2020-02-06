@@ -42,8 +42,10 @@ $ gcloud pubsub topics create myRunTopic
   imports: [
     CloudRunPubSubPublisherModule.register({
       topic: "myRunTopic",
-      // If necessary
-      keyFilename: "path/to/file.json",
+      clientConfig: {
+        // If necessary
+        keyFilename: "path/to/file.json",      
+      }
     }),
   ],
 })
