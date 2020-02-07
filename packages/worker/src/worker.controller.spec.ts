@@ -20,7 +20,7 @@ describe("CloudRunPubSubWorkerController", () => {
   let explorerService: CloudRunPubSubWorkerExplorerService;
   beforeEach(async () => {
     const app = await Test.createTestingModule({
-      imports: [CloudRunPubSubWorkerModule.register({})],
+      imports: [CloudRunPubSubWorkerModule.register({ throwModuleError: true })],
     }).compile();
     controller = app.get<CloudRunPubSubWorkerController>(CloudRunPubSubWorkerController);
     explorerService = app.get<CloudRunPubSubWorkerExplorerService>(CloudRunPubSubWorkerExplorerService);
@@ -30,7 +30,16 @@ describe("CloudRunPubSubWorkerController", () => {
     expect(controller).toBeDefined();
     expect(explorerService).toBeDefined();
   });
-
+  it("should ignore error if data invalid", async () => {
+    const app = await Test.createTestingModule({
+      imports: [CloudRunPubSubWorkerModule.registerAsync({ useFactory: () => undefined as any })],
+    }).compile();
+    controller = app.get<CloudRunPubSubWorkerController>(CloudRunPubSubWorkerController);
+    explorerService = app.get<CloudRunPubSubWorkerExplorerService>(CloudRunPubSubWorkerExplorerService);
+    await expect(
+      controller.root({ message: { data: "invalid" }, subscription: "123" } as PubSubRootDto),
+    ).resolves.toBeUndefined();
+  });
   it("should throw error if data invalid", async () => {
     await expect(
       controller.root({ message: { data: "invalid" }, subscription: "123" } as PubSubRootDto),

@@ -7,7 +7,15 @@ import {
 import { Injectable } from "@nestjs/common/interfaces";
 import { PubSubRootDto } from "./message.dto";
 
-export type CloudRunPubSubWorkerModuleOptions = ModuleOptions;
+export interface CloudRunPubSubWorkerModuleOptions extends ModuleOptions {
+  /**
+   * Whether to return 4xx codes when throw error about nest-cloud-run-pubsub module. Default is false.
+   * ex, Returns 204 instead of 400 when worker name not found. Returns 204 instead of 400 when message data is invalid.
+   * @type {boolean}
+   * @memberof CloudRunPubSubWorkerModuleOptions
+   */
+  throwModuleError?: boolean;
+}
 export type CloudRunPubSubWorkerModuleAsyncOptions = ModuleAsyncOptions<CloudRunPubSubWorkerModuleOptions>;
 export type CloudRunPubSubWorkerModuleOptionsFactory = ModuleOptionsFactory<CloudRunPubSubWorkerModuleOptions>;
 
