@@ -28,20 +28,18 @@ export class CloudRunPubSubWorkerController {
       data = this.decodeData(info.message.data);
 
       if (!data.name) {
-        this.logger.error(ERROR_WORKER_NAME_NOT_FOUND);
-        throw new BadRequestException(ERROR_WORKER_NAME_NOT_FOUND);
+        throw new Error(ERROR_WORKER_NAME_NOT_FOUND);
       }
 
       workers.push(...this.explorerService.explore().filter(worker => worker.name === data.name));
 
       if (workers.length === 0) {
-        const error = ERROR_WORKER_NOT_FOUND(data.name);
-        this.logger.error(error);
-        throw new BadRequestException(error);
+        throw new Error(ERROR_WORKER_NOT_FOUND(data.name));
       }
     } catch (error) {
+      this.logger.error(error.message);
       if (this.options?.throwModuleError) {
-        throw error;
+        throw new BadRequestException(error.message);
       }
     }
     for (const worker of workers) {
@@ -56,8 +54,7 @@ export class CloudRunPubSubWorkerController {
     try {
       return JSON.parse(str) as CloudRunPubSubMessage;
     } catch {
-      this.logger.error(ERROR_INVALID_MESSAGE_FORMAT);
-      throw new BadRequestException(ERROR_INVALID_MESSAGE_FORMAT);
+      throw new Error(ERROR_INVALID_MESSAGE_FORMAT);
     }
   }
 }
