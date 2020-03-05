@@ -149,3 +149,17 @@ See [docker-compose.yml](https://github.com/anchan828/nest-cloud-run-pubsub/blob
 ### 5. Done
 
 Your service is now fully integrated with Pub/Sub using Nest framework!
+
+### Testing
+
+You can create mock for CLOUD_RUN_PUBSUB
+
+```typescript
+Test.createTestingModule(metadata)
+    .overrideProvider(CLOUD_RUN_PUBSUB)
+    .useValue({
+      topic: jest.fn().mockImplementation(() => ({
+        publishJSON: jest.fn().mockResolvedValue("published"),
+      })),
+    }).compile()
+```
