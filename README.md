@@ -163,3 +163,11 @@ Test.createTestingModule(metadata)
       })),
     }).compile()
 ```
+
+### Using Cloud Scheduler
+
+You can use Cloud Scheduler as trigger.
+
+Payload is JSON string `{"name": "worker name", "data": "str"}`
+
+![](https://i.gyazo.com/a778c6a67eed6e525c38dd42378aa8bf.png)
