@@ -1,4 +1,5 @@
 import { CloudRunPubSubMessage } from "@anchan828/nest-cloud-run-pubsub-common";
+import { BadRequestException } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import { ERROR_INVALID_MESSAGE_FORMAT, ERROR_WORKER_NAME_NOT_FOUND, ERROR_WORKER_NOT_FOUND } from "./constants";
 import { CloudRunPubSubWorkerExplorerService } from "./explorer.service";
@@ -43,13 +44,13 @@ describe("CloudRunPubSubWorkerController", () => {
   it("should throw error if data invalid", async () => {
     await expect(
       controller.root({ message: { data: "invalid" }, subscription: "123" } as PubSubRootDto),
-    ).rejects.toThrowError(ERROR_INVALID_MESSAGE_FORMAT);
+    ).rejects.toThrowError(new BadRequestException(ERROR_INVALID_MESSAGE_FORMAT));
   });
 
   it("should throw error if data is not message object", async () => {
     await expect(
       controller.root({ message: { data: toBase64("testtest") }, subscription: "123" } as PubSubRootDto),
-    ).rejects.toThrowError(ERROR_INVALID_MESSAGE_FORMAT);
+    ).rejects.toThrowError(new BadRequestException(ERROR_INVALID_MESSAGE_FORMAT));
   });
 
   it("should throw error if message dosen't have name", async () => {
@@ -58,7 +59,7 @@ describe("CloudRunPubSubWorkerController", () => {
         message: { data: toBase64({ data: "data" } as CloudRunPubSubMessage) },
         subscription: "123",
       } as PubSubRootDto),
-    ).rejects.toThrowError(ERROR_WORKER_NAME_NOT_FOUND);
+    ).rejects.toThrowError(new BadRequestException(ERROR_WORKER_NAME_NOT_FOUND));
   });
 
   it("should throw error if worker not found", async () => {
@@ -67,7 +68,7 @@ describe("CloudRunPubSubWorkerController", () => {
         message: { data: toBase64({ name: "name" } as CloudRunPubSubMessage) },
         subscription: "123",
       } as PubSubRootDto),
-    ).rejects.toThrowError(ERROR_WORKER_NOT_FOUND("name"));
+    ).rejects.toThrowError(new BadRequestException(ERROR_WORKER_NOT_FOUND("name")));
   });
 
   it("should run processor if worker found", async () => {
