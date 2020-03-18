@@ -34,6 +34,6 @@
   "version": "0.0.14",
   "dependencies": {
     "@anchan828/nest-cloud-run-pubsub-common": "^0.0.14",
-    "class-validator": "0.11.0"
+    "class-validator": "0.11.1"
   }
 }
