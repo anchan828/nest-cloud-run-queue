@@ -21,7 +21,7 @@ export class CloudRunPubSubWorkerExplorerService {
     const metadata: CloudRunPubSubWorkerMetadata[] = [];
     for (const classInstanceWrapper of this.discoveryService
       .getProviders()
-      .filter(instanceWrapper => instanceWrapper.instance?.constructor)) {
+      .filter((instanceWrapper) => instanceWrapper.instance?.constructor)) {
       const name = Reflect.getMetadata(CLOUD_RUN_PUBSUB_WORKER_DECORATOR, classInstanceWrapper.instance.constructor);
 
       if (name) {

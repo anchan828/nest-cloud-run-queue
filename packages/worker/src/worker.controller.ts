@@ -31,7 +31,7 @@ export class CloudRunPubSubWorkerController {
         throw new Error(ERROR_WORKER_NAME_NOT_FOUND);
       }
 
-      workers.push(...this.explorerService.explore().filter(worker => worker.name === data.name));
+      workers.push(...this.explorerService.explore().filter((worker) => worker.name === data.name));
 
       if (workers.length === 0) {
         throw new Error(ERROR_WORKER_NOT_FOUND(data.name));

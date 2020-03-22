@@ -12,12 +12,12 @@ function hasTestDebug(packageName: string): boolean {
   }
 }
 const packageNames = readdirSync(packagesDir, { withFileTypes: true })
-  .filter(f => !f.isFile())
-  .map(f => f.name)
-  .filter(f => hasTestDebug(f));
+  .filter((f) => !f.isFile())
+  .map((f) => f.name)
+  .filter((f) => hasTestDebug(f));
 
 const launch = {
-  configurations: packageNames.map(packageName => ({
+  configurations: packageNames.map((packageName) => ({
     console: "integratedTerminal",
     cwd: "${workspaceRoot}/packages/" + packageName,
     internalConsoleOptions: "neverOpen",
