@@ -42,9 +42,14 @@ export class CloudRunPubSubWorkerController {
         throw new BadRequestException(error.message);
       }
     }
+
     for (const worker of workers) {
       for (const processor of worker.processors) {
-        await processor(data.data, info.message.attributes, info);
+        try {
+          await processor(data.data, info.message.attributes, info);
+        } catch (error) {
+          this.logger.error(error.message);
+        }
       }
     }
   }

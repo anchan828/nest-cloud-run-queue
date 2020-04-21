@@ -89,9 +89,17 @@ describe("CloudRunPubSubWorkerController", () => {
         subscription: "123",
       });
     };
-    jest
-      .spyOn(explorerService, "explore")
-      .mockReturnValueOnce([{ name: "name", processors: [processor] }] as CloudRunPubSubWorkerMetadata[]);
+    jest.spyOn(explorerService, "explore").mockReturnValueOnce([
+      {
+        name: "name",
+        processors: [
+          processor,
+          (): void => {
+            throw new Error();
+          },
+        ],
+      },
+    ] as CloudRunPubSubWorkerMetadata[]);
     await expect(
       controller.root({
         message: {
