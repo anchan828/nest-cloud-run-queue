@@ -33,7 +33,7 @@ describe("CloudRunPubSubWorkerController", () => {
   });
   it("should ignore error if data invalid", async () => {
     const app = await Test.createTestingModule({
-      imports: [CloudRunPubSubWorkerModule.registerAsync({ useFactory: () => undefined as any })],
+      imports: [CloudRunPubSubWorkerModule.registerAsync({ useFactory: () => ({} as any) })],
     }).compile();
     controller = app.get<CloudRunPubSubWorkerController>(CloudRunPubSubWorkerController);
     explorerService = app.get<CloudRunPubSubWorkerExplorerService>(CloudRunPubSubWorkerExplorerService);
@@ -89,15 +89,13 @@ describe("CloudRunPubSubWorkerController", () => {
         subscription: "123",
       });
     };
+    const processorMock = jest.fn().mockImplementation((): void => {
+      throw new Error();
+    });
     jest.spyOn(explorerService, "explore").mockReturnValueOnce([
       {
         name: "name",
-        processors: [
-          processor,
-          (): void => {
-            throw new Error();
-          },
-        ],
+        processors: [processor, processorMock],
       },
     ] as CloudRunPubSubWorkerMetadata[]);
     await expect(
@@ -111,5 +109,36 @@ describe("CloudRunPubSubWorkerController", () => {
         subscription: "123",
       } as PubSubRootDto),
     ).resolves.toBeUndefined();
+    expect(processorMock).toBeCalledTimes(1);
+  });
+
+  it("maxRetryAttempts", async () => {
+    const app = await Test.createTestingModule({
+      imports: [CloudRunPubSubWorkerModule.registerAsync({ useFactory: () => ({ maxRetryAttempts: 3 } as any) })],
+    }).compile();
+    controller = app.get<CloudRunPubSubWorkerController>(CloudRunPubSubWorkerController);
+    explorerService = app.get<CloudRunPubSubWorkerExplorerService>(CloudRunPubSubWorkerExplorerService);
+
+    const mock = jest.fn().mockImplementation((): void => {
+      throw new Error();
+    });
+    jest.spyOn(explorerService, "explore").mockReturnValueOnce([
+      {
+        name: "name",
+        processors: [mock] as any,
+      },
+    ] as CloudRunPubSubWorkerMetadata[]);
+    await expect(
+      controller.root({
+        message: {
+          attributes: { attr: 2 },
+          data: toBase64({ data: { prop: 1 }, name: "name" }),
+          messageId: "1234",
+          publishTime: "934074354430499",
+        },
+        subscription: "123",
+      } as PubSubRootDto),
+    ).resolves.toBeUndefined();
+    expect(mock).toBeCalledTimes(3);
   });
 });

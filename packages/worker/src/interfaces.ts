@@ -15,6 +15,14 @@ export interface CloudRunPubSubWorkerModuleOptions extends ModuleOptions {
    * @memberof CloudRunPubSubWorkerModuleOptions
    */
   throwModuleError?: boolean;
+
+  /**
+   * Max number of processor retry attempts. If an error occurs in a processor, it will try again.
+   *
+   * @type {number}
+   * @memberof CloudRunPubSubWorkerModuleOptions
+   */
+  maxRetryAttempts?: number;
 }
 export type CloudRunPubSubWorkerModuleAsyncOptions = ModuleAsyncOptions<CloudRunPubSubWorkerModuleOptions>;
 export type CloudRunPubSubWorkerModuleOptionsFactory = ModuleOptionsFactory<CloudRunPubSubWorkerModuleOptions>;

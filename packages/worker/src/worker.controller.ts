@@ -21,6 +21,7 @@ export class CloudRunPubSubWorkerController {
   @Post()
   @HttpCode(204)
   public async root(@Body() info: PubSubRootDto): Promise<any> {
+    const maxRetryAttempts = this.options.maxRetryAttempts ?? 1;
     const workers: CloudRunPubSubWorkerMetadata[] = [];
     let data: CloudRunPubSubMessage<any> = { name: "" };
 
@@ -43,10 +44,13 @@ export class CloudRunPubSubWorkerController {
       }
     }
 
-    for (const worker of workers) {
-      for (const processor of worker.processors) {
+    const processors = workers.map((w) => w.processors).flat();
+
+    for (const processor of processors) {
+      for (let i = 0; i < maxRetryAttempts; i++) {
         try {
           await processor(data.data, info.message.attributes, info);
+          i = maxRetryAttempts;
         } catch (error) {
           this.logger.error(error.message);
         }
