@@ -45,7 +45,7 @@
     "@types/node": "11.15.12",
     "@types/prettier": "2.0.0",
     "@types/rimraf": "3.0.0",
-    "@types/supertest": "2.0.8",
+    "@types/supertest": "2.0.9",
     "@typescript-eslint/eslint-plugin": "2.30.0",
     "@typescript-eslint/parser": "2.30.0",
     "eslint": "6.8.0",
