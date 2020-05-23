@@ -1,4 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const prettierRc = require("./.prettierrc");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require("path");
 module.exports = {
   env: {
@@ -13,6 +15,7 @@ module.exports = {
   },
   plugins: ["@typescript-eslint", "sort-keys-fix"],
   rules: {
+    "@typescript-eslint/ban-types": "off",
     "prettier/prettier": ["error", prettierRc],
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": "error",

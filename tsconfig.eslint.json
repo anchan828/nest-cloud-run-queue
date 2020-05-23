@@ -1,6 +1,6 @@
 {
   "extends": "./tsconfig.base.json",
   "compilerOptions": { "allowJs": true },
-  "include": ["packages/*/src/**/*.ts", "scripts/**/*.ts"],
+  "include": ["packages/*/src/**/*.ts", "scripts/**/*.ts", ".eslintrc.js"],
   "exclude": ["node_modules", "dist"]
 }
