@@ -77,12 +77,12 @@ describe("CloudRunPubSubWorkerController", () => {
       attributes: Record<string, any>,
       info: PubSubRootDto,
     ) => {
-      expect(message).toEqual({ prop: 1 });
+      expect(message).toEqual({ date: expect.any(Date), prop: 1 });
       expect(attributes).toEqual({ attr: 2 });
       expect(info).toEqual({
         message: {
           attributes: { attr: 2 },
-          data: toBase64({ data: { prop: 1 }, name: "name" }),
+          data: expect.any(String),
           messageId: "1234",
           publishTime: "934074354430499",
         },
@@ -102,7 +102,7 @@ describe("CloudRunPubSubWorkerController", () => {
       controller.root({
         message: {
           attributes: { attr: 2 },
-          data: toBase64({ data: { prop: 1 }, name: "name" }),
+          data: toBase64({ data: { date: new Date(), prop: 1 }, name: "name" }),
           messageId: "1234",
           publishTime: "934074354430499",
         },

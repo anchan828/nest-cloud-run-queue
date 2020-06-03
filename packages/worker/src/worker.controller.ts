@@ -9,6 +9,7 @@ import {
 import { CloudRunPubSubWorkerExplorerService } from "./explorer.service";
 import { CloudRunPubSubWorkerMetadata, CloudRunPubSubWorkerModuleOptions } from "./interfaces";
 import { PubSubRootDto } from "./message.dto";
+import { parseJSON } from "./util";
 
 @Controller()
 export class CloudRunPubSubWorkerController {
@@ -27,7 +28,7 @@ export class CloudRunPubSubWorkerController {
 
     try {
       data = this.decodeData(info.message.data);
-
+      console.log({ data });
       if (!data.name) {
         throw new Error(ERROR_WORKER_NAME_NOT_FOUND);
       }
@@ -61,7 +62,7 @@ export class CloudRunPubSubWorkerController {
   private decodeData(data: string): CloudRunPubSubMessage {
     const str = Buffer.from(data, "base64").toString();
     try {
-      return JSON.parse(str) as CloudRunPubSubMessage;
+      return parseJSON(str) as CloudRunPubSubMessage;
     } catch {
       throw new Error(ERROR_INVALID_MESSAGE_FORMAT);
     }
