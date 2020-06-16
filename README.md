@@ -44,8 +44,8 @@ $ gcloud pubsub topics create myRunTopic
       topic: "myRunTopic",
       clientConfig: {
         // If necessary
-        keyFilename: "path/to/file.json",      
-      }
+        keyFilename: "path/to/file.json",
+      },
     }),
   ],
 })
@@ -150,24 +150,71 @@ See [docker-compose.yml](https://github.com/anchan828/nest-cloud-run-pubsub/blob
 
 Your service is now fully integrated with Pub/Sub using Nest framework!
 
-### Testing
+## Testing
 
 You can create mock for CLOUD_RUN_PUBSUB
 
 ```typescript
 Test.createTestingModule(metadata)
-    .overrideProvider(CLOUD_RUN_PUBSUB)
-    .useValue({
-      topic: jest.fn().mockImplementation(() => ({
-        publishJSON: jest.fn().mockResolvedValue("published"),
-      })),
-    }).compile()
+  .overrideProvider(CLOUD_RUN_PUBSUB)
+  .useValue({
+    topic: jest.fn().mockImplementation(() => ({
+      publishJSON: jest.fn().mockResolvedValue("published"),
+    })),
+  })
+  .compile();
 ```
 
-### Using Cloud Scheduler
+## Using Cloud Scheduler
 
 You can use Cloud Scheduler as trigger.
 
 Payload is JSON string `{"name": "worker name", "data": "str"}`
 
 ![](https://i.gyazo.com/a778c6a67eed6e525c38dd42378aa8bf.png)
+
+## Global Events
+
+This package is defined special event handlers.
+
+Note: `throwModuleError: true` is not working if you set global events.
+
+### CLOUD_RUN_UNHANDLED
+
+You can listen to undefined worker name
+
+```typescript
+@CloudRunPubSubWorker(CLOUD_RUN_UNHANDLED)
+class Worker {
+  @CloudRunPubSubWorkerProcess()
+  public async process(
+    message: CloudRunPubSubMessage<any>,
+    attributes: Record<string, any>,
+    raw: PubSubRootDto,
+  ): Promise<void> {
+    console.log("Message: " + JSON.stringify(message));
+    console.log("Attributes: " + JSON.stringify(attributes));
+    console.log("request.body: " + JSON.stringify(raw));
+  }
+}
+```
+
+### CLOUD_RUN_ALL_WORKERS
+
+You can listen to all workers
+
+```typescript
+@CloudRunPubSubWorker(CLOUD_RUN_ALL_WORKERS)
+class Worker {
+  @CloudRunPubSubWorkerProcess()
+  public async process(
+    message: CloudRunPubSubMessage<any>,
+    attributes: Record<string, any>,
+    raw: PubSubRootDto,
+  ): Promise<void> {
+    console.log("Message: " + JSON.stringify(message));
+    console.log("Attributes: " + JSON.stringify(attributes));
+    console.log("request.body: " + JSON.stringify(raw));
+  }
+}
+```

@@ -1,7 +1,13 @@
 import { CloudRunPubSubMessage } from "@anchan828/nest-cloud-run-pubsub-common";
 import { BadRequestException } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
-import { ERROR_INVALID_MESSAGE_FORMAT, ERROR_WORKER_NAME_NOT_FOUND, ERROR_WORKER_NOT_FOUND } from "./constants";
+import {
+  CLOUD_RUN_ALL_WORKERS_WORKER_NAME,
+  CLOUD_RUN_UNHANDLED_WORKER_NAME,
+  ERROR_INVALID_MESSAGE_FORMAT,
+  ERROR_WORKER_NAME_NOT_FOUND,
+  ERROR_WORKER_NOT_FOUND,
+} from "./constants";
 import { CloudRunPubSubWorkerExplorerService } from "./explorer.service";
 import { CloudRunPubSubWorkerMetadata, CloudRunPubSubWorkerProcessor } from "./interfaces";
 import { PubSubRootDto } from "./message.dto";
@@ -96,6 +102,50 @@ describe("CloudRunPubSubWorkerController", () => {
       {
         name: "name",
         processors: [processor, processorMock],
+      },
+    ] as CloudRunPubSubWorkerMetadata[]);
+    await expect(
+      controller.root({
+        message: {
+          attributes: { attr: 2 },
+          data: toBase64({ data: { date: new Date(), prop: 1 }, name: "name" }),
+          messageId: "1234",
+          publishTime: "934074354430499",
+        },
+        subscription: "123",
+      } as PubSubRootDto),
+    ).resolves.toBeUndefined();
+    expect(processorMock).toBeCalledTimes(1);
+  });
+
+  it("should run processor if CLOUD_RUN_ALL_WORKERS_WORKER_NAME worker found", async () => {
+    const processorMock = jest.fn().mockResolvedValueOnce("ok");
+    jest.spyOn(explorerService, "explore").mockReturnValueOnce([
+      {
+        name: CLOUD_RUN_ALL_WORKERS_WORKER_NAME,
+        processors: [processorMock] as CloudRunPubSubWorkerProcessor[],
+      },
+    ] as CloudRunPubSubWorkerMetadata[]);
+    await expect(
+      controller.root({
+        message: {
+          attributes: { attr: 2 },
+          data: toBase64({ data: { date: new Date(), prop: 1 }, name: "name" }),
+          messageId: "1234",
+          publishTime: "934074354430499",
+        },
+        subscription: "123",
+      } as PubSubRootDto),
+    ).resolves.toBeUndefined();
+    expect(processorMock).toBeCalledWith(1);
+  });
+
+  it("should run processor if CLOUD_RUN_UNHANDLED_WORKER_NAME worker found", async () => {
+    const processorMock = jest.fn().mockResolvedValueOnce("ok");
+    jest.spyOn(explorerService, "explore").mockReturnValueOnce([
+      {
+        name: CLOUD_RUN_UNHANDLED_WORKER_NAME,
+        processors: [processorMock] as CloudRunPubSubWorkerProcessor[],
       },
     ] as CloudRunPubSubWorkerMetadata[]);
     await expect(
