@@ -126,18 +126,33 @@ describe("CloudRunPubSubWorkerController", () => {
         processors: [processorMock] as CloudRunPubSubWorkerProcessor[],
       },
     ] as CloudRunPubSubWorkerMetadata[]);
+    const date = new Date();
+    const encodeData = toBase64({ data: { date, prop: 1 }, name: "name" });
+
     await expect(
       controller.root({
         message: {
           attributes: { attr: 2 },
-          data: toBase64({ data: { date: new Date(), prop: 1 }, name: "name" }),
+          data: encodeData,
           messageId: "1234",
           publishTime: "934074354430499",
         },
         subscription: "123",
       } as PubSubRootDto),
     ).resolves.toBeUndefined();
-    expect(processorMock).toBeCalledWith(1);
+    expect(processorMock).toHaveBeenCalledWith(
+      { data: { date, prop: 1 }, name: "name" },
+      { attr: 2 },
+      {
+        message: {
+          attributes: { attr: 2 },
+          data: encodeData,
+          messageId: "1234",
+          publishTime: "934074354430499",
+        },
+        subscription: "123",
+      },
+    );
   });
 
   it("should run processor if CLOUD_RUN_UNHANDLED_WORKER_NAME worker found", async () => {
