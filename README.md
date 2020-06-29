@@ -117,7 +117,7 @@ async function bootstrap(): Promise<void> {
 bootstrap();
 ```
 
-### 5. Deploy docker image and create service on Cloud Run
+### 4. Deploy docker image and create service on Cloud Run
 
 1. Build worker application
 2. Build docker image
@@ -128,7 +128,7 @@ Then you can get service url
 
 ![](https://gyazo.com/c5e7078c58ce3e9bef45387fdb31e2bf.png)
 
-### 4. Create subscription (push) for topic
+### 5. Create subscription (push) for topic
 
 `SERVICE-URL` with the HTTPS URL provided on deploying the service.
 (ex, https://nest-cloud-run-pubsub-xxxxxxxxxxx-an.a.run.app)
@@ -146,7 +146,7 @@ If you want to test on your locally:
 
 See [docker-compose.yml](https://github.com/anchan828/nest-cloud-run-pubsub/blob/master/docker-compose.yml) and [jest.setup.js](https://github.com/anchan828/nest-cloud-run-pubsub/blob/master/jest.setup.js)
 
-### 5. Done
+### 6. Done
 
 Your service is now fully integrated with Pub/Sub using Nest framework!
 
