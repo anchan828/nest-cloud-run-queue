@@ -3,6 +3,8 @@ export {
   CloudRunPubSubPublisherModuleAsyncOptions,
   CloudRunPubSubPublisherModuleOptions,
   CloudRunPubSubPublisherModuleOptionsFactory,
+  ExtraConfig,
+  PublishData,
 } from "./interfaces";
 export { CloudRunPubSubPublisherModule } from "./publish.module";
 export { CloudRunPubSubService } from "./publish.service";
