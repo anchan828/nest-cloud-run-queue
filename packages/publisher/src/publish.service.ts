@@ -12,10 +12,20 @@ export class CloudRunPubSubService {
   ) {}
 
   public async publish<T>(message: PublishData<T>, options?: PublishOptions & { topic?: string }): Promise<string> {
-    const { attributes, ...json } = message;
     const topicName = this.getTopicName(options);
     const topic = this.pubsub.topic(topicName, Object.assign({}, this.options.publishConfig, options));
-    return topic.publishJSON(json, attributes);
+
+    const { attributes, ...json } = this.options.extraConfig?.prePublish
+      ? await this.options.extraConfig?.prePublish(message)
+      : message;
+
+    const messageId = await topic.publishJSON(json, attributes);
+
+    if (this.options.extraConfig?.postPublish) {
+      await this.options.extraConfig?.postPublish(message, messageId);
+    }
+
+    return messageId;
   }
 
   private getTopicName(options?: { topic?: string }): string {

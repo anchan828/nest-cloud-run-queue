@@ -13,9 +13,18 @@ export interface CloudRunPubSubPublisherModuleOptions extends ModuleOptions {
   topic?: string;
   clientConfig?: ClientConfig;
   publishConfig?: PublishOptions;
+
+  extraConfig?: ExtraConfig;
 }
 export type CloudRunPubSubPublisherModuleAsyncOptions = ModuleAsyncOptions<CloudRunPubSubPublisherModuleOptions>;
 
 export type CloudRunPubSubPublisherModuleOptionsFactory = ModuleOptionsFactory<CloudRunPubSubPublisherModuleOptions>;
 
 export type PublishData<T> = CloudRunPubSubMessage<T> & { attributes?: Attributes };
+
+export type ExtraConfig = {
+  // Run BEFORE the message is published
+  prePublish?: (message: PublishData<any>) => PublishData<any> | Promise<PublishData<any>>;
+  // Run AFTER the message is published
+  postPublish?: (message: PublishData<any>, messageId: string) => void | Promise<void>;
+};
