@@ -50,7 +50,7 @@ export interface CloudRunPubSubWorkerMetadata {
 
 export type WorkerExtraConfig = {
   // Run BEFORE the message is processed
-  preProcessor?: (...args: Parameters<CloudRunPubSubWorkerProcessor>) => void | Promise<void>;
+  preProcessor?: (name: string, ...args: Parameters<CloudRunPubSubWorkerProcessor>) => void | Promise<void>;
   // Run AFTER the message is processed
-  postProcessor?: (...args: Parameters<CloudRunPubSubWorkerProcessor>) => void | Promise<void>;
+  postProcessor?: (name: string, ...args: Parameters<CloudRunPubSubWorkerProcessor>) => void | Promise<void>;
 };
