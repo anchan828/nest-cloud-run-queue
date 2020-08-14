@@ -8,6 +8,7 @@ export {
   CloudRunPubSubWorkerModuleOptions,
   CloudRunPubSubWorkerModuleOptionsFactory,
   CloudRunPubSubWorkerProcessor,
+  WorkerExtraConfig,
 } from "./interfaces";
 export { PubSubMessageDto, PubSubRootDto } from "./message.dto";
 export { CloudRunPubSubWorkerModule } from "./worker.module";
