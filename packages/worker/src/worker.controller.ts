@@ -61,7 +61,7 @@ export class CloudRunPubSubWorkerController {
 
     const processors = workers.map((w) => w.processors).flat();
     const spetialProcessors = spetialWorkers.map((w) => w.processors).flat();
-
+    await this.options.extraConfig?.preProcessor?.(data.data, info.message.attributes, info);
     for (const processor of processors) {
       await this.execProcessor(processor, data.data, info, maxRetryAttempts);
     }
@@ -69,6 +69,7 @@ export class CloudRunPubSubWorkerController {
     for (const processor of spetialProcessors) {
       await this.execProcessor(processor, data, info, maxRetryAttempts);
     }
+    await this.options.extraConfig?.postProcessor?.(data.data, info.message.attributes, info);
   }
 
   private async execProcessor<T>(

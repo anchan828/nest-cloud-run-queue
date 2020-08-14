@@ -23,11 +23,19 @@ export interface CloudRunPubSubWorkerModuleOptions extends ModuleOptions {
    * @memberof CloudRunPubSubWorkerModuleOptions
    */
   maxRetryAttempts?: number;
+
+  /**
+   * extra config
+   *
+   * @type {WorkerExtraConfig}
+   * @memberof CloudRunPubSubWorkerModuleOptions
+   */
+  extraConfig?: WorkerExtraConfig;
 }
 export type CloudRunPubSubWorkerModuleAsyncOptions = ModuleAsyncOptions<CloudRunPubSubWorkerModuleOptions>;
 export type CloudRunPubSubWorkerModuleOptionsFactory = ModuleOptionsFactory<CloudRunPubSubWorkerModuleOptions>;
 
-export type CloudRunPubSubWorkerProcessor = <T, U = Record<string, any>>(
+export type CloudRunPubSubWorkerProcessor = <T, U = Record<string, string>>(
   message: T,
   attributes: U,
   info: PubSubRootDto,
@@ -39,3 +47,10 @@ export interface CloudRunPubSubWorkerMetadata {
 
   processors: CloudRunPubSubWorkerProcessor[];
 }
+
+export type WorkerExtraConfig = {
+  // Run BEFORE the message is processed
+  preProcessor?: (...args: Parameters<CloudRunPubSubWorkerProcessor>) => void | Promise<void>;
+  // Run AFTER the message is processed
+  postProcessor?: (...args: Parameters<CloudRunPubSubWorkerProcessor>) => void | Promise<void>;
+};
