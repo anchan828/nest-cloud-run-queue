@@ -2,7 +2,12 @@ import { Injectable } from "@nestjs/common";
 import { DiscoveryService } from "@nestjs/core";
 import { MetadataScanner } from "@nestjs/core/metadata-scanner";
 import { CLOUD_RUN_PUBSUB_WORKER_DECORATOR, CLOUD_RUN_PUBSUB_WORKER_PROCESS_DECORATOR } from "./constants";
-import { CloudRunPubSubWorkerMetadata, CloudRunPubSubWorkerProcessor } from "./interfaces";
+import {
+  CloudRunPubSubWorkerDecoratorArgs,
+  CloudRunPubSubWorkerMetadata,
+  CloudRunPubSubWorkerProcessDecoratorArgs,
+  CloudRunPubSubWorkerProcessorMetadata,
+} from "./interfaces";
 @Injectable()
 export class CloudRunPubSubWorkerExplorerService {
   constructor(private readonly discoveryService: DiscoveryService, private readonly metadataScanner: MetadataScanner) {}
@@ -22,26 +27,41 @@ export class CloudRunPubSubWorkerExplorerService {
     for (const classInstanceWrapper of this.discoveryService
       .getProviders()
       .filter((instanceWrapper) => instanceWrapper.instance?.constructor)) {
-      const name = Reflect.getMetadata(CLOUD_RUN_PUBSUB_WORKER_DECORATOR, classInstanceWrapper.instance.constructor);
+      const args = Reflect.getMetadata(
+        CLOUD_RUN_PUBSUB_WORKER_DECORATOR,
+        classInstanceWrapper.instance.constructor,
+      ) as CloudRunPubSubWorkerDecoratorArgs;
 
-      if (name) {
-        metadata.push({ instance: classInstanceWrapper.instance, name, processors: [] });
+      if (args) {
+        metadata.push({
+          instance: classInstanceWrapper.instance,
+          name: args.name,
+          priority: args.priority || 0,
+          processors: [],
+        });
       }
     }
     return metadata;
   }
 
-  private getWorkerProcessors(worker: CloudRunPubSubWorkerMetadata): CloudRunPubSubWorkerProcessor[] {
+  private getWorkerProcessors(worker: CloudRunPubSubWorkerMetadata): CloudRunPubSubWorkerProcessorMetadata[] {
+    const metadata: CloudRunPubSubWorkerProcessorMetadata[] = [];
     const instance = worker.instance;
     const prototype = Object.getPrototypeOf(instance);
-    const workerProcessors: CloudRunPubSubWorkerProcessor[] = [];
 
     for (const methodName of this.metadataScanner.getAllFilteredMethodNames(prototype)) {
-      if (Reflect.hasMetadata(CLOUD_RUN_PUBSUB_WORKER_PROCESS_DECORATOR, prototype[methodName])) {
-        workerProcessors.push(prototype[methodName].bind(instance));
+      const args = Reflect.getMetadata(
+        CLOUD_RUN_PUBSUB_WORKER_PROCESS_DECORATOR,
+        prototype[methodName],
+      ) as CloudRunPubSubWorkerProcessDecoratorArgs;
+      if (args) {
+        metadata.push({
+          priority: args.priority || 0,
+          processor: prototype[methodName].bind(instance),
+        });
       }
     }
 
-    return workerProcessors;
+    return metadata;
   }
 }

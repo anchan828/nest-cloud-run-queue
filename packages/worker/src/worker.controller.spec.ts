@@ -9,7 +9,11 @@ import {
   ERROR_WORKER_NOT_FOUND,
 } from "./constants";
 import { CloudRunPubSubWorkerExplorerService } from "./explorer.service";
-import { CloudRunPubSubWorkerMetadata, CloudRunPubSubWorkerProcessor } from "./interfaces";
+import {
+  CloudRunPubSubWorkerMetadata,
+  CloudRunPubSubWorkerProcessor,
+  CloudRunPubSubWorkerProcessorMetadata,
+} from "./interfaces";
 import { PubSubRootDto } from "./message.dto";
 import { CloudRunPubSubWorkerController } from "./worker.controller";
 import { CloudRunPubSubWorkerModule } from "./worker.module";
@@ -101,7 +105,11 @@ describe("CloudRunPubSubWorkerController", () => {
     jest.spyOn(explorerService, "explore").mockReturnValueOnce([
       {
         name: "name",
-        processors: [processor, processorMock],
+        priority: 0,
+        processors: [
+          { priority: 0, processor },
+          { priority: 1, processor: processorMock },
+        ],
       },
     ] as CloudRunPubSubWorkerMetadata[]);
     await expect(
@@ -123,7 +131,8 @@ describe("CloudRunPubSubWorkerController", () => {
     jest.spyOn(explorerService, "explore").mockReturnValueOnce([
       {
         name: CLOUD_RUN_ALL_WORKERS_WORKER_NAME,
-        processors: [processorMock] as CloudRunPubSubWorkerProcessor[],
+        priority: 0,
+        processors: [{ priority: 0, processor: processorMock }] as CloudRunPubSubWorkerProcessorMetadata[],
       },
     ] as CloudRunPubSubWorkerMetadata[]);
     const date = new Date();
@@ -160,7 +169,8 @@ describe("CloudRunPubSubWorkerController", () => {
     jest.spyOn(explorerService, "explore").mockReturnValueOnce([
       {
         name: CLOUD_RUN_UNHANDLED_WORKER_NAME,
-        processors: [processorMock] as CloudRunPubSubWorkerProcessor[],
+        priority: 0,
+        processors: [{ priority: 0, processor: processorMock }] as CloudRunPubSubWorkerProcessorMetadata[],
       },
     ] as CloudRunPubSubWorkerMetadata[]);
     await expect(
@@ -177,6 +187,61 @@ describe("CloudRunPubSubWorkerController", () => {
     expect(processorMock).toBeCalledTimes(1);
   });
 
+  it("priority", async () => {
+    const processorMock = jest.fn();
+    jest.spyOn(explorerService, "explore").mockReturnValueOnce([
+      {
+        name: "name",
+        priority: 2,
+        processors: [
+          { priority: 2, processor: () => processorMock(5) },
+          { priority: 1, processor: () => processorMock(4) },
+          { priority: 3, processor: () => processorMock(6) },
+        ] as CloudRunPubSubWorkerProcessorMetadata[],
+      },
+      {
+        name: "name",
+        priority: 1,
+        processors: [
+          { priority: 2, processor: () => processorMock(2) },
+          { priority: 1, processor: () => processorMock(1) },
+          { priority: 3, processor: () => processorMock(3) },
+        ] as CloudRunPubSubWorkerProcessorMetadata[],
+      },
+      {
+        name: CLOUD_RUN_ALL_WORKERS_WORKER_NAME,
+        priority: 1,
+        processors: [
+          { priority: 2, processor: () => processorMock(8) },
+          { priority: 1, processor: () => processorMock(7) },
+          { priority: 3, processor: () => processorMock(9) },
+        ] as CloudRunPubSubWorkerProcessorMetadata[],
+      },
+    ] as CloudRunPubSubWorkerMetadata[]);
+
+    await expect(
+      controller.root({
+        message: {
+          attributes: { attr: 2 },
+          data: toBase64({ data: { date: new Date(), prop: 1 }, name: "name" }),
+          messageId: "1234",
+          publishTime: "934074354430499",
+        },
+        subscription: "123",
+      } as PubSubRootDto),
+    ).resolves.toBeUndefined();
+    expect(processorMock).toBeCalledTimes(9);
+    expect(processorMock).nthCalledWith(1, 1);
+    expect(processorMock).nthCalledWith(2, 2);
+    expect(processorMock).nthCalledWith(3, 3);
+    expect(processorMock).nthCalledWith(4, 4);
+    expect(processorMock).nthCalledWith(5, 5);
+    expect(processorMock).nthCalledWith(6, 6);
+    expect(processorMock).nthCalledWith(7, 7);
+    expect(processorMock).nthCalledWith(8, 8);
+    expect(processorMock).nthCalledWith(9, 9);
+  });
+
   it("maxRetryAttempts", async () => {
     const app = await Test.createTestingModule({
       imports: [CloudRunPubSubWorkerModule.registerAsync({ useFactory: () => ({ maxRetryAttempts: 3 } as any) })],
@@ -190,7 +255,7 @@ describe("CloudRunPubSubWorkerController", () => {
     jest.spyOn(explorerService, "explore").mockReturnValueOnce([
       {
         name: "name",
-        processors: [mock] as any,
+        processors: [{ priority: 0, processor: mock }] as CloudRunPubSubWorkerProcessorMetadata[],
       },
     ] as CloudRunPubSubWorkerMetadata[]);
     await expect(

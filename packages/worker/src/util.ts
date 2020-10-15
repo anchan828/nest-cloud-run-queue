@@ -14,3 +14,15 @@ export const parseJSON = <T>(json: string): T | undefined => {
     return value;
   });
 };
+
+/**
+ * sort array by priority prop
+ *
+ * @export
+ * @template T
+ * @param {T[]} items
+ * @returns {T[]}
+ */
+export function sortByPriority<T extends { priority: number }>(items: T[]): T[] {
+  return items.sort((x, y) => x.priority - y.priority);
+}

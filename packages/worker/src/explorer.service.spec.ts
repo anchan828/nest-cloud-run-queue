@@ -24,6 +24,7 @@ describe("CloudRunPubSubWorkerExplorerService", () => {
       {
         instance: expect.any(TestWorker),
         name: "TestWorker",
+        priority: 0,
         processors: [],
       },
     ]);
@@ -50,6 +51,7 @@ describe("CloudRunPubSubWorkerExplorerService", () => {
       {
         instance: expect.any(TestWorker),
         name: "TestWorker",
+        priority: 0,
         processors: [expect.anything()],
       },
     ]);
