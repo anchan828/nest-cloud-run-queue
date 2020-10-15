@@ -41,11 +41,14 @@ export type CloudRunPubSubWorkerProcessor = <T, U = Record<string, string>>(
   info: PubSubRootDto,
 ) => Promise<void> | void;
 
-export interface CloudRunPubSubWorkerMetadata {
+export interface CloudRunPubSubWorkerMetadata extends CloudRunPubSubWorkerDecoratorArgs {
   instance: Injectable;
-  name: CloudRunPubSubWorkerName;
 
-  processors: CloudRunPubSubWorkerProcessor[];
+  processors: CloudRunPubSubWorkerProcessorMetadata[];
+}
+
+export interface CloudRunPubSubWorkerProcessorMetadata extends CloudRunPubSubWorkerProcessDecoratorArgs {
+  processor: CloudRunPubSubWorkerProcessor;
 }
 
 export type WorkerExtraConfig = {
@@ -54,3 +57,25 @@ export type WorkerExtraConfig = {
   // Run AFTER the message is processed
   postProcessor?: (name: string, ...args: Parameters<CloudRunPubSubWorkerProcessor>) => void | Promise<void>;
 };
+
+export interface CloudRunPubSubWorkerDecoratorArgs {
+  name: CloudRunPubSubWorkerName;
+
+  /**
+   * Highest priority is 0, and lower the larger integer you use.
+   *
+   * @type {number}
+   * @memberof CloudRunPubSubWorkerDecoratorArgs
+   */
+  priority: number;
+}
+
+export interface CloudRunPubSubWorkerProcessDecoratorArgs {
+  /**
+   * Highest priority is 0, and lower the larger integer you use.
+   *
+   * @type {number}
+   * @memberof CloudRunPubSubWorkerProcessDecoratorArgs
+   */
+  priority: number;
+}

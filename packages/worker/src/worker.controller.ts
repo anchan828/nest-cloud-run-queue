@@ -15,7 +15,7 @@ import {
   CloudRunPubSubWorkerProcessor,
 } from "./interfaces";
 import { PubSubRootDto } from "./message.dto";
-import { parseJSON } from "./util";
+import { parseJSON, sortByPriority } from "./util";
 
 @Controller()
 export class CloudRunPubSubWorkerController {
@@ -58,16 +58,19 @@ export class CloudRunPubSubWorkerController {
         throw new BadRequestException(error.message);
       }
     }
-
-    const processors = workers.map((w) => w.processors).flat();
-    const spetialProcessors = spetialWorkers.map((w) => w.processors).flat();
+    const processors = sortByPriority(workers)
+      .map((w) => sortByPriority(w.processors))
+      .flat();
+    const spetialProcessors = sortByPriority(spetialWorkers)
+      .map((w) => sortByPriority(w.processors))
+      .flat();
     await this.options.extraConfig?.preProcessor?.(data.name, data.data, info.message.attributes, info);
     for (const processor of processors) {
-      await this.execProcessor(processor, data.data, info, maxRetryAttempts);
+      await this.execProcessor(processor.processor, data.data, info, maxRetryAttempts);
     }
 
     for (const processor of spetialProcessors) {
-      await this.execProcessor(processor, data, info, maxRetryAttempts);
+      await this.execProcessor(processor.processor, data, info, maxRetryAttempts);
     }
     await this.options.extraConfig?.postProcessor?.(data.name, data.data, info.message.attributes, info);
   }
