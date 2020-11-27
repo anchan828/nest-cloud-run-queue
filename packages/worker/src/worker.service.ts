@@ -1,5 +1,6 @@
 import { CloudRunPubSubMessage } from "@anchan828/nest-cloud-run-pubsub-common";
 import { BadRequestException, Inject, Injectable, Logger } from "@nestjs/common";
+import { isBase64 } from "class-validator";
 import { CloudRunPubSubWorkerModuleOptions } from ".";
 import {
   CLOUD_RUN_ALL_WORKERS_WORKER_NAME,
@@ -13,7 +14,6 @@ import { CloudRunPubSubWorkerExplorerService } from "./explorer.service";
 import { CloudRunPubSubWorkerMetadata, CloudRunPubSubWorkerProcessor } from "./interfaces";
 import { CloudRunPubSubWorkerPubSubMessage } from "./message.dto";
 import { parseJSON, sortByPriority } from "./util";
-
 @Injectable()
 export class CloudRunPubSubWorkerService {
   #allWorkers: CloudRunPubSubWorkerMetadata[] | undefined;
@@ -95,9 +95,11 @@ export class CloudRunPubSubWorkerService {
   }
 
   private decodeData(data: string): CloudRunPubSubMessage {
-    const str = Buffer.from(data, "base64").toString();
+    if (isBase64(data)) {
+      data = Buffer.from(data, "base64").toString();
+    }
     try {
-      return parseJSON(str) as CloudRunPubSubMessage;
+      return parseJSON(data) as CloudRunPubSubMessage;
     } catch {
       throw new Error(ERROR_INVALID_MESSAGE_FORMAT);
     }
