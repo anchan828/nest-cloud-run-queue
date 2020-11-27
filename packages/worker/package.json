@@ -31,7 +31,7 @@
     "watch": "node ../../node_modules/typescript/bin/tsc -w"
   },
   "types": "./dist/index.d.ts",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "dependencies": {
     "@anchan828/nest-cloud-run-pubsub-common": "^0.2.6",
     "class-validator": "0.12.2"
