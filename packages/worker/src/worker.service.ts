@@ -94,7 +94,11 @@ export class CloudRunPubSubWorkerService {
     }
   }
 
-  private decodeData(data: string | Buffer): CloudRunPubSubMessage {
+  private decodeData(data?: string | Buffer | null): CloudRunPubSubMessage {
+    if (!data) {
+      throw new Error(ERROR_INVALID_MESSAGE_FORMAT);
+    }
+
     if (Buffer.isBuffer(data)) {
       data = data.toString();
     }

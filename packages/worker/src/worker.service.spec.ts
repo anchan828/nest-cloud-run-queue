@@ -55,6 +55,12 @@ describe("CloudRunPubSubWorkerService", () => {
     );
   });
 
+  it("should throw error if data is null", async () => {
+    await expect(service.execute({ data: null } as CloudRunPubSubWorkerPubSubMessage)).rejects.toThrowError(
+      new BadRequestException(ERROR_INVALID_MESSAGE_FORMAT),
+    );
+  });
+
   it("should throw error if data is not message object", async () => {
     await expect(
       service.execute({ data: toBase64("testtest") } as CloudRunPubSubWorkerPubSubMessage),

@@ -2,10 +2,10 @@ import { IsBase64, IsNotEmptyObject, IsOptional, ValidateNested } from "class-va
 
 export class CloudRunPubSubWorkerPubSubMessage {
   @IsOptional()
-  public readonly attributes?: Record<string, any>;
+  public readonly attributes?: Record<string, any> | null;
 
   @IsBase64()
-  public readonly data!: string | Buffer;
+  public readonly data!: string | Buffer | null;
 }
 
 export class PubSubReceivedMessageDto {
