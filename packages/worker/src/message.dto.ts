@@ -1,32 +1,15 @@
-import {
-  IsBase64,
-  IsDateString,
-  IsNotEmptyObject,
-  IsNumberString,
-  IsOptional,
-  IsString,
-  ValidateNested,
-} from "class-validator";
-export class PubSubMessageDto {
+import { IsBase64, IsNotEmptyObject, IsOptional, ValidateNested } from "class-validator";
+
+export class CloudRunPubSubWorkerPubSubMessage {
   @IsOptional()
   public readonly attributes?: Record<string, any>;
 
   @IsBase64()
   public readonly data!: string;
-
-  @IsNumberString()
-  public readonly messageId!: string;
-
-  @IsDateString()
-  @IsOptional()
-  public readonly publishTime!: string;
 }
 
-export class PubSubRootDto {
+export class PubSubReceivedMessageDto {
   @ValidateNested({ message: "Invalid Pub/Sub message format" })
   @IsNotEmptyObject()
-  public readonly message!: PubSubMessageDto;
-
-  @IsString()
-  public readonly subscription!: string;
+  public readonly message!: CloudRunPubSubWorkerPubSubMessage;
 }

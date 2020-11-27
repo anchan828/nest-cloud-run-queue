@@ -86,7 +86,7 @@ export class WorkerAppModule {}
 @CloudRunPubSubWorker("Worker name")
 class Worker {
   @CloudRunPubSubWorkerProcess()
-  public async process(message: string | object, attributes: Record<string, any>, raw: PubSubRootDto): Promise<void> {
+  public async process(message: string | object, attributes: Record<string, any>, raw: any): Promise<void> {
     console.log("Message: " + JSON.stringify(message));
     console.log("Attributes: " + JSON.stringify(attributes));
     console.log("request.body: " + JSON.stringify(raw));
@@ -187,11 +187,7 @@ You can listen to undefined worker name
 @CloudRunPubSubWorker(CLOUD_RUN_UNHANDLED)
 class Worker {
   @CloudRunPubSubWorkerProcess()
-  public async process(
-    message: CloudRunPubSubMessage<any>,
-    attributes: Record<string, any>,
-    raw: PubSubRootDto,
-  ): Promise<void> {
+  public async process(message: CloudRunPubSubMessage<any>, attributes: Record<string, any>, raw: any): Promise<void> {
     console.log("Message: " + JSON.stringify(message));
     console.log("Attributes: " + JSON.stringify(attributes));
     console.log("request.body: " + JSON.stringify(raw));
@@ -207,11 +203,7 @@ You can listen to all workers
 @CloudRunPubSubWorker(CLOUD_RUN_ALL_WORKERS)
 class Worker {
   @CloudRunPubSubWorkerProcess()
-  public async process(
-    message: CloudRunPubSubMessage<any>,
-    attributes: Record<string, any>,
-    raw: PubSubRootDto,
-  ): Promise<void> {
+  public async process(message: CloudRunPubSubMessage<any>, attributes: Record<string, any>, raw: any): Promise<void> {
     console.log("Message: " + JSON.stringify(message));
     console.log("Attributes: " + JSON.stringify(attributes));
     console.log("request.body: " + JSON.stringify(raw));

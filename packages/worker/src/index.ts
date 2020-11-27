@@ -10,5 +10,10 @@ export {
   CloudRunPubSubWorkerProcessor,
   WorkerExtraConfig,
 } from "./interfaces";
-export { PubSubMessageDto, PubSubRootDto } from "./message.dto";
+export {
+  CloudRunPubSubWorkerPubSubMessage,
+  CloudRunPubSubWorkerPubSubMessage as PubSubMessageDto,
+  PubSubReceivedMessageDto,
+  PubSubReceivedMessageDto as PubSubRootDto,
+} from "./message.dto";
 export { CloudRunPubSubWorkerModule } from "./worker.module";

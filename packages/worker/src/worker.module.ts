@@ -6,12 +6,15 @@ import { CLOUD_RUN_PUBSUB_WORKER_MODULE_OPTIONS } from "./constants";
 import { CloudRunPubSubWorkerExplorerService } from "./explorer.service";
 import { CloudRunPubSubWorkerModuleAsyncOptions, CloudRunPubSubWorkerModuleOptions } from "./interfaces";
 import { CloudRunPubSubWorkerController } from "./worker.controller";
+import { CloudRunPubSubWorkerService } from "./worker.service";
 @Module({
   controllers: [CloudRunPubSubWorkerController],
+  exports: [CloudRunPubSubWorkerService],
   imports: [DiscoveryModule],
   providers: [
     MetadataScanner,
     CloudRunPubSubWorkerExplorerService,
+    CloudRunPubSubWorkerService,
     { provide: Logger, useValue: new Logger("CloudRunPubSubWorkerModule") },
   ],
 })
