@@ -94,7 +94,7 @@ export class CloudRunPubSubWorkerService {
     }
   }
 
-  private decodeData(data?: string | Buffer | null): CloudRunPubSubMessage {
+  private decodeData(data?: string | Uint8Array | Buffer | null): CloudRunPubSubMessage {
     if (!data) {
       throw new Error(ERROR_INVALID_MESSAGE_FORMAT);
     }
@@ -102,6 +102,11 @@ export class CloudRunPubSubWorkerService {
     if (Buffer.isBuffer(data)) {
       data = data.toString();
     }
+
+    if (data instanceof Uint8Array) {
+      data = new TextDecoder("utf8").decode(data);
+    }
+
     if (isBase64(data)) {
       data = Buffer.from(data, "base64").toString();
     }
