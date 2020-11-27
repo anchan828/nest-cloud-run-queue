@@ -73,7 +73,7 @@ describe("CloudRunPubSubWorkerService", () => {
     );
   });
 
-  it("should run processor if worker found", async () => {
+  it("should run processor if worker found (data is base64)", async () => {
     const processor: CloudRunPubSubWorkerProcessor = (message: any, attributes: Record<string, any>, raw: any) => {
       expect(message).toEqual({ date: expect.any(Date), prop: 1 });
       expect(attributes).toEqual({ attr: 2 });
@@ -103,7 +103,36 @@ describe("CloudRunPubSubWorkerService", () => {
     ).resolves.toBeUndefined();
     expect(processorMock).toBeCalledTimes(1);
   });
-
+  it("should run processor if worker found (data is buffer)", async () => {
+    const processor: CloudRunPubSubWorkerProcessor = (message: any, attributes: Record<string, any>, raw: any) => {
+      expect(message).toEqual({ date: expect.any(Date), prop: 1 });
+      expect(attributes).toEqual({ attr: 2 });
+      expect(raw).toEqual("raw");
+    };
+    const processorMock = jest.fn().mockImplementation((): void => {
+      throw new Error();
+    });
+    jest.spyOn(explorerService, "explore").mockReturnValueOnce([
+      {
+        name: "name",
+        priority: 0,
+        processors: [
+          { priority: 0, processor },
+          { priority: 1, processor: processorMock },
+        ],
+      },
+    ] as CloudRunPubSubWorkerMetadata[]);
+    await expect(
+      service.execute(
+        {
+          attributes: { attr: 2 },
+          data: Buffer.from(JSON.stringify({ data: { date: new Date(), prop: 1 }, name: "name" })),
+        },
+        "raw",
+      ),
+    ).resolves.toBeUndefined();
+    expect(processorMock).toBeCalledTimes(1);
+  });
   it("should run processor if CLOUD_RUN_ALL_WORKERS_WORKER_NAME worker found", async () => {
     const processorMock = jest.fn().mockResolvedValueOnce("ok");
     jest.spyOn(explorerService, "explore").mockReturnValueOnce([

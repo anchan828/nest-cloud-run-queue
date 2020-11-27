@@ -94,7 +94,10 @@ export class CloudRunPubSubWorkerService {
     }
   }
 
-  private decodeData(data: string): CloudRunPubSubMessage {
+  private decodeData(data: string | Buffer): CloudRunPubSubMessage {
+    if (Buffer.isBuffer(data)) {
+      data = data.toString();
+    }
     if (isBase64(data)) {
       data = Buffer.from(data, "base64").toString();
     }

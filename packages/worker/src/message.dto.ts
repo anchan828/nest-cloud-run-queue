@@ -5,7 +5,7 @@ export class CloudRunPubSubWorkerPubSubMessage {
   public readonly attributes?: Record<string, any>;
 
   @IsBase64()
-  public readonly data!: string;
+  public readonly data!: string | Buffer;
 }
 
 export class PubSubReceivedMessageDto {
