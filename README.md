@@ -210,3 +210,68 @@ class Worker {
   }
 }
 ```
+
+### Pull subscription
+
+You can use woeker with pull subscription.
+
+You need to inject CloudRunPubSubWorkerService and call execute method.
+
+```typescript
+import { CloudRunPubSubWorkerService } from "@anchan828/nest-cloud-run-pubsub-worker";
+import { Message, PubSub, v1 } from "@google-cloud/pubsub";
+import { Logger } from "@nestjs/common";
+
+export class PullSubscriptionWorker {
+  constructor(private readonly workerService: CloudRunPubSubWorkerService) {}
+
+  /**
+   * See: https://cloud.google.com/pubsub/docs/pull#asynchronous-pull
+   */
+  public async setUpAsynchronousPull() {
+    const pubSubClient = new PubSub({ projectId: "test" });
+    const subscription = pubSubClient.topic("nest-cloud-run-pubsub-demo").subscription("pull-subscription");
+
+    subscription.on("message", async (message: Message) => {
+      await this.workerService.execute(message);
+      message.ack();
+      Logger.log(`Done: ${message.id}`, "Async Pull Subscription");
+    });
+  }
+
+  /**
+   * See: https://cloud.google.com/pubsub/docs/pull#synchronous_pull
+   */
+  public async setUpSynchronousPull() {
+    const subClient = new v1.SubscriberClient();
+    const formattedSubscription = subClient.subscriptionPath("test", "pull-subscription");
+    const request = {
+      maxMessages: 10,
+      subscription: formattedSubscription,
+    };
+
+    const [response] = await subClient.pull(request);
+
+    const ackIds: string[] = [];
+    for (const message of response.receivedMessages || []) {
+      if (!message.message) {
+        continue;
+      }
+
+      await this.workerService.execute(message.message);
+      if (message.ackId) {
+        ackIds.push(message.ackId);
+      }
+    }
+
+    const ackRequest = {
+      ackIds: ackIds,
+      subscription: formattedSubscription,
+    };
+
+    await subClient.acknowledge(ackRequest);
+
+    Logger.log(`Done: ${ackIds.join(", ")}`, "Pull Subscription");
+  }
+}
+```
