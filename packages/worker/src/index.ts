@@ -17,3 +17,4 @@ export {
   PubSubReceivedMessageDto as PubSubRootDto,
 } from "./message.dto";
 export { CloudRunPubSubWorkerModule } from "./worker.module";
+export { CloudRunPubSubWorkerService } from "./worker.service";
