@@ -8,6 +8,7 @@ export {
   CloudRunPubSubWorkerModuleOptions,
   CloudRunPubSubWorkerModuleOptionsFactory,
   CloudRunPubSubWorkerProcessor,
+  CloudRunPubSubWorkerProcessorStatus,
   WorkerExtraConfig,
 } from "./interfaces";
 export {
