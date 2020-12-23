@@ -82,7 +82,7 @@ export class CloudRunPubSubWorkerService {
     maxRetryAttempts: number,
     data: T,
     attributes: Record<string, any>,
-    rawMessage?: CloudRunPubSubWorkerPubSubMessage,
+    rawMessage: CloudRunPubSubWorkerPubSubMessage,
   ): Promise<void> {
     for (let i = 0; i < maxRetryAttempts; i++) {
       try {
