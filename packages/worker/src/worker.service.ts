@@ -11,7 +11,11 @@ import {
   ERROR_WORKER_NOT_FOUND,
 } from "./constants";
 import { CloudRunPubSubWorkerExplorerService } from "./explorer.service";
-import { CloudRunPubSubWorkerMetadata, CloudRunPubSubWorkerProcessor } from "./interfaces";
+import {
+  CloudRunPubSubWorkerMetadata,
+  CloudRunPubSubWorkerProcessor,
+  CloudRunPubSubWorkerProcessorStatus,
+} from "./interfaces";
 import { CloudRunPubSubWorkerPubSubMessage } from "./message.dto";
 import { parseJSON, sortByPriority } from "./util";
 @Injectable()
@@ -65,13 +69,15 @@ export class CloudRunPubSubWorkerService {
     const spetialProcessors = sortByPriority(spetialWorkers)
       .map((w) => sortByPriority(w.processors))
       .flat();
-    await this.options.extraConfig?.preProcessor?.(data.name, data.data, attributes, message);
-    for (const processor of processors) {
-      await this.execProcessor(processor.processor, maxRetryAttempts, data.data, attributes, message);
-    }
+    const processorStatus = await this.options.extraConfig?.preProcessor?.(data.name, data.data, attributes, message);
+    if (processorStatus !== CloudRunPubSubWorkerProcessorStatus.SKIP) {
+      for (const processor of processors) {
+        await this.execProcessor(processor.processor, maxRetryAttempts, data.data, attributes, message);
+      }
 
-    for (const processor of spetialProcessors) {
-      await this.execProcessor(processor.processor, maxRetryAttempts, data, attributes, message);
+      for (const processor of spetialProcessors) {
+        await this.execProcessor(processor.processor, maxRetryAttempts, data, attributes, message);
+      }
     }
 
     await this.options.extraConfig?.postProcessor?.(data.name, data.data, attributes, message);

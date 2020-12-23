@@ -51,9 +51,17 @@ export interface CloudRunPubSubWorkerProcessorMetadata extends CloudRunPubSubWor
   processor: CloudRunPubSubWorkerProcessor;
 }
 
+export enum CloudRunPubSubWorkerProcessorStatus {
+  IN_PROGRESS = 0,
+  SKIP = 1,
+}
+
 export type WorkerExtraConfig = {
   // Run BEFORE the message is processed
-  preProcessor?: (name: string, ...args: Parameters<CloudRunPubSubWorkerProcessor>) => void | Promise<void>;
+  preProcessor?: (
+    name: string,
+    ...args: Parameters<CloudRunPubSubWorkerProcessor>
+  ) => (CloudRunPubSubWorkerProcessorStatus | undefined) | Promise<CloudRunPubSubWorkerProcessorStatus | undefined>;
   // Run AFTER the message is processed
   postProcessor?: (name: string, ...args: Parameters<CloudRunPubSubWorkerProcessor>) => void | Promise<void>;
 };
