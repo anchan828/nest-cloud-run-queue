@@ -61,7 +61,9 @@ export type WorkerExtraConfig = {
   preProcessor?: (
     name: string,
     ...args: Parameters<CloudRunPubSubWorkerProcessor>
-  ) => (CloudRunPubSubWorkerProcessorStatus | undefined) | Promise<CloudRunPubSubWorkerProcessorStatus | undefined>;
+  ) =>
+    | (CloudRunPubSubWorkerProcessorStatus | undefined | void)
+    | Promise<CloudRunPubSubWorkerProcessorStatus | undefined | void>;
   // Run AFTER the message is processed
   postProcessor?: (name: string, ...args: Parameters<CloudRunPubSubWorkerProcessor>) => void | Promise<void>;
 };
