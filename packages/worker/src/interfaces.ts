@@ -5,6 +5,7 @@ import {
   ModuleOptionsFactory,
 } from "@anchan828/nest-cloud-run-pubsub-common";
 import { Injectable } from "@nestjs/common/interfaces";
+import { CloudRunPubSubWorkerPubSubMessage } from "./message.dto";
 
 export interface CloudRunPubSubWorkerModuleOptions extends ModuleOptions {
   /**
@@ -37,7 +38,7 @@ export type CloudRunPubSubWorkerModuleOptionsFactory = ModuleOptionsFactory<Clou
 export type CloudRunPubSubWorkerProcessor = <T, U = Record<string, string>>(
   message: T,
   attributes: U,
-  raw: any,
+  rawMessage: CloudRunPubSubWorkerPubSubMessage,
 ) => Promise<void> | void;
 
 export interface CloudRunPubSubWorkerMetadata extends CloudRunPubSubWorkerDecoratorArgs {
