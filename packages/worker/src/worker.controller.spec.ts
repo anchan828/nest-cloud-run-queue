@@ -23,9 +23,10 @@ describe("CloudRunPubSubWorkerController", () => {
   it("should call execute method", async () => {
     jest.spyOn(service, "execute").mockResolvedValueOnce();
     await expect(
-      controller.root({ message: { data: "invalid" }, subscription: "123" } as PubSubReceivedMessageDto, {
-        body: { raw: "raw" },
-      }),
+      controller.root({
+        message: { data: "invalid", messageId: "2" },
+        subscription: "123",
+      } as PubSubReceivedMessageDto),
     ).resolves.toBeUndefined();
   });
 });

@@ -26,7 +26,7 @@ export class CloudRunPubSubWorkerService {
   ) {}
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  public async execute(message: CloudRunPubSubWorkerPubSubMessage, raw?: any): Promise<void> {
+  public async execute(message: CloudRunPubSubWorkerPubSubMessage): Promise<void> {
     if (!this.#allWorkers) {
       this.#allWorkers = this.explorerService.explore();
     }
@@ -65,16 +65,16 @@ export class CloudRunPubSubWorkerService {
     const spetialProcessors = sortByPriority(spetialWorkers)
       .map((w) => sortByPriority(w.processors))
       .flat();
-    await this.options.extraConfig?.preProcessor?.(data.name, data.data, attributes, raw);
+    await this.options.extraConfig?.preProcessor?.(data.name, data.data, attributes, message);
     for (const processor of processors) {
-      await this.execProcessor(processor.processor, maxRetryAttempts, data.data, attributes, raw);
+      await this.execProcessor(processor.processor, maxRetryAttempts, data.data, attributes, message);
     }
 
     for (const processor of spetialProcessors) {
-      await this.execProcessor(processor.processor, maxRetryAttempts, data, attributes, raw);
+      await this.execProcessor(processor.processor, maxRetryAttempts, data, attributes, message);
     }
 
-    await this.options.extraConfig?.postProcessor?.(data.name, data.data, attributes, raw);
+    await this.options.extraConfig?.postProcessor?.(data.name, data.data, attributes, message);
   }
 
   private async execProcessor<T>(
@@ -82,11 +82,11 @@ export class CloudRunPubSubWorkerService {
     maxRetryAttempts: number,
     data: T,
     attributes: Record<string, any>,
-    raw?: any,
+    rawMessage?: CloudRunPubSubWorkerPubSubMessage,
   ): Promise<void> {
     for (let i = 0; i < maxRetryAttempts; i++) {
       try {
-        await processor(data, attributes, raw);
+        await processor(data, attributes, rawMessage);
         i = maxRetryAttempts;
       } catch (error) {
         this.logger.error(error.message);

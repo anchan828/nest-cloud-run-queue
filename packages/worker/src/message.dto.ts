@@ -1,4 +1,4 @@
-import { IsBase64, IsNotEmptyObject, IsOptional, ValidateNested } from "class-validator";
+import { IsBase64, IsNotEmptyObject, IsOptional, IsString, ValidateNested } from "class-validator";
 
 export class CloudRunPubSubWorkerPubSubMessage {
   @IsOptional()
@@ -6,6 +6,9 @@ export class CloudRunPubSubWorkerPubSubMessage {
 
   @IsBase64()
   public readonly data?: string | Uint8Array | Buffer | null;
+
+  @IsString()
+  public readonly messageId!: string;
 }
 
 export class PubSubReceivedMessageDto {

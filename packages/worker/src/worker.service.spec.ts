@@ -63,27 +63,27 @@ describe("CloudRunPubSubWorkerService", () => {
 
   it("should throw error if data is not message object", async () => {
     await expect(
-      service.execute({ data: toBase64("testtest") } as CloudRunPubSubWorkerPubSubMessage),
+      service.execute({ data: toBase64("testtest"), messageId: "1" } as CloudRunPubSubWorkerPubSubMessage),
     ).rejects.toThrowError(new BadRequestException(ERROR_INVALID_MESSAGE_FORMAT));
   });
 
   it("should throw error if message dosen't have name", async () => {
-    await expect(service.execute({ data: toBase64({ data: "data" } as CloudRunPubSubMessage) })).rejects.toThrowError(
-      new BadRequestException(ERROR_WORKER_NAME_NOT_FOUND),
-    );
+    await expect(
+      service.execute({ data: toBase64({ data: "data" } as CloudRunPubSubMessage), messageId: "1" }),
+    ).rejects.toThrowError(new BadRequestException(ERROR_WORKER_NAME_NOT_FOUND));
   });
 
   it("should throw error if worker not found", async () => {
-    await expect(service.execute({ data: toBase64({ name: "name" } as CloudRunPubSubMessage) })).rejects.toThrowError(
-      new BadRequestException(ERROR_WORKER_NOT_FOUND("name")),
-    );
+    await expect(
+      service.execute({ data: toBase64({ name: "name" } as CloudRunPubSubMessage), messageId: "1" }),
+    ).rejects.toThrowError(new BadRequestException(ERROR_WORKER_NOT_FOUND("name")));
   });
 
   it("should run processor if worker found (data is base64)", async () => {
     const processor: CloudRunPubSubWorkerProcessor = (message: any, attributes: Record<string, any>, raw: any) => {
       expect(message).toEqual({ date: expect.any(Date), prop: 1 });
       expect(attributes).toEqual({ attr: 2 });
-      expect(raw).toEqual("raw");
+      expect(raw).toEqual({ attributes, data: expect.anything(), messageId: "1" });
     };
     const processorMock = jest.fn().mockImplementation((): void => {
       throw new Error();
@@ -99,13 +99,11 @@ describe("CloudRunPubSubWorkerService", () => {
       },
     ] as CloudRunPubSubWorkerMetadata[]);
     await expect(
-      service.execute(
-        {
-          attributes: { attr: 2 },
-          data: toBase64({ data: { date: new Date(), prop: 1 }, name: "name" }),
-        },
-        "raw",
-      ),
+      service.execute({
+        attributes: { attr: 2 },
+        data: toBase64({ data: { date: new Date(), prop: 1 }, name: "name" }),
+        messageId: "1",
+      }),
     ).resolves.toBeUndefined();
     expect(processorMock).toBeCalledTimes(1);
   });
@@ -113,7 +111,7 @@ describe("CloudRunPubSubWorkerService", () => {
     const processor: CloudRunPubSubWorkerProcessor = (message: any, attributes: Record<string, any>, raw: any) => {
       expect(message).toEqual({ date: expect.any(Date), prop: 1 });
       expect(attributes).toEqual({ attr: 2 });
-      expect(raw).toEqual("raw");
+      expect(raw).toEqual({ attributes, data: expect.anything(), messageId: "1" });
     };
     const processorMock = jest.fn().mockImplementation((): void => {
       throw new Error();
@@ -129,13 +127,11 @@ describe("CloudRunPubSubWorkerService", () => {
       },
     ] as CloudRunPubSubWorkerMetadata[]);
     await expect(
-      service.execute(
-        {
-          attributes: { attr: 2 },
-          data: Buffer.from(JSON.stringify({ data: { date: new Date(), prop: 1 }, name: "name" })),
-        },
-        "raw",
-      ),
+      service.execute({
+        attributes: { attr: 2 },
+        data: Buffer.from(JSON.stringify({ data: { date: new Date(), prop: 1 }, name: "name" })),
+        messageId: "1",
+      }),
     ).resolves.toBeUndefined();
     expect(processorMock).toBeCalledTimes(1);
   });
@@ -144,7 +140,7 @@ describe("CloudRunPubSubWorkerService", () => {
     const processor: CloudRunPubSubWorkerProcessor = (message: any, attributes: Record<string, any>, raw: any) => {
       expect(message).toEqual({ date: expect.any(Date), prop: 1 });
       expect(attributes).toEqual({ attr: 2 });
-      expect(raw).toEqual("raw");
+      expect(raw).toEqual({ attributes, data: expect.anything(), messageId: "1" });
     };
     const processorMock = jest.fn().mockImplementation((): void => {
       throw new Error();
@@ -160,13 +156,11 @@ describe("CloudRunPubSubWorkerService", () => {
       },
     ] as CloudRunPubSubWorkerMetadata[]);
     await expect(
-      service.execute(
-        {
-          attributes: { attr: 2 },
-          data: new TextEncoder().encode(JSON.stringify({ data: { date: new Date(), prop: 1 }, name: "name" })),
-        },
-        "raw",
-      ),
+      service.execute({
+        attributes: { attr: 2 },
+        data: new TextEncoder().encode(JSON.stringify({ data: { date: new Date(), prop: 1 }, name: "name" })),
+        messageId: "1",
+      }),
     ).resolves.toBeUndefined();
     expect(processorMock).toBeCalledTimes(1);
   });
@@ -183,15 +177,13 @@ describe("CloudRunPubSubWorkerService", () => {
     const encodeData = toBase64({ data: { date, prop: 1 }, name: "name" });
 
     await expect(
-      service.execute(
-        {
-          attributes: { attr: 2 },
-          data: encodeData,
-        },
-        "raw",
-      ),
+      service.execute({ attributes: { attr: 2 }, data: encodeData, messageId: "1" }),
     ).resolves.toBeUndefined();
-    expect(processorMock).toHaveBeenCalledWith({ data: { date, prop: 1 }, name: "name" }, { attr: 2 }, "raw");
+    expect(processorMock).toHaveBeenCalledWith(
+      { data: { date, prop: 1 }, name: "name" },
+      { attr: 2 },
+      { attributes: { attr: 2 }, data: encodeData, messageId: "1" },
+    );
   });
 
   it("should run processor if CLOUD_RUN_UNHANDLED_WORKER_NAME worker found", async () => {
@@ -207,6 +199,7 @@ describe("CloudRunPubSubWorkerService", () => {
       service.execute({
         attributes: { attr: 2 },
         data: toBase64({ data: { date: new Date(), prop: 1 }, name: "name" }),
+        messageId: "1",
       }),
     ).resolves.toBeUndefined();
     expect(processorMock).toBeCalledTimes(1);
@@ -248,6 +241,7 @@ describe("CloudRunPubSubWorkerService", () => {
       service.execute({
         attributes: { attr: 2 },
         data: toBase64({ data: { date: new Date(), prop: 1 }, name: "name" }),
+        messageId: "1",
       }),
     ).resolves.toBeUndefined();
     expect(processorMock).toBeCalledTimes(9);
@@ -279,10 +273,7 @@ describe("CloudRunPubSubWorkerService", () => {
       },
     ] as CloudRunPubSubWorkerMetadata[]);
     await expect(
-      service.execute({
-        attributes: { attr: 2 },
-        data: toBase64({ data: { prop: 1 }, name: "name" }),
-      }),
+      service.execute({ attributes: { attr: 2 }, data: toBase64({ data: { prop: 1 }, name: "name" }), messageId: "1" }),
     ).resolves.toBeUndefined();
     expect(mock).toBeCalledTimes(3);
   });

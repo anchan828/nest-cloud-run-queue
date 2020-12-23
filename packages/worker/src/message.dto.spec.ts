@@ -36,6 +36,7 @@ describe("PubSubReceivedMessageDto", () => {
               test: "test",
             },
             data: "eyJ0ZXN0IjoidGVzdCJ9",
+            messageId: "1",
           },
         ),
       },
