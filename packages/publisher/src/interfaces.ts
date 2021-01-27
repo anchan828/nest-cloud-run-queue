@@ -27,4 +27,7 @@ export type PublishExtraConfig = {
   prePublish?: (message: PublishData<any>) => PublishData<any> | Promise<PublishData<any>>;
   // Run AFTER the message is published
   postPublish?: (message: PublishData<any>, messageId: string) => void | Promise<void>;
+
+  // The delay time to wait before publishing message (millisecond)
+  delay?: number;
 };
