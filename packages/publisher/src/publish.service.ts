@@ -3,7 +3,6 @@ import { PublishOptions } from "@google-cloud/pubsub/build/src/topic";
 import { Inject, Injectable } from "@nestjs/common";
 import { CLOUD_RUN_PUBSUB, CLOUD_RUN_PUBSUB_PUBLISHER_MODULE_OPTIONS, ERROR_TOPIC_NOT_FOUND } from "./constants";
 import { CloudRunPubSubPublisherModuleOptions, PublishData } from "./interfaces";
-import { wait } from "./utils";
 
 @Injectable()
 export class CloudRunPubSubService {
@@ -15,10 +14,6 @@ export class CloudRunPubSubService {
   public async publish<T>(message: PublishData<T>, options?: PublishOptions & { topic?: string }): Promise<string> {
     const topicName = this.getTopicName(options);
     const topic = this.pubsub.topic(topicName, Object.assign({}, this.options.publishConfig, options));
-
-    if (this.options.extraConfig?.delay) {
-      await wait(this.options.extraConfig.delay);
-    }
 
     const { attributes, ...json } = this.options.extraConfig?.prePublish
       ? await this.options.extraConfig?.prePublish(message)

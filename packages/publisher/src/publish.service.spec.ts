@@ -100,23 +100,4 @@ describe("CloudRunPubSubService [extra configs]", () => {
       expect(mock).toHaveBeenLastCalledWith({ data: "data", name: "test" }, expect.any(String));
     });
   });
-
-  describe("delay", () => {
-    it("1 second must have elapsed", async () => {
-      const time = Date.now();
-      const app = await Test.createTestingModule({
-        imports: [
-          CloudRunPubSubPublisherModule.register({
-            extraConfig: {
-              delay: 1000,
-            },
-          }),
-        ],
-      }).compile();
-      const service = app.get<CloudRunPubSubService>(CloudRunPubSubService);
-      const topicName = await createTopicAndSubscription(service["pubsub"]);
-      await service.publish({ data: "data", name: "test" }, { topic: topicName });
-      expect(Date.now() - time).toBeGreaterThanOrEqual(1000);
-    });
-  });
 });
