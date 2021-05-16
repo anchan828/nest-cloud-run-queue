@@ -31,5 +31,5 @@
     "watch": "node ../../node_modules/typescript/bin/tsc -w"
   },
   "types": "./dist/index.d.ts",
-  "version": "0.3.26"
+  "version": "0.3.27"
 }
