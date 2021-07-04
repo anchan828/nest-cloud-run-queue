@@ -13,12 +13,10 @@ jobs:
       - uses: actions/checkout@master
       - name: Checkout master
         run: git checkout master
-      - uses: actions/cache@v2
+      - uses: actions/setup-node@v2
         with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          node-version: 16
+          cache: npm
       - name: Install npm packages
         run: npm ci
       - name: Bootstrap monorepo packages
