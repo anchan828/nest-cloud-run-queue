@@ -31,5 +31,12 @@
     "watch": "node ../../node_modules/typescript/bin/tsc -w"
   },
   "types": "./dist/index.d.ts",
-  "version": "0.4.2"
+  "version": "0.4.2",
+  "peerDependencies": {
+    "@nestjs/common": "^8.0.0"
+  },
+  "devDependencies": {
+    "@nestjs/common": "8.0.4",
+    "rxjs": "7.2.0"
+  }
 }
