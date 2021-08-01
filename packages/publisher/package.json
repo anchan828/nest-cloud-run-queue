@@ -31,9 +31,9 @@
     "watch": "node ../../node_modules/typescript/bin/tsc -w"
   },
   "types": "./dist/index.d.ts",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "dependencies": {
-    "@anchan828/nest-cloud-run-pubsub-common": "^0.4.4",
+    "@anchan828/nest-cloud-run-pubsub-common": "^0.4.5",
     "@google-cloud/pubsub": "2.16.1"
   },
   "peerDependencies": {
