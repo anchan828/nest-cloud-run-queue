@@ -34,7 +34,7 @@
   "version": "0.4.7",
   "dependencies": {
     "@anchan828/nest-cloud-run-pubsub-common": "^0.4.7",
-    "@google-cloud/pubsub": "2.16.5"
+    "@google-cloud/pubsub": "2.16.6"
   },
   "peerDependencies": {
     "@nestjs/common": "^8.0.0"
