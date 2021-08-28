@@ -57,7 +57,7 @@ export class CloudRunPubSubWorkerService {
       if (workers.length === 0) {
         throw new Error(ERROR_WORKER_NOT_FOUND(data.name));
       }
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(error.message);
       if (this.options?.throwModuleError && spetialWorkers.length === 0) {
         throw new BadRequestException(error.message);
@@ -94,7 +94,7 @@ export class CloudRunPubSubWorkerService {
       try {
         await processor(data, attributes, rawMessage);
         i = maxRetryAttempts;
-      } catch (error) {
+      } catch (error: any) {
         this.logger.error(error.message);
       }
     }

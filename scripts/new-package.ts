@@ -125,7 +125,7 @@ try {
   writeFileSync(resolve(packageDir, ".npmignore"), npmignore, "utf8");
   writeFileSync(resolve(packageDir, ".eslintrc.js"), prettier.format(eslintConfig, { parser: "babel" }), "utf8");
   writeFileSync(resolve(packageDir, ".prettierrc.js"), prettier.format(prettierConfig, { parser: "babel" }), "utf8");
-} catch (e) {
+} catch (e: any) {
   console.error(e);
   rimraf.sync(packageDir);
 }
