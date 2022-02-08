@@ -41,6 +41,6 @@
   },
   "devDependencies": {
     "@nestjs/common": "8.2.6",
-    "rxjs": "7.5.2"
+    "rxjs": "7.5.3"
   }
 }
