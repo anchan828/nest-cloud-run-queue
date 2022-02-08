@@ -54,7 +54,7 @@
     "eslint-plugin-sort-keys-fix": "1.1.2",
     "glob": "7.2.0",
     "husky": "7.0.4",
-    "jest": "27.5.0",
+    "jest": "27.5.1",
     "lerna": "4.0.0",
     "lint-staged": "12.3.3",
     "prettier": "2.5.1",
