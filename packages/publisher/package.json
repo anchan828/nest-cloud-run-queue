@@ -31,16 +31,16 @@
     "watch": "node ../../node_modules/typescript/bin/tsc -w"
   },
   "types": "./dist/index.d.ts",
-  "version": "0.4.39",
+  "version": "0.4.40",
   "dependencies": {
-    "@anchan828/nest-cloud-run-pubsub-common": "^0.4.39",
+    "@anchan828/nest-cloud-run-pubsub-common": "^0.4.40",
     "@google-cloud/pubsub": "2.19.0"
   },
   "peerDependencies": {
     "@nestjs/common": "^8.0.0"
   },
   "devDependencies": {
-    "@nestjs/common": "8.4.3",
+    "@nestjs/common": "8.4.4",
     "rxjs": "7.5.5"
   }
 }
