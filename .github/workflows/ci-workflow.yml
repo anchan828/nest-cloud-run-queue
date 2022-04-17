@@ -2,6 +2,10 @@ name: CI
 
 on: [push]
 
+env:
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+
 jobs:
   test:
     name: Test
@@ -15,14 +19,10 @@ jobs:
       - name: Run docker-compose
         run: docker-compose up -d
       - name: Install npm packages
-        run: npm i
+        run: npm ci
       - name: Lint
         run: npm run lint
       - name: Test monorepo packages
-        if: github.repository != 'anchan828/nest-lerna-template'
-        uses: paambaati/codeclimate-action@v3.0.0
-        env:
-          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-        with:
-          coverageCommand: npm test
-          debug: true
+        run: npm test
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
