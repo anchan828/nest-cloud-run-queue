@@ -1,12 +1,12 @@
 import { Inject, Module, OnModuleInit } from "@nestjs/common";
-import { CloudRunQueueWorkerModule } from "@anchan828/nest-cloud-run-queue-worker";
+import { QueueWorkerModule } from "@anchan828/nest-cloud-run-queue-worker";
 import {
-  CloudRunQueuePubSubPublisherModule,
-  CloudRunQueuePubSubPublisherModuleOptions,
-  CLOUD_RUN_PUBSUB,
-  CLOUD_RUN_PUBSUB_PUBLISHER_MODULE_OPTIONS,
+  PubSubPublisherModule,
+  PubSubPublisherModuleOptions,
+  PUBSUB,
+  PUBSUB_PUBLISHER_MODULE_OPTIONS,
 } from "@anchan828/nest-cloud-run-queue-pubsub-publisher";
-import { CloudRunQueueTasksPublisherModule } from "@anchan828/nest-cloud-run-queue-tasks-publisher";
+import { TasksPublisherModule } from "@anchan828/nest-cloud-run-queue-tasks-publisher";
 import { PubSub } from "@google-cloud/pubsub";
 import { PubSubWorker, TasksWorker } from "./processor";
 import { AppController } from "./app.controller";
@@ -15,12 +15,12 @@ import { credentials } from "@grpc/grpc-js";
 @Module({
   controllers: [AppController],
   imports: [
-    CloudRunQueueWorkerModule.register(),
-    CloudRunQueuePubSubPublisherModule.register({
+    QueueWorkerModule.register(),
+    PubSubPublisherModule.register({
       clientConfig: { projectId: "test" },
       topic: "nest-cloud-run-queue-demo",
     }),
-    CloudRunQueueTasksPublisherModule.register({
+    TasksPublisherModule.register({
       clientConfig: {
         apiEndpoint: "gcloud-tasks-emulator",
         port: 8123,
@@ -29,7 +29,7 @@ import { credentials } from "@grpc/grpc-js";
       },
       publishConfig: {
         httpRequest: {
-          url: process.env.CLOUD_RUN_WORKER_ENDPOINT,
+          url: process.env.WORKER_ENDPOINT,
         },
       },
       queue: "projects/test/locations/location/queues/nest-cloud-run-queue-demo",
@@ -39,9 +39,9 @@ import { credentials } from "@grpc/grpc-js";
 })
 export class AppModule implements OnModuleInit {
   constructor(
-    @Inject(CLOUD_RUN_PUBSUB_PUBLISHER_MODULE_OPTIONS)
-    private readonly options: CloudRunQueuePubSubPublisherModuleOptions,
-    @Inject(CLOUD_RUN_PUBSUB) private readonly pubsub: PubSub,
+    @Inject(PUBSUB_PUBLISHER_MODULE_OPTIONS)
+    private readonly options: PubSubPublisherModuleOptions,
+    @Inject(PUBSUB) private readonly pubsub: PubSub,
   ) {}
 
   public async onModuleInit(): Promise<void> {
@@ -68,7 +68,7 @@ export class AppModule implements OnModuleInit {
     const pushSubscription = topic.subscription("push-subscription");
 
     if (!(await pushSubscription.exists())[0]) {
-      await pushSubscription.create({ pushEndpoint: process.env.CLOUD_RUN_WORKER_ENDPOINT });
+      await pushSubscription.create({ pushEndpoint: process.env.WORKER_ENDPOINT });
     }
 
     const pullSubscription = topic.subscription("pull-subscription");

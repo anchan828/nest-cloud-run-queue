@@ -1,21 +1,17 @@
-import {
-  CloudRunQueueWorker,
-  CloudRunQueueWorkerRawMessage,
-  CloudRunQueueWorkerProcess,
-} from "@anchan828/nest-cloud-run-queue-worker";
+import { Worker, QueueWorkerRawMessage, WorkerProcess } from "@anchan828/nest-cloud-run-queue-worker";
 
-@CloudRunQueueWorker("pubsub")
+@Worker("pubsub")
 export class PubSubWorker {
-  @CloudRunQueueWorkerProcess()
-  public async process(message: string, raw: CloudRunQueueWorkerRawMessage): Promise<void> {
+  @WorkerProcess()
+  public async process(message: string, raw: QueueWorkerRawMessage): Promise<void> {
     console.log("pubsub", message, raw);
   }
 }
 
-@CloudRunQueueWorker("tasks")
+@Worker("tasks")
 export class TasksWorker {
-  @CloudRunQueueWorkerProcess()
-  public async process(message: string, raw: CloudRunQueueWorkerRawMessage): Promise<void> {
+  @WorkerProcess()
+  public async process(message: string, raw: QueueWorkerRawMessage): Promise<void> {
     console.log("tasks", message, raw);
   }
 }

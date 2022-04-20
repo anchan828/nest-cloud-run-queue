@@ -1,12 +1,12 @@
-import { CloudRunQueuePubSubPublisherService } from "@anchan828/nest-cloud-run-queue-pubsub-publisher";
-import { CloudRunQueueTasksPublisherService } from "@anchan828/nest-cloud-run-queue-tasks-publisher";
+import { PubSubPublisherService } from "@anchan828/nest-cloud-run-queue-pubsub-publisher";
+import { TasksPublisherService } from "@anchan828/nest-cloud-run-queue-tasks-publisher";
 import { Controller, Get } from "@nestjs/common";
 
 @Controller()
 export class AppController {
   constructor(
-    private readonly pubsubService: CloudRunQueuePubSubPublisherService,
-    private readonly tasksService: CloudRunQueueTasksPublisherService,
+    private readonly pubsubService: PubSubPublisherService,
+    private readonly tasksService: TasksPublisherService,
   ) {}
 
   @Get()

@@ -1,19 +1,19 @@
 import { PubSub } from "@google-cloud/pubsub";
 import { Test, TestingModule } from "@nestjs/testing";
-import { CLOUD_RUN_PUBSUB, ERROR_TOPIC_NOT_FOUND } from "./constants";
+import { PUBSUB, ERROR_TOPIC_NOT_FOUND } from "./constants";
 import { PublishData } from "./interfaces";
-import { CloudRunQueuePubSubPublisherModule } from "./publish.module";
-import { CloudRunQueuePubSubPublisherService } from "./publish.service";
-describe("CloudRunQueuePubSubPublisherService", () => {
-  let service: CloudRunQueuePubSubPublisherService;
+import { PubSubPublisherModule } from "./publish.module";
+import { PubSubPublisherService } from "./publish.service";
+describe("PubSubPublisherService", () => {
+  let service: PubSubPublisherService;
   let app: TestingModule;
   beforeEach(async () => {
     app = await Test.createTestingModule({
-      imports: [CloudRunQueuePubSubPublisherModule.register()],
+      imports: [PubSubPublisherModule.register()],
     }).compile();
-    service = app.get<CloudRunQueuePubSubPublisherService>(CloudRunQueuePubSubPublisherService);
+    service = app.get<PubSubPublisherService>(PubSubPublisherService);
 
-    const pubsub = app.get<PubSub>(CLOUD_RUN_PUBSUB);
+    const pubsub = app.get<PubSub>(PUBSUB);
 
     jest.spyOn(pubsub, "topic").mockReturnValue({
       publishMessage: jest.fn(async () => "messageId"),
@@ -56,12 +56,12 @@ describe("CloudRunQueuePubSubPublisherService", () => {
   });
 });
 
-describe("CloudRunQueuePubSubPublisherService [extra configs]", () => {
+describe("PubSubPublisherService [extra configs]", () => {
   describe("prepublish", () => {
     it("should customize message", async () => {
       const app = await Test.createTestingModule({
         imports: [
-          CloudRunQueuePubSubPublisherModule.register({
+          PubSubPublisherModule.register({
             extraConfig: {
               prePublish: (message: PublishData<string>): PublishData<string> => {
                 expect(message).toEqual({ data: "data", name: "test" });
@@ -73,10 +73,10 @@ describe("CloudRunQueuePubSubPublisherService [extra configs]", () => {
           }),
         ],
       }).compile();
-      jest.spyOn(app.get<PubSub>(CLOUD_RUN_PUBSUB), "topic").mockReturnValue({
+      jest.spyOn(app.get<PubSub>(PUBSUB), "topic").mockReturnValue({
         publishMessage: jest.fn(async () => "messageId"),
       } as any);
-      const service = app.get<CloudRunQueuePubSubPublisherService>(CloudRunQueuePubSubPublisherService);
+      const service = app.get<PubSubPublisherService>(PubSubPublisherService);
       const topicName = "test";
       const message: PublishData<string> = { data: "data", name: "test" };
       await service.publish(message, { topic: topicName });
@@ -89,17 +89,17 @@ describe("CloudRunQueuePubSubPublisherService [extra configs]", () => {
       const mock = jest.fn();
       const app = await Test.createTestingModule({
         imports: [
-          CloudRunQueuePubSubPublisherModule.register({
+          PubSubPublisherModule.register({
             extraConfig: {
               postPublish: mock,
             },
           }),
         ],
       }).compile();
-      jest.spyOn(app.get<PubSub>(CLOUD_RUN_PUBSUB), "topic").mockReturnValue({
+      jest.spyOn(app.get<PubSub>(PUBSUB), "topic").mockReturnValue({
         publishMessage: jest.fn(async () => "messageId"),
       } as any);
-      const service = app.get<CloudRunQueuePubSubPublisherService>(CloudRunQueuePubSubPublisherService);
+      const service = app.get<PubSubPublisherService>(PubSubPublisherService);
       const topicName = "test";
       await service.publish({ data: "data", name: "test" }, { topic: topicName });
       expect(mock).toHaveBeenLastCalledWith({ data: "data", name: "test" }, expect.any(String));

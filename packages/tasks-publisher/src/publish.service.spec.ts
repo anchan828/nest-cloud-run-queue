@@ -1,16 +1,16 @@
 import { Test } from "@nestjs/testing";
-import { CloudRunQueueTasksPublisherModule } from "./publish.module";
-import { CloudRunQueueTasksPublisherService } from "./publish.service";
+import { TasksPublisherModule } from "./publish.module";
+import { TasksPublisherService } from "./publish.service";
 import { credentials } from "@grpc/grpc-js";
 import { CloudTasksClient } from "@google-cloud/tasks";
-import { CLOUD_RUN_TASKS_CLIENT } from "./constants";
-describe("CloudRunQueueTasksPublisherService", () => {
-  let service: CloudRunQueueTasksPublisherService;
+import { TASKS_CLIENT } from "./constants";
+describe("TasksPublisherService", () => {
+  let service: TasksPublisherService;
   let client: CloudTasksClient;
   beforeEach(async () => {
     const app = await Test.createTestingModule({
       imports: [
-        CloudRunQueueTasksPublisherModule.register({
+        TasksPublisherModule.register({
           clientConfig: { apiEndpoint: "localhost", port: 8123, sslCreds: credentials.createInsecure() },
           publishConfig: {
             httpRequest: { headers: { "X-DefaultHeader": "test" }, url: "http://localhost:3000" },
@@ -19,8 +19,8 @@ describe("CloudRunQueueTasksPublisherService", () => {
         }),
       ],
     }).compile();
-    service = app.get(CloudRunQueueTasksPublisherService);
-    client = app.get<CloudTasksClient>(CLOUD_RUN_TASKS_CLIENT);
+    service = app.get(TasksPublisherService);
+    client = app.get<CloudTasksClient>(TASKS_CLIENT);
   });
 
   describe("publish", () => {
