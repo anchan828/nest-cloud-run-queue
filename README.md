@@ -157,7 +157,7 @@ You can listen to all workers
 ```typescript
 @QueueWorker(ALL_QUEUE_WORKERS)
 class Worker {
-  @QueueWorkerProcess()nest-cloud-run-queue-worker
+  @QueueWorkerProcess()
   public async process(message: Message<any>, raw: QueueWorkerRawMessage): Promise<void> {
     console.log("Message:", message);
     console.log("Raw message:" , raw);
