@@ -1,4 +1,4 @@
-import { createAsyncProviders, createOptionProvider } from "@anchan828/nest-cloud-run-pubsub-common";
+import { createAsyncProviders, createOptionProvider } from "@anchan828/nest-cloud-run-common";
 import { PubSub } from "@google-cloud/pubsub";
 import { DynamicModule, Module } from "@nestjs/common";
 import { FactoryProvider } from "@nestjs/common/interfaces";

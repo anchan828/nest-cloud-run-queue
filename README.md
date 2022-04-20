@@ -1,4 +1,4 @@
-# @anchan828/nest-cloud-run-pubsub
+# @anchan828/nest-cloud-run-queue
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/3df1d40de6d47f4768ae/maintainability)](https://codeclimate.com/github/anchan828/nest-cloud-run-pubsub/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/3df1d40de6d47f4768ae/test_coverage)](https://codeclimate.com/github/anchan828/nest-cloud-run-pubsub/test_coverage)
@@ -9,7 +9,7 @@ Using Pub/Sub and [NestJS](https://nestjs.com/) framework with Cloud Run.
 
 ## Demo
 
-See [https://github.com/anchan828/nest-cloud-run-pubsub-demo](https://github.com/anchan828/nest-cloud-run-pubsub-demo#readme)
+See [https://github.com/anchan828/nest-cloud-run-queue-demo](https://github.com/anchan828/nest-cloud-run-queue-demo#readme)
 
 ## Overview
 
@@ -144,7 +144,7 @@ If you want to test on your locally:
 1. Run pubsub emulator. And set `localhost:{PORT}` of emulator to PUBSUB_EMULATOR_HOST
 2. Run test server for receiving a Pub/Sub message from the topic. And set `localhost:${PORT}` of test server to `SERVICE-URL`
 
-See [docker-compose.yml](https://github.com/anchan828/nest-cloud-run-pubsub/blob/master/docker-compose.yml) and [jest.setup.js](https://github.com/anchan828/nest-cloud-run-pubsub/blob/master/jest.setup.js)
+See [docker-compose.yml](https://github.com/anchan828/nest-cloud-run-queue/blob/master/docker-compose.yml) and [jest.setup.js](https://github.com/anchan828/nest-cloud-run-queue/blob/master/jest.setup.js)
 
 ### 6. Done
 

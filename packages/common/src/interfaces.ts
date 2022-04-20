@@ -12,8 +12,8 @@ export interface ModuleOptionsFactory<T extends ModuleOptions = ModuleOptions> {
   createModuleOptions(): Promise<T> | T;
 }
 
-export type CloudRunPubSubWorkerName = string;
+export type CloudRunWorkerName = string;
 export interface CloudRunPubSubMessage<T = any> {
-  name: CloudRunPubSubWorkerName;
+  name: CloudRunWorkerName;
   data?: T;
 }

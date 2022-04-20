@@ -1,7 +1,7 @@
 {
   "author": "anchan828 <anchan828@gmail.com>",
   "bugs": {
-    "url": "https://github.com/anchan828/nest-cloud-run-pubsub/issues"
+    "url": "https://github.com/anchan828/nest-cloud-run-queue/issues"
   },
   "description": "> TODO: description",
   "directories": {
@@ -10,13 +10,13 @@
   "files": [
     "dist"
   ],
-  "homepage": "https://github.com/anchan828/nest-cloud-run-pubsub/tree/master/packages/common#readme",
+  "homepage": "https://github.com/anchan828/nest-cloud-run-queue/tree/master/packages/common#readme",
   "license": "MIT",
   "main": "./dist/index.js",
-  "name": "@anchan828/nest-cloud-run-pubsub-common",
+  "name": "@anchan828/nest-cloud-run-common",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/anchan828/nest-cloud-run-pubsub.git"
+    "url": "git+https://github.com/anchan828/nest-cloud-run-queue.git"
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",

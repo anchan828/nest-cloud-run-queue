@@ -1,4 +1,4 @@
-import { CloudRunPubSubMessage } from "@anchan828/nest-cloud-run-pubsub-common";
+import { CloudRunPubSubMessage } from "@anchan828/nest-cloud-run-common";
 import { BadRequestException, Inject, Injectable, Logger } from "@nestjs/common";
 import { isBase64 } from "class-validator";
 import { CloudRunPubSubWorkerModuleOptions } from ".";
