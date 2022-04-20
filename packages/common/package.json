@@ -1,23 +1,25 @@
 {
-  "author": "anchan828 <anchan828@gmail.com>",
+  "name": "@anchan828/nest-cloud-run-common",
+  "version": "0.4.41",
+  "description": "> TODO: description",
+  "homepage": "https://github.com/anchan828/nest-cloud-run-queue/tree/master/packages/common#readme",
   "bugs": {
     "url": "https://github.com/anchan828/nest-cloud-run-queue/issues"
   },
-  "description": "> TODO: description",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anchan828/nest-cloud-run-queue.git"
+  },
+  "license": "MIT",
+  "author": "anchan828 <anchan828@gmail.com>",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "directories": {
     "dist": "dist"
   },
   "files": [
     "dist"
   ],
-  "homepage": "https://github.com/anchan828/nest-cloud-run-queue/tree/master/packages/common#readme",
-  "license": "MIT",
-  "main": "./dist/index.js",
-  "name": "@anchan828/nest-cloud-run-common",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/anchan828/nest-cloud-run-queue.git"
-  },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "build:watch": "tsc --watch",
@@ -30,13 +32,11 @@
     "test:watch": "jest --watch",
     "watch": "tsc -w"
   },
-  "types": "./dist/index.d.ts",
-  "version": "0.4.41",
-  "peerDependencies": {
-    "@nestjs/common": "^8.0.0"
-  },
   "devDependencies": {
     "@nestjs/common": "8.4.4",
     "rxjs": "7.5.5"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^8.0.0"
   }
 }

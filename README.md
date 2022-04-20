@@ -1,7 +1,7 @@
 # @anchan828/nest-cloud-run-queue
 
-[![Maintainability](https://api.codeclimate.com/v1/badges/3df1d40de6d47f4768ae/maintainability)](https://codeclimate.com/github/anchan828/nest-cloud-run-pubsub/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/3df1d40de6d47f4768ae/test_coverage)](https://codeclimate.com/github/anchan828/nest-cloud-run-pubsub/test_coverage)
+[![Maintainability](https://api.codeclimate.com/v1/badges/3df1d40de6d47f4768ae/maintainability)](https://codeclimate.com/github/anchan828/nest-cloud-run-queue-pubsub/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/3df1d40de6d47f4768ae/test_coverage)](https://codeclimate.com/github/anchan828/nest-cloud-run-queue-pubsub/test_coverage)
 
 Using Pub/Sub and [NestJS](https://nestjs.com/) framework with Cloud Run.
 
@@ -17,8 +17,8 @@ Create two applications using these packages.
 
 | Package                                                                                                                | Description                                                                |
 | :--------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------- |
-| [@anchan828/nest-cloud-run-pubsub-publisher](https://www.npmjs.com/package/@anchan828/nest-cloud-run-pubsub-publisher) | This is used by application of sending a Pub/Sub message to the topic.     |
-| [@anchan828/nest-cloud-run-pubsub-worker](https://www.npmjs.com/package/@anchan828/nest-cloud-run-pubsub-worker)       | This is used by application of receiving a Pub/Sub message from the topic. |
+| [@anchan828/nest-cloud-run-queue-pubsub-publisher](https://www.npmjs.com/package/@anchan828/nest-cloud-run-queue-pubsub-publisher) | This is used by application of sending a Pub/Sub message to the topic.     |
+| [@anchan828/nest-cloud-run-queue-pubsub-worker](https://www.npmjs.com/package/@anchan828/nest-cloud-run-queue-pubsub-worker)       | This is used by application of receiving a Pub/Sub message from the topic. |
 
 ## Getting started
 
@@ -56,11 +56,11 @@ export class PublisherAppModule {}
 
 ```ts
 export class Service {
-  constructor(private readonly pubsubService: CloudRunPubSubService) {}
+  constructor(private readonly pubsubService: CloudRunPubSubPublisherService) {}
 
   public async sendMessage(): Promise<void> {
     await this.pubsubService.publish({
-      // Required. this property is used by @anchan828/nest-cloud-run-pubsub-worker
+      // Required. this property is used by @anchan828/nest-cloud-run-queue-pubsub-worker
       name: "Worker name",
       // string or object. ex, { text: "text" }
       data: "text",
@@ -131,7 +131,7 @@ Then you can get service url
 ### 5. Create subscription (push) for topic
 
 `SERVICE-URL` with the HTTPS URL provided on deploying the service.
-(ex, https://nest-cloud-run-pubsub-xxxxxxxxxxx-an.a.run.app)
+(ex, https://nest-cloud-run-queue-pubsub-xxxxxxxxxxx-an.a.run.app)
 
 ```
 gcloud pubsub subscriptions create myRunSubscription \
@@ -187,7 +187,7 @@ You can listen to undefined worker name
 @CloudRunPubSubWorker(CLOUD_RUN_UNHANDLED)
 class Worker {
   @CloudRunPubSubWorkerProcess()
-  public async process(message: CloudRunPubSubMessage<any>, attributes: Record<string, any>, raw: any): Promise<void> {
+  public async process(message: CloudRunQueueMessage<any>, attributes: Record<string, any>, raw: any): Promise<void> {
     console.log("Message: " + JSON.stringify(message));
     console.log("Attributes: " + JSON.stringify(attributes));
     console.log("request.body: " + JSON.stringify(raw));
@@ -203,7 +203,7 @@ You can listen to all workers
 @CloudRunPubSubWorker(CLOUD_RUN_ALL_WORKERS)
 class Worker {
   @CloudRunPubSubWorkerProcess()
-  public async process(message: CloudRunPubSubMessage<any>, attributes: Record<string, any>, raw: any): Promise<void> {
+  public async process(message: CloudRunQueueMessage<any>, attributes: Record<string, any>, raw: any): Promise<void> {
     console.log("Message: " + JSON.stringify(message));
     console.log("Attributes: " + JSON.stringify(attributes));
     console.log("request.body: " + JSON.stringify(raw));
@@ -218,7 +218,7 @@ You can use woeker with pull subscription.
 You need to inject CloudRunPubSubWorkerService and call execute method.
 
 ```typescript
-import { CloudRunPubSubWorkerService } from "@anchan828/nest-cloud-run-pubsub-worker";
+import { CloudRunPubSubWorkerService } from "@anchan828/nest-cloud-run-queue-pubsub-worker";
 import { Message, PubSub, v1 } from "@google-cloud/pubsub";
 import { Logger } from "@nestjs/common";
 
@@ -230,7 +230,7 @@ export class PullSubscriptionWorker {
    */
   public async setUpAsynchronousPull() {
     const pubSubClient = new PubSub({ projectId: "test" });
-    const subscription = pubSubClient.topic("nest-cloud-run-pubsub-demo").subscription("pull-subscription");
+    const subscription = pubSubClient.topic("nest-cloud-run-queue-pubsub-demo").subscription("pull-subscription");
 
     subscription.on("message", async (message: Message) => {
       await this.workerService.execute(message);

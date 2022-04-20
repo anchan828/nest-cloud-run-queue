@@ -17,6 +17,10 @@
     "test": {
       "dependsOn": ["^build"],
       "outputs": ["coverage/**"]
+    },
+    "start:demo": {
+      "dependsOn": ["^build"],
+      "outputs": []
     }
   }
 }

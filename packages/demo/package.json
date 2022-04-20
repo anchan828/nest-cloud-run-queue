@@ -1,8 +1,9 @@
 {
-  "name": "@anchan828/nest-cloud-run-queue-pubsub-publisher",
+  "name": "@anchan828/nest-cloud-run-queue-demo",
   "version": "0.4.41",
+  "private": true,
   "description": "> TODO: description",
-  "homepage": "https://github.com/anchan828/nest-cloud-run-queue/tree/master/packages/pubsub-publish#readme",
+  "homepage": "https://github.com/anchan828/nest-cloud-run-queue/tree/master/packages/common#readme",
   "bugs": {
     "url": "https://github.com/anchan828/nest-cloud-run-queue/issues"
   },
@@ -27,20 +28,21 @@
     "lint": "eslint --ignore-path ../../.eslintignore '**/*.ts' '**/*.spec.ts'",
     "lint:fix": "npm run lint -- --fix",
     "prepublishOnly": "rm -rf dist && npm run build && rm -f dist/*.tsbuildinfo && npm run copy:license",
+    "start:demo": "ts-node-dev --respawn src/main.ts",
     "test": "jest --coverage --logHeapUsage --runInBand",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand --logHeapUsage",
     "test:watch": "jest --watch",
     "watch": "tsc -w"
   },
   "dependencies": {
-    "@anchan828/nest-cloud-run-common": "^0.4.41",
-    "@google-cloud/pubsub": "2.19.0"
+    "@anchan828/nest-cloud-run-queue-pubsub-publisher": "^0.4.41",
+    "@anchan828/nest-cloud-run-queue-tasks-publisher": "^0.4.41",
+    "@anchan828/nest-cloud-run-queue-worker": "^0.4.41",
+    "@nestjs/common": "8.4.4",
+    "@nestjs/core": "8.4.4",
+    "@nestjs/platform-express": "8.4.4"
   },
   "devDependencies": {
-    "@nestjs/common": "8.4.4",
-    "rxjs": "7.5.5"
-  },
-  "peerDependencies": {
-    "@nestjs/common": "^8.0.0"
+    "ts-node-dev": "1.1.8"
   }
 }

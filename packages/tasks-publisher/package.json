@@ -1,5 +1,5 @@
 {
-  "name": "@anchan828/nest-cloud-run-queue-pubsub-publisher",
+  "name": "@anchan828/nest-cloud-run-queue-tasks-publisher",
   "version": "0.4.41",
   "description": "> TODO: description",
   "homepage": "https://github.com/anchan828/nest-cloud-run-queue/tree/master/packages/pubsub-publish#readme",
@@ -34,7 +34,7 @@
   },
   "dependencies": {
     "@anchan828/nest-cloud-run-common": "^0.4.41",
-    "@google-cloud/pubsub": "2.19.0"
+    "@google-cloud/tasks": "2.5.0"
   },
   "devDependencies": {
     "@nestjs/common": "8.4.4",
