@@ -3,7 +3,7 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/3df1d40de6d47f4768ae/maintainability)](https://codeclimate.com/github/anchan828/nest-cloud-run-queue-pubsub/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/3df1d40de6d47f4768ae/test_coverage)](https://codeclimate.com/github/anchan828/nest-cloud-run-queue-pubsub/test_coverage)
 
-Create a Queue for [NestJS](https://nestjs.com/) application in Cloud Run.
+Create a Queue/Worker for [NestJS](https://nestjs.com/) application in Cloud Run.
 
 ![nest-cloud-run-queue](https://user-images.githubusercontent.com/694454/164212037-6afd1e3a-ab0f-4f61-b607-469826d04ffb.png)
 
