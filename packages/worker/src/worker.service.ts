@@ -12,7 +12,7 @@ import {
 } from "./constants";
 import { CloudRunWorkerExplorerService } from "./explorer.service";
 import {
-  CloudRunWorkerMessage,
+  CloudRunWorkerRawMessage,
   CloudRunWorkerMetadata,
   CloudRunWorkerProcessor,
   CloudRunWorkerProcessorStatus,
@@ -30,7 +30,7 @@ export class CloudRunWorkerService {
   ) {}
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  public async execute(message: CloudRunWorkerMessage): Promise<void> {
+  public async execute(message: CloudRunWorkerRawMessage): Promise<void> {
     if (!this.#allWorkers) {
       this.#allWorkers = this.explorerService.explore();
     }
@@ -86,7 +86,7 @@ export class CloudRunWorkerService {
     processor: CloudRunWorkerProcessor,
     maxRetryAttempts: number,
     data: T,
-    rawMessage: CloudRunWorkerMessage,
+    rawMessage: CloudRunWorkerRawMessage,
   ): Promise<void> {
     for (let i = 0; i < maxRetryAttempts; i++) {
       try {

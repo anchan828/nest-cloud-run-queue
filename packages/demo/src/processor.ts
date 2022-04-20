@@ -1,9 +1,13 @@
-import { CloudRunWorker, CloudRunWorkerProcess } from "@anchan828/nest-cloud-run-queue-worker";
+import {
+  CloudRunWorker,
+  CloudRunWorkerRawMessage,
+  CloudRunWorkerProcess,
+} from "@anchan828/nest-cloud-run-queue-worker";
 
 @CloudRunWorker("pubsub")
 export class PubSubWorker {
   @CloudRunWorkerProcess()
-  public async process(message: any, raw: any): Promise<void> {
+  public async process(message: string, raw: CloudRunWorkerRawMessage): Promise<void> {
     console.log("pubsub", message, raw);
   }
 }
@@ -11,7 +15,7 @@ export class PubSubWorker {
 @CloudRunWorker("tasks")
 export class TasksWorker {
   @CloudRunWorkerProcess()
-  public async process(message: any, raw: any): Promise<void> {
+  public async process(message: string, raw: CloudRunWorkerRawMessage): Promise<void> {
     console.log("tasks", message, raw);
   }
 }

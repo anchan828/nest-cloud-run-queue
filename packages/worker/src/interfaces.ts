@@ -49,7 +49,7 @@ export type CloudRunWorkerModuleOptionsFactory = ModuleOptionsFactory<
 > &
   Pick<CloudRunWorkerModuleOptions, "workerController">;
 
-export type CloudRunWorkerProcessor = <T>(message: T, rawMessage: CloudRunWorkerMessage) => Promise<void> | void;
+export type CloudRunWorkerProcessor = <T>(message: T, rawMessage: CloudRunWorkerRawMessage) => Promise<void> | void;
 
 export interface CloudRunWorkerMetadata extends CloudRunWorkerDecoratorArgs {
   instance: Injectable;
@@ -98,13 +98,13 @@ export interface CloudRunWorkerProcessDecoratorArgs {
   priority: number;
 }
 
-export type CloudRunWorkerMessage<T = Record<string, any>> = {
+export type CloudRunWorkerRawMessage<T = Record<string, any>> = {
   readonly data?: string | Uint8Array | Buffer | null;
   readonly headers?: Record<string, string>;
 } & T;
 
 export type CloudRunReceivedMessage = {
-  readonly message: CloudRunWorkerMessage;
+  readonly message: CloudRunWorkerRawMessage;
 };
 
 export interface CloudRunWorkerControllerMetadata extends RequestMappingMetadata {
