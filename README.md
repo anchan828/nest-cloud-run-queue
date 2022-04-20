@@ -19,7 +19,6 @@ Therefore, I used Cloud Pub/Sub or Cloud Tasks so that I could implement Queue v
 
 See [https://github.com/anchan828/nest-cloud-run-queue/tree/master/packages/demo](https://github.com/anchan828/nest-cloud-run-queue/tree/master/packages/demo#readme)
 
-
 ## Packages
 
 There are two types of packages.
@@ -43,89 +42,12 @@ There are two types of packages.
 
 ### Using Cloud Pub/Sub
 
-NOTE: You may want to do tutorial for using Pub/Sub with Cloud Run before using them.
-https://cloud.google.com/run/docs/tutorials/pubsub
-
-#### Import publisher module
-
-```ts
-@Module({
-  imports: [
-    PubSubPublisherModule.register({
-      topic: "myRunTopic",
-      clientConfig: {
-        // If necessary
-        projectId: "projectId",
-        keyFilename: "path/to/file.json",
-      },
-    }),
-  ],
-})
-export class PublisherAppModule {}
-```
-
-#### Publish message to topic
-
-```ts
-export class Service {
-  constructor(private readonly pubsubService: PubSubPublisherService) {}
-
-  public async sendMessage(): Promise<void> {
-    await this.pubsubService.publish({
-      // Required. this property is used by @anchan828/nest-cloud-run-queue-worker
-      name: "Worker name",
-      // string or object. ex, { text: "text" }
-      data: "text",
-    });
-  }
-}
-```
+See: [@anchan828/nest-cloud-run-queue-pubsub-publisher - README.md](https://github.com/anchan828/nest-cloud-run-queue/tree/master/packages/pubsub-publisher#readme)
 
 ### Using Cloud Tasks
 
-NOTE: You may want to do tutorial for using Tasks with Cloud Run before using them.
-https://cloud.google.com/run/docs/triggering/using-tasks
+See: [@anchan828/nest-cloud-run-queue-tasks-publisher - README.md](https://github.com/anchan828/nest-cloud-run-queue/tree/master/packages/tasks-publisher#readme)
 
-#### Import publisher module
-
-```ts
-@Module({
-  imports: [
-    TasksPublisherModule.register({
-      clientConfig: {
-        // If necessary
-        projectId: "projectId",
-        keyFilename: "path/to/file.json",
-      },
-      publishConfig: {
-        httpRequest: {
-          // By setting this as the default URL here, you can save yourself the trouble of setting the URL each time.
-          url: "https://example-this-is-demo-uc.a.run.app",
-        },
-      },
-      queue: "projects/test/locations/location/queues/nest-cloud-run-queue-demo",
-    }),
-  ],
-})
-export class PublisherAppModule {}
-```
-
-#### Publish message to queue
-
-```ts
-export class Service {
-  constructor(private readonly tasksService: TasksPublisherService) {}
-
-  public async sendMessage(): Promise<void> {
-    await this.tasksService.publish({
-      // Required. this property is used by @anchan828/nest-cloud-run-queue-worker
-      name: "Worker name",
-      // string or object. ex, { text: "text" }
-      data: "text",
-    });
-  }
-}
-```
 
 ## 2. Create worker application
 
