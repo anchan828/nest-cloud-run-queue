@@ -10,7 +10,7 @@ import {
 } from "./constants";
 import { CloudRunWorkerExplorerService } from "./explorer.service";
 import {
-  CloudRunWorkerMessage,
+  CloudRunWorkerRawMessage,
   CloudRunWorkerMetadata,
   CloudRunWorkerProcessor,
   CloudRunWorkerProcessorMetadata,
@@ -47,23 +47,23 @@ describe("CloudRunWorkerService", () => {
     }).compile();
     service = app.get<CloudRunWorkerService>(CloudRunWorkerService);
     explorerService = app.get<CloudRunWorkerExplorerService>(CloudRunWorkerExplorerService);
-    await expect(service.execute({ data: "invalid" } as CloudRunWorkerMessage)).resolves.toBeUndefined();
+    await expect(service.execute({ data: "invalid" } as CloudRunWorkerRawMessage)).resolves.toBeUndefined();
   });
   it("should throw error if data invalid", async () => {
-    await expect(service.execute({ data: "invalid" } as CloudRunWorkerMessage)).rejects.toThrowError(
+    await expect(service.execute({ data: "invalid" } as CloudRunWorkerRawMessage)).rejects.toThrowError(
       new BadRequestException(ERROR_INVALID_MESSAGE_FORMAT),
     );
   });
 
   it("should throw error if data is null", async () => {
-    await expect(service.execute({ data: null } as CloudRunWorkerMessage)).rejects.toThrowError(
+    await expect(service.execute({ data: null } as CloudRunWorkerRawMessage)).rejects.toThrowError(
       new BadRequestException(ERROR_INVALID_MESSAGE_FORMAT),
     );
   });
 
   it("should throw error if data is not message object", async () => {
     await expect(
-      service.execute({ data: toBase64("testtest"), messageId: "1" } as CloudRunWorkerMessage),
+      service.execute({ data: toBase64("testtest"), messageId: "1" } as CloudRunWorkerRawMessage),
     ).rejects.toThrowError(new BadRequestException(ERROR_INVALID_MESSAGE_FORMAT));
   });
 

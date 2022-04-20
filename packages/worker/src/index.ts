@@ -10,9 +10,8 @@ export {
   CloudRunWorkerProcessor,
   CloudRunWorkerProcessorStatus,
   CloudRunWorkerExtraConfig,
-  CloudRunWorkerMessage,
+  CloudRunWorkerRawMessage,
   CloudRunWorkerControllerInterface,
-  CloudRunReceivedMessage,
   CloudRunWorkerControllerMetadata,
 } from "./interfaces";
 
