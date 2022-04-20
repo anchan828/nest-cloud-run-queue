@@ -22,5 +22,5 @@ export type PublishExtraConfig<T extends Message = Message> = {
   // Run BEFORE the message is published
   prePublish?: (message: T) => T | Promise<T>;
   // Run AFTER the message is published
-  postPublish?: (message: T, messageId: string) => void | Promise<void>;
+  postPublish?: (message: T, resultId: string) => void | Promise<void>;
 };
