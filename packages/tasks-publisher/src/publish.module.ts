@@ -1,4 +1,4 @@
-import { createAsyncProviders, createOptionProvider } from "@anchan828/nest-cloud-run-common";
+import { createAsyncProviders, createOptionProvider } from "@anchan828/nest-cloud-run-queue-common";
 import { CloudTasksClient } from "@google-cloud/tasks";
 import { DynamicModule, Module } from "@nestjs/common";
 import { FactoryProvider } from "@nestjs/common/interfaces";

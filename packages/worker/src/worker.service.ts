@@ -1,4 +1,4 @@
-import { Message } from "@anchan828/nest-cloud-run-common";
+import { Message } from "@anchan828/nest-cloud-run-queue-common";
 import { BadRequestException, Inject, Injectable, Logger } from "@nestjs/common";
 import { isBase64 } from "class-validator";
 import { QueueWorkerModuleOptions } from "./interfaces";

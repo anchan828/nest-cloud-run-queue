@@ -3,7 +3,7 @@ import {
   ModuleAsyncOptions,
   ModuleOptions,
   ModuleOptionsFactory,
-} from "@anchan828/nest-cloud-run-common";
+} from "@anchan828/nest-cloud-run-queue-common";
 import { RequestMappingMetadata } from "@nestjs/common";
 import { Injectable } from "@nestjs/common/interfaces";
 

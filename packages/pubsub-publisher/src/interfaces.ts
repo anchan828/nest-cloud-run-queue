@@ -4,7 +4,7 @@ import {
   ModuleOptions,
   ModuleOptionsFactory,
   PublishExtraConfig,
-} from "@anchan828/nest-cloud-run-common";
+} from "@anchan828/nest-cloud-run-queue-common";
 import { Attributes } from "@google-cloud/pubsub";
 import { ClientConfig } from "@google-cloud/pubsub/build/src/pubsub";
 import { PublishOptions } from "@google-cloud/pubsub/build/src/topic";

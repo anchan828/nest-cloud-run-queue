@@ -1,4 +1,4 @@
-import { QueueWorkerName } from "@anchan828/nest-cloud-run-common";
+import { QueueWorkerName } from "@anchan828/nest-cloud-run-queue-common";
 import { SetMetadata } from "@nestjs/common";
 import { QUEUE_WORKER_DECORATOR, QUEUE_WORKER_PROCESS_DECORATOR } from "./constants";
 

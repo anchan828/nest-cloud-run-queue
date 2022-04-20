@@ -4,7 +4,7 @@ import {
   ModuleOptions,
   ModuleOptionsFactory,
   PublishExtraConfig,
-} from "@anchan828/nest-cloud-run-common";
+} from "@anchan828/nest-cloud-run-queue-common";
 import type { google } from "@google-cloud/tasks/build/protos/protos";
 import { ClientOptions, CallOptions } from "google-gax";
 export interface TasksPublisherModuleOptions extends ModuleOptions {

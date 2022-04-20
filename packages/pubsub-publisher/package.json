@@ -33,7 +33,7 @@
     "watch": "tsc -w"
   },
   "dependencies": {
-    "@anchan828/nest-cloud-run-common": "^1.0.2-next.0",
+    "@anchan828/nest-cloud-run-queue-common": "^1.0.2-next.0",
     "@google-cloud/pubsub": "2.19.0"
   },
   "devDependencies": {
