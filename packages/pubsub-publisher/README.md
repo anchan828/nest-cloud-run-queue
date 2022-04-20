@@ -8,4 +8,4 @@ npm i @anchan828/nest-cloud-run-pubsub-publisher
 
 ## Usage
 
-See [https://github.com/anchan828/nest-cloud-run-pubsub#readme](https://github.com/anchan828/nest-cloud-run-pubsub#readme)
+See [https://github.com/anchan828/nest-cloud-run-queue#readme](https://github.com/anchan828/nest-cloud-run-queue#readme)

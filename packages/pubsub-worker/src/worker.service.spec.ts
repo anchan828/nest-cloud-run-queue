@@ -1,4 +1,4 @@
-import { CloudRunPubSubMessage } from "@anchan828/nest-cloud-run-pubsub-common";
+import { CloudRunPubSubMessage } from "@anchan828/nest-cloud-run-common";
 import { BadRequestException } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import {

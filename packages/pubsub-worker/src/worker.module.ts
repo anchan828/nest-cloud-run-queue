@@ -1,4 +1,4 @@
-import { createAsyncProviders, createOptionProvider } from "@anchan828/nest-cloud-run-pubsub-common";
+import { createAsyncProviders, createOptionProvider } from "@anchan828/nest-cloud-run-common";
 import { DynamicModule, Logger, Module } from "@nestjs/common";
 import { DiscoveryModule } from "@nestjs/core";
 import { MetadataScanner } from "@nestjs/core/metadata-scanner";

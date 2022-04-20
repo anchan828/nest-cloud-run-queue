@@ -1,5 +1,5 @@
 {
-  "name": "@anchan828/nest-cloud-run-pubsub-packages",
+  "name": "@anchan828/nest-cloud-run-queue-packages",
   "private": true,
   "version": "0.0.0",
   "description": "",
@@ -26,14 +26,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/anchan828/nest-cloud-run-pubsub.git"
+    "url": "git+https://github.com/anchan828/nest-cloud-run-queue.git"
   },
   "author": "anchan828 <anchan828@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/anchan828/nest-cloud-run-pubsub/issues"
+    "url": "https://github.com/anchan828/nest-cloud-run-queue/issues"
   },
-  "homepage": "https://github.com/anchan828/nest-cloud-run-pubsub",
+  "homepage": "https://github.com/anchan828/nest-cloud-run-queue",
   "devDependencies": {
     "@commitlint/cli": "16.2.3",
     "@commitlint/config-conventional": "16.2.1",

@@ -1,7 +1,7 @@
 {
   "author": "anchan828 <anchan828@gmail.com>",
   "bugs": {
-    "url": "https://github.com/anchan828/nest-cloud-run-pubsub/issues"
+    "url": "https://github.com/anchan828/nest-cloud-run-queue/issues"
   },
   "description": "> TODO: description",
   "directories": {
@@ -10,13 +10,13 @@
   "files": [
     "dist"
   ],
-  "homepage": "https://github.com/anchan828/nest-cloud-run-pubsub/tree/master/packages/publish#readme",
+  "homepage": "https://github.com/anchan828/nest-cloud-run-queue/tree/master/packages/pubsub-worker#readme",
   "license": "MIT",
   "main": "./dist/index.js",
-  "name": "@anchan828/nest-cloud-run-pubsub-publisher",
+  "name": "@anchan828/nest-cloud-run-pubsub-worker",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/anchan828/nest-cloud-run-pubsub.git"
+    "url": "git+https://github.com/anchan828/nest-cloud-run-queue.git"
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
@@ -33,8 +33,8 @@
   "types": "./dist/index.d.ts",
   "version": "0.4.41",
   "dependencies": {
-    "@anchan828/nest-cloud-run-pubsub-common": "^0.4.41",
-    "@google-cloud/pubsub": "2.19.0"
+    "@anchan828/nest-cloud-run-common": "^0.4.41",
+    "class-validator": "0.13.2"
   },
   "peerDependencies": {
     "@nestjs/common": "^8.0.0"

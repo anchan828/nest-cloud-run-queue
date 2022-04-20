@@ -1,9 +1,9 @@
 import {
-  CloudRunPubSubWorkerName,
+  CloudRunWorkerName,
   ModuleAsyncOptions,
   ModuleOptions,
   ModuleOptionsFactory,
-} from "@anchan828/nest-cloud-run-pubsub-common";
+} from "@anchan828/nest-cloud-run-common";
 import { Injectable } from "@nestjs/common/interfaces";
 import { CloudRunPubSubWorkerPubSubMessage } from "./message.dto";
 
@@ -69,7 +69,7 @@ export type WorkerExtraConfig = {
 };
 
 export interface CloudRunPubSubWorkerDecoratorArgs {
-  name: CloudRunPubSubWorkerName;
+  name: CloudRunWorkerName;
 
   /**
    * Highest priority is 0, and lower the larger integer you use.
