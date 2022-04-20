@@ -7,7 +7,7 @@ Create a Queue for [NestJS](https://nestjs.com/) application in Cloud Run.
 
 ![nest-cloud-run-queue](https://user-images.githubusercontent.com/694454/164212037-6afd1e3a-ab0f-4f61-b607-469826d04ffb.png)
 
-## Context
+## Overview
 
 I am wondering how to implement Queue when running an application with Cloud Run. While @nestjs/bull is a very good library, Cloud Run, which is serverless, cannot be used because the server is not always running.  You can use "CPU always allocated" for resolve this issue, but it doesn't make sense to use Cloud Run.
 
@@ -19,17 +19,24 @@ Therefore, I used Cloud Pub/Sub or Cloud Tasks so that I could implement Queue v
 
 See [https://github.com/anchan828/nest-cloud-run-queue/tree/master/packages/demo](https://github.com/anchan828/nest-cloud-run-queue/tree/master/packages/demo#readme)
 
-## Overview
+## Packages
 
-Create two applications using these packages.
+There are two types of packages.
+
+### Publisher
 
 | Package                                                                                                                | Description                                                                |
 | :--------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------- |
-| [@anchan828/nest-cloud-run-queue-pubsub-publisher](https://www.npmjs.com/package/@anchan828/nest-cloud-run-queue-pubsub-publisher) | This is used by application of sending a Pub/Sub message to the topic.     |
-| [@anchan828/nest-cloud-run-queue-tasks-publisher](https://www.npmjs.com/package/@anchan828/nest-cloud-run-queue-tasks-publisher) | This is used by application of sending a Tasks message to the topic.     |
-| [@anchan828/nest-cloud-run-queue-worker](https://www.npmjs.com/package/@anchan828/nest-cloud-run-queue-worker)       | This is used by application of receiving a Pub/Sub message from the topic. |
+| [@anchan828/nest-cloud-run-queue-pubsub-publisher](https://www.npmjs.com/package/@anchan828/nest-cloud-run-queue-pubsub-publisher) | Library for sending messages using Cloud Pub/Sub.     |
+| [@anchan828/nest-cloud-run-queue-tasks-publisher](https://www.npmjs.com/package/@anchan828/nest-cloud-run-queue-tasks-publisher) | Library for sending messages using Cloud Tasks.     |
 
-## Getting started
+### Worker
+
+| Package                                                                                                                | Description                                                                |
+| :--------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------- |
+| [@anchan828/nest-cloud-run-queue-worker](https://www.npmjs.com/package/@anchan828/nest-cloud-run-queue-worker)       | Library for creating applications that receive and process messages. |
+
+## Getting started (using Cloud Pub/Sub)
 
 NOTE: You may want to do tutorial for using Pub/Sub with Cloud Run before using them.
 https://cloud.google.com/run/docs/tutorials/pubsub
