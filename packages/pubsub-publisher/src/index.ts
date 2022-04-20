@@ -1,9 +1,9 @@
 export { CLOUD_RUN_PUBSUB, CLOUD_RUN_PUBSUB_PUBLISHER_MODULE_OPTIONS } from "./constants";
 export {
-  CloudRunPubSubPublisherModuleAsyncOptions,
-  CloudRunPubSubPublisherModuleOptions,
-  CloudRunPubSubPublisherModuleOptionsFactory,
+  CloudRunQueuePubSubPublisherModuleAsyncOptions,
+  CloudRunQueuePubSubPublisherModuleOptions,
+  CloudRunQueuePubSubPublisherModuleOptionsFactory,
   PublishData,
 } from "./interfaces";
-export { CloudRunPubSubPublisherModule } from "./publish.module";
-export { CloudRunPubSubPublisherService } from "./publish.service";
+export { CloudRunQueuePubSubPublisherModule } from "./publish.module";
+export { CloudRunQueuePubSubPublisherService } from "./publish.service";

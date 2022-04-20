@@ -1,16 +1,16 @@
 import { Test } from "@nestjs/testing";
-import { CloudRunTasksPublisherModule } from "./publish.module";
-import { CloudRunTasksPublisherService } from "./publish.service";
+import { CloudRunQueueTasksPublisherModule } from "./publish.module";
+import { CloudRunQueueTasksPublisherService } from "./publish.service";
 import { credentials } from "@grpc/grpc-js";
 import { CloudTasksClient } from "@google-cloud/tasks";
 import { CLOUD_RUN_TASKS_CLIENT } from "./constants";
-describe("CloudRunTasksPublisherService", () => {
-  let service: CloudRunTasksPublisherService;
+describe("CloudRunQueueTasksPublisherService", () => {
+  let service: CloudRunQueueTasksPublisherService;
   let client: CloudTasksClient;
   beforeEach(async () => {
     const app = await Test.createTestingModule({
       imports: [
-        CloudRunTasksPublisherModule.register({
+        CloudRunQueueTasksPublisherModule.register({
           clientConfig: { apiEndpoint: "localhost", port: 8123, sslCreds: credentials.createInsecure() },
           publishConfig: {
             httpRequest: { headers: { "X-DefaultHeader": "test" }, url: "http://localhost:3000" },
@@ -19,11 +19,11 @@ describe("CloudRunTasksPublisherService", () => {
         }),
       ],
     }).compile();
-    service = app.get(CloudRunTasksPublisherService);
+    service = app.get(CloudRunQueueTasksPublisherService);
     client = app.get<CloudTasksClient>(CLOUD_RUN_TASKS_CLIENT);
   });
 
-  describe("publish (use mock)", () => {
+  describe("publish", () => {
     beforeEach(() => {
       jest.spyOn(client, "createTask").mockImplementation(async () => {
         return [
@@ -47,22 +47,13 @@ describe("CloudRunTasksPublisherService", () => {
             headers: {
               "X-DefaultHeader": "test",
               "X-Header": "test",
+              "content-type": "application/json",
             },
             httpMethod: "POST",
             url: "http://localhost:3000",
           },
         },
       });
-    });
-  });
-
-  describe("publish (use emulator)", () => {
-    it("should get task name", async () => {
-      await expect(service.publish({ data: { test: "ok" }, name: "test" })).resolves.toEqual(
-        expect.stringContaining(
-          "projects/projectId/locations/location/queues/nest-cloud-run-queue-tasks-publisher/tasks/",
-        ),
-      );
     });
   });
 });

@@ -1,6 +1,6 @@
 import { CloudTasksClient } from "@google-cloud/tasks";
-import { CloudRunTasksPublisherModuleOptions } from "./interfaces";
+import { CloudRunQueueTasksPublisherModuleOptions } from "./interfaces";
 
-export function createClient(options: CloudRunTasksPublisherModuleOptions): CloudTasksClient {
+export function createClient(options: CloudRunQueueTasksPublisherModuleOptions): CloudTasksClient {
   return new CloudTasksClient(options.clientConfig);
 }
