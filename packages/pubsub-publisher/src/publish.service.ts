@@ -2,12 +2,13 @@ import { PubSub } from "@google-cloud/pubsub";
 import { PublishOptions } from "@google-cloud/pubsub/build/src/topic";
 import { Inject, Injectable } from "@nestjs/common";
 import { CLOUD_RUN_PUBSUB, CLOUD_RUN_PUBSUB_PUBLISHER_MODULE_OPTIONS, ERROR_TOPIC_NOT_FOUND } from "./constants";
-import { CloudRunPubSubPublisherModuleOptions, PublishData } from "./interfaces";
+import { CloudRunQueuePubSubPublisherModuleOptions, PublishData } from "./interfaces";
 
 @Injectable()
-export class CloudRunPubSubPublisherService {
+export class CloudRunQueuePubSubPublisherService {
   constructor(
-    @Inject(CLOUD_RUN_PUBSUB_PUBLISHER_MODULE_OPTIONS) private readonly options: CloudRunPubSubPublisherModuleOptions,
+    @Inject(CLOUD_RUN_PUBSUB_PUBLISHER_MODULE_OPTIONS)
+    private readonly options: CloudRunQueuePubSubPublisherModuleOptions,
     @Inject(CLOUD_RUN_PUBSUB) private readonly pubsub: PubSub,
   ) {}
 

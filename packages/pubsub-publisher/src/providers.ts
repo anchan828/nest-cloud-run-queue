@@ -1,6 +1,6 @@
 import { PubSub } from "@google-cloud/pubsub";
-import { CloudRunPubSubPublisherModuleOptions } from "./interfaces";
+import { CloudRunQueuePubSubPublisherModuleOptions } from "./interfaces";
 
-export function createPubSub(options: CloudRunPubSubPublisherModuleOptions): PubSub {
+export function createPubSub(options: CloudRunQueuePubSubPublisherModuleOptions): PubSub {
   return new PubSub(options.clientConfig);
 }

@@ -1,19 +1,19 @@
 import { Body, Controller, Headers, HttpCode, RequestMapping, RequestMethod, Type } from "@nestjs/common";
 import {
-  CloudRunWorkerControllerInterface,
+  CloudRunQueueWorkerControllerInterface,
   CloudRunReceivedMessage,
-  CloudRunWorkerControllerMetadata,
+  CloudRunQueueWorkerControllerMetadata,
 } from "./interfaces";
-import { CloudRunWorkerService } from "./worker.service";
+import { CloudRunQueueWorkerService } from "./worker.service";
 
 export function getWorkerController(
-  metadata?: CloudRunWorkerControllerMetadata,
-): Type<CloudRunWorkerControllerInterface> {
+  metadata?: CloudRunQueueWorkerControllerMetadata,
+): Type<CloudRunQueueWorkerControllerInterface> {
   const path = metadata?.path;
   const method = metadata?.method || RequestMethod.POST;
   @Controller()
-  class CloudRunWorkerController implements CloudRunWorkerControllerInterface {
-    constructor(private readonly service: CloudRunWorkerService) {}
+  class CloudRunQueueWorkerController implements CloudRunQueueWorkerControllerInterface {
+    constructor(private readonly service: CloudRunQueueWorkerService) {}
 
     @RequestMapping({ method, path })
     @HttpCode(metadata?.statusCode || 200)
@@ -25,5 +25,5 @@ export function getWorkerController(
     }
   }
 
-  return CloudRunWorkerController;
+  return CloudRunQueueWorkerController;
 }

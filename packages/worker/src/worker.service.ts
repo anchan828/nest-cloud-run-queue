@@ -1,7 +1,7 @@
 import { CloudRunQueueMessage } from "@anchan828/nest-cloud-run-common";
 import { BadRequestException, Inject, Injectable, Logger } from "@nestjs/common";
 import { isBase64 } from "class-validator";
-import { CloudRunWorkerModuleOptions } from "./interfaces";
+import { CloudRunQueueWorkerModuleOptions } from "./interfaces";
 import {
   CLOUD_RUN_ALL_WORKERS_WORKER_NAME,
   CLOUD_RUN_PUBSUB_WORKER_MODULE_OPTIONS,
@@ -10,34 +10,34 @@ import {
   ERROR_WORKER_NAME_NOT_FOUND,
   ERROR_WORKER_NOT_FOUND,
 } from "./constants";
-import { CloudRunWorkerExplorerService } from "./explorer.service";
+import { CloudRunQueueWorkerExplorerService } from "./explorer.service";
 import {
-  CloudRunWorkerRawMessage,
-  CloudRunWorkerMetadata,
-  CloudRunWorkerProcessor,
-  CloudRunWorkerProcessorStatus,
+  CloudRunQueueWorkerRawMessage,
+  CloudRunQueueWorkerMetadata,
+  CloudRunQueueWorkerProcessor,
+  CloudRunQueueWorkerProcessorStatus,
 } from "./interfaces";
 import { parseJSON, sortByPriority } from "./util";
 @Injectable()
-export class CloudRunWorkerService {
-  #allWorkers: CloudRunWorkerMetadata[] | undefined;
+export class CloudRunQueueWorkerService {
+  #allWorkers: CloudRunQueueWorkerMetadata[] | undefined;
 
   constructor(
     @Inject(CLOUD_RUN_PUBSUB_WORKER_MODULE_OPTIONS)
-    private readonly options: CloudRunWorkerModuleOptions,
+    private readonly options: CloudRunQueueWorkerModuleOptions,
     private readonly logger: Logger,
-    private readonly explorerService: CloudRunWorkerExplorerService,
+    private readonly explorerService: CloudRunQueueWorkerExplorerService,
   ) {}
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  public async execute(message: CloudRunWorkerRawMessage): Promise<void> {
+  public async execute(message: CloudRunQueueWorkerRawMessage): Promise<void> {
     if (!this.#allWorkers) {
       this.#allWorkers = this.explorerService.explore();
     }
 
     const maxRetryAttempts = this.options.maxRetryAttempts ?? 1;
-    const workers: CloudRunWorkerMetadata[] = [];
-    const spetialWorkers: CloudRunWorkerMetadata[] = [];
+    const workers: CloudRunQueueWorkerMetadata[] = [];
+    const spetialWorkers: CloudRunQueueWorkerMetadata[] = [];
     let data: CloudRunQueueMessage<any> = { name: "" };
     try {
       data = this.decodeData(message.data);
@@ -69,7 +69,7 @@ export class CloudRunWorkerService {
       .map((w) => sortByPriority(w.processors))
       .flat();
     const processorStatus = await this.options.extraConfig?.preProcessor?.(data.name, data.data, message);
-    if (processorStatus !== CloudRunWorkerProcessorStatus.SKIP) {
+    if (processorStatus !== CloudRunQueueWorkerProcessorStatus.SKIP) {
       for (const processor of processors) {
         await this.execProcessor(processor.processor, maxRetryAttempts, data.data, message);
       }
@@ -83,10 +83,10 @@ export class CloudRunWorkerService {
   }
 
   private async execProcessor<T>(
-    processor: CloudRunWorkerProcessor,
+    processor: CloudRunQueueWorkerProcessor,
     maxRetryAttempts: number,
     data: T,
-    rawMessage: CloudRunWorkerRawMessage,
+    rawMessage: CloudRunQueueWorkerRawMessage,
   ): Promise<void> {
     for (let i = 0; i < maxRetryAttempts; i++) {
       try {

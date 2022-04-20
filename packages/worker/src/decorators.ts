@@ -1,4 +1,4 @@
-import { CloudRunWorkerName } from "@anchan828/nest-cloud-run-common";
+import { CloudRunQueueWorkerName } from "@anchan828/nest-cloud-run-common";
 import { SetMetadata } from "@nestjs/common";
 import { CLOUD_RUN_PUBSUB_WORKER_DECORATOR, CLOUD_RUN_PUBSUB_WORKER_PROCESS_DECORATOR } from "./constants";
 
@@ -6,11 +6,11 @@ import { CLOUD_RUN_PUBSUB_WORKER_DECORATOR, CLOUD_RUN_PUBSUB_WORKER_PROCESS_DECO
  * Define worker
  *
  * @export
- * @param {CloudRunWorkerName} name
+ * @param {CloudRunQueueWorkerName} name
  * @param {number} [priority=0] Highest priority is 0, and lower the larger integer you use.
  * @returns {ClassDecorator}
  */
-export function CloudRunWorker(name: CloudRunWorkerName, priority = 0): ClassDecorator {
+export function CloudRunQueueWorker(name: CloudRunQueueWorkerName, priority = 0): ClassDecorator {
   return SetMetadata(CLOUD_RUN_PUBSUB_WORKER_DECORATOR, { name, priority }) as ClassDecorator;
 }
 
@@ -21,6 +21,6 @@ export function CloudRunWorker(name: CloudRunWorkerName, priority = 0): ClassDec
  * @param {number} [priority=0] Highest priority is 0, and lower the larger integer you use.
  * @returns {MethodDecorator}
  */
-export function CloudRunWorkerProcess(priority = 0): MethodDecorator {
+export function CloudRunQueueWorkerProcess(priority = 0): MethodDecorator {
   return SetMetadata(CLOUD_RUN_PUBSUB_WORKER_PROCESS_DECORATOR, { priority }) as MethodDecorator;
 }

@@ -8,15 +8,15 @@ import {
   ERROR_WORKER_NAME_NOT_FOUND,
   ERROR_WORKER_NOT_FOUND,
 } from "./constants";
-import { CloudRunWorkerExplorerService } from "./explorer.service";
+import { CloudRunQueueWorkerExplorerService } from "./explorer.service";
 import {
-  CloudRunWorkerRawMessage,
-  CloudRunWorkerMetadata,
-  CloudRunWorkerProcessor,
-  CloudRunWorkerProcessorMetadata,
+  CloudRunQueueWorkerRawMessage,
+  CloudRunQueueWorkerMetadata,
+  CloudRunQueueWorkerProcessor,
+  CloudRunQueueWorkerProcessorMetadata,
 } from "./interfaces";
-import { CloudRunWorkerModule } from "./worker.module";
-import { CloudRunWorkerService } from "./worker.service";
+import { CloudRunQueueWorkerModule } from "./worker.module";
+import { CloudRunQueueWorkerService } from "./worker.service";
 
 function toBase64(json: object | string): string {
   if (typeof json === "object") {
@@ -26,15 +26,15 @@ function toBase64(json: object | string): string {
   return Buffer.from(json).toString("base64");
 }
 
-describe("CloudRunWorkerService", () => {
-  let service: CloudRunWorkerService;
-  let explorerService: CloudRunWorkerExplorerService;
+describe("CloudRunQueueWorkerService", () => {
+  let service: CloudRunQueueWorkerService;
+  let explorerService: CloudRunQueueWorkerExplorerService;
   beforeEach(async () => {
     const app = await Test.createTestingModule({
-      imports: [CloudRunWorkerModule.register({ throwModuleError: true })],
+      imports: [CloudRunQueueWorkerModule.register({ throwModuleError: true })],
     }).compile();
-    service = app.get<CloudRunWorkerService>(CloudRunWorkerService);
-    explorerService = app.get<CloudRunWorkerExplorerService>(CloudRunWorkerExplorerService);
+    service = app.get<CloudRunQueueWorkerService>(CloudRunQueueWorkerService);
+    explorerService = app.get<CloudRunQueueWorkerExplorerService>(CloudRunQueueWorkerExplorerService);
   });
 
   it("should be defined", () => {
@@ -43,27 +43,27 @@ describe("CloudRunWorkerService", () => {
   });
   it("should ignore error if data invalid", async () => {
     const app = await Test.createTestingModule({
-      imports: [CloudRunWorkerModule.registerAsync({ useFactory: () => ({} as any) })],
+      imports: [CloudRunQueueWorkerModule.registerAsync({ useFactory: () => ({} as any) })],
     }).compile();
-    service = app.get<CloudRunWorkerService>(CloudRunWorkerService);
-    explorerService = app.get<CloudRunWorkerExplorerService>(CloudRunWorkerExplorerService);
-    await expect(service.execute({ data: "invalid" } as CloudRunWorkerRawMessage)).resolves.toBeUndefined();
+    service = app.get<CloudRunQueueWorkerService>(CloudRunQueueWorkerService);
+    explorerService = app.get<CloudRunQueueWorkerExplorerService>(CloudRunQueueWorkerExplorerService);
+    await expect(service.execute({ data: "invalid" } as CloudRunQueueWorkerRawMessage)).resolves.toBeUndefined();
   });
   it("should throw error if data invalid", async () => {
-    await expect(service.execute({ data: "invalid" } as CloudRunWorkerRawMessage)).rejects.toThrowError(
+    await expect(service.execute({ data: "invalid" } as CloudRunQueueWorkerRawMessage)).rejects.toThrowError(
       new BadRequestException(ERROR_INVALID_MESSAGE_FORMAT),
     );
   });
 
   it("should throw error if data is null", async () => {
-    await expect(service.execute({ data: null } as CloudRunWorkerRawMessage)).rejects.toThrowError(
+    await expect(service.execute({ data: null } as CloudRunQueueWorkerRawMessage)).rejects.toThrowError(
       new BadRequestException(ERROR_INVALID_MESSAGE_FORMAT),
     );
   });
 
   it("should throw error if data is not message object", async () => {
     await expect(
-      service.execute({ data: toBase64("testtest"), messageId: "1" } as CloudRunWorkerRawMessage),
+      service.execute({ data: toBase64("testtest"), messageId: "1" } as CloudRunQueueWorkerRawMessage),
     ).rejects.toThrowError(new BadRequestException(ERROR_INVALID_MESSAGE_FORMAT));
   });
 
@@ -80,7 +80,7 @@ describe("CloudRunWorkerService", () => {
   });
 
   it("should run processor if worker found (data is base64)", async () => {
-    const processor: CloudRunWorkerProcessor = (message: any, raw: any) => {
+    const processor: CloudRunQueueWorkerProcessor = (message: any, raw: any) => {
       expect(message).toEqual({ date: expect.any(Date), prop: 1 });
       expect(raw).toEqual({ attributes: { attr: 2 }, data: expect.anything(), messageId: "1" });
     };
@@ -96,7 +96,7 @@ describe("CloudRunWorkerService", () => {
           { priority: 1, processor: processorMock },
         ],
       },
-    ] as CloudRunWorkerMetadata[]);
+    ] as CloudRunQueueWorkerMetadata[]);
     await expect(
       service.execute({
         attributes: { attr: 2 },
@@ -107,7 +107,7 @@ describe("CloudRunWorkerService", () => {
     expect(processorMock).toBeCalledTimes(1);
   });
   it("should run processor if worker found (data is buffer)", async () => {
-    const processor: CloudRunWorkerProcessor = (message: any, raw: any) => {
+    const processor: CloudRunQueueWorkerProcessor = (message: any, raw: any) => {
       expect(message).toEqual({ date: expect.any(Date), prop: 1 });
       expect(raw).toEqual({ attributes: { attr: 2 }, data: expect.anything(), messageId: "1" });
     };
@@ -123,7 +123,7 @@ describe("CloudRunWorkerService", () => {
           { priority: 1, processor: processorMock },
         ],
       },
-    ] as CloudRunWorkerMetadata[]);
+    ] as CloudRunQueueWorkerMetadata[]);
     await expect(
       service.execute({
         attributes: { attr: 2 },
@@ -135,7 +135,7 @@ describe("CloudRunWorkerService", () => {
   });
 
   it("should run processor if worker found (data is Uint8Array)", async () => {
-    const processor: CloudRunWorkerProcessor = (message: any, raw: any) => {
+    const processor: CloudRunQueueWorkerProcessor = (message: any, raw: any) => {
       expect(message).toEqual({ date: expect.any(Date), prop: 1 });
       expect(raw).toEqual({ attributes: { attr: 2 }, data: expect.anything(), messageId: "1" });
     };
@@ -151,7 +151,7 @@ describe("CloudRunWorkerService", () => {
           { priority: 1, processor: processorMock },
         ],
       },
-    ] as CloudRunWorkerMetadata[]);
+    ] as CloudRunQueueWorkerMetadata[]);
     await expect(
       service.execute({
         attributes: { attr: 2 },
@@ -167,9 +167,9 @@ describe("CloudRunWorkerService", () => {
       {
         name: CLOUD_RUN_ALL_WORKERS_WORKER_NAME,
         priority: 0,
-        processors: [{ priority: 0, processor: processorMock }] as CloudRunWorkerProcessorMetadata[],
+        processors: [{ priority: 0, processor: processorMock }] as CloudRunQueueWorkerProcessorMetadata[],
       },
-    ] as CloudRunWorkerMetadata[]);
+    ] as CloudRunQueueWorkerMetadata[]);
     const date = new Date();
     const encodeData = toBase64({ data: { date, prop: 1 }, name: "name" });
 
@@ -188,9 +188,9 @@ describe("CloudRunWorkerService", () => {
       {
         name: CLOUD_RUN_UNHANDLED_WORKER_NAME,
         priority: 0,
-        processors: [{ priority: 0, processor: processorMock }] as CloudRunWorkerProcessorMetadata[],
+        processors: [{ priority: 0, processor: processorMock }] as CloudRunQueueWorkerProcessorMetadata[],
       },
-    ] as CloudRunWorkerMetadata[]);
+    ] as CloudRunQueueWorkerMetadata[]);
     await expect(
       service.execute({
         attributes: { attr: 2 },
@@ -211,7 +211,7 @@ describe("CloudRunWorkerService", () => {
           { priority: 2, processor: () => processorMock(5) },
           { priority: 1, processor: () => processorMock(4) },
           { priority: 3, processor: () => processorMock(6) },
-        ] as CloudRunWorkerProcessorMetadata[],
+        ] as CloudRunQueueWorkerProcessorMetadata[],
       },
       {
         name: "name",
@@ -220,7 +220,7 @@ describe("CloudRunWorkerService", () => {
           { priority: 2, processor: () => processorMock(2) },
           { priority: 1, processor: () => processorMock(1) },
           { priority: 3, processor: () => processorMock(3) },
-        ] as CloudRunWorkerProcessorMetadata[],
+        ] as CloudRunQueueWorkerProcessorMetadata[],
       },
       {
         name: CLOUD_RUN_ALL_WORKERS_WORKER_NAME,
@@ -229,9 +229,9 @@ describe("CloudRunWorkerService", () => {
           { priority: 2, processor: () => processorMock(8) },
           { priority: 1, processor: () => processorMock(7) },
           { priority: 3, processor: () => processorMock(9) },
-        ] as CloudRunWorkerProcessorMetadata[],
+        ] as CloudRunQueueWorkerProcessorMetadata[],
       },
-    ] as CloudRunWorkerMetadata[]);
+    ] as CloudRunQueueWorkerMetadata[]);
 
     await expect(
       service.execute({
@@ -254,10 +254,10 @@ describe("CloudRunWorkerService", () => {
 
   it("maxRetryAttempts", async () => {
     const app = await Test.createTestingModule({
-      imports: [CloudRunWorkerModule.registerAsync({ useFactory: () => ({ maxRetryAttempts: 3 } as any) })],
+      imports: [CloudRunQueueWorkerModule.registerAsync({ useFactory: () => ({ maxRetryAttempts: 3 } as any) })],
     }).compile();
-    service = app.get<CloudRunWorkerService>(CloudRunWorkerService);
-    explorerService = app.get<CloudRunWorkerExplorerService>(CloudRunWorkerExplorerService);
+    service = app.get<CloudRunQueueWorkerService>(CloudRunQueueWorkerService);
+    explorerService = app.get<CloudRunQueueWorkerExplorerService>(CloudRunQueueWorkerExplorerService);
 
     const mock = jest.fn().mockImplementation((): void => {
       throw new Error();
@@ -265,9 +265,9 @@ describe("CloudRunWorkerService", () => {
     jest.spyOn(explorerService, "explore").mockReturnValueOnce([
       {
         name: "name",
-        processors: [{ priority: 0, processor: mock }] as CloudRunWorkerProcessorMetadata[],
+        processors: [{ priority: 0, processor: mock }] as CloudRunQueueWorkerProcessorMetadata[],
       },
-    ] as CloudRunWorkerMetadata[]);
+    ] as CloudRunQueueWorkerMetadata[]);
     await expect(
       service.execute({ attributes: { attr: 2 }, data: toBase64({ data: { prop: 1 }, name: "name" }), messageId: "1" }),
     ).resolves.toBeUndefined();

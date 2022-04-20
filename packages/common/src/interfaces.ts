@@ -12,9 +12,9 @@ export interface ModuleOptionsFactory<T extends ModuleOptions = ModuleOptions> {
   createModuleOptions(): Promise<T> | T;
 }
 
-export type CloudRunWorkerName = string;
+export type CloudRunQueueWorkerName = string;
 export interface CloudRunQueueMessage<T = any> {
-  name: CloudRunWorkerName;
+  name: CloudRunQueueWorkerName;
   data?: T;
 }
 

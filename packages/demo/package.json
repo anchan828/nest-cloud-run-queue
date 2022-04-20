@@ -22,17 +22,9 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
-    "build:watch": "tsc --watch",
-    "copy:license": "cp ../../LICENSE ./",
-    "lint": "eslint --ignore-path ../../.eslintignore '**/*.ts' '**/*.spec.ts'",
+    "lint": "eslint --ignore-path ../../.eslintignore '**/*.ts'",
     "lint:fix": "npm run lint -- --fix",
-    "prepublishOnly": "rm -rf dist && npm run build && rm -f dist/*.tsbuildinfo && npm run copy:license",
-    "start:demo": "ts-node-dev --respawn src/main.ts",
-    "test": "jest --coverage --logHeapUsage --runInBand",
-    "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand --logHeapUsage",
-    "test:watch": "jest --watch",
-    "watch": "tsc -w"
+    "start:demo": "ts-node-dev --respawn src/main.ts"
   },
   "dependencies": {
     "@anchan828/nest-cloud-run-queue-pubsub-publisher": "^0.4.41",

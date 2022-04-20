@@ -1,5 +1,5 @@
 import {
-  CloudRunWorkerName,
+  CloudRunQueueWorkerName,
   ModuleAsyncOptions,
   ModuleOptions,
   ModuleOptionsFactory,
@@ -7,12 +7,12 @@ import {
 import { RequestMappingMetadata } from "@nestjs/common";
 import { Injectable } from "@nestjs/common/interfaces";
 
-export interface CloudRunWorkerModuleOptions extends ModuleOptions {
+export interface CloudRunQueueWorkerModuleOptions extends ModuleOptions {
   /**
    * Whether to return 4xx codes when throw error about nest-cloud-run-queue-pubsub module. Default is false.
    * ex, Returns 204 instead of 400 when worker name not found. Returns 204 instead of 400 when message data is invalid.
    * @type {boolean}
-   * @memberof CloudRunWorkerModuleOptions
+   * @memberof CloudRunQueueWorkerModuleOptions
    */
   throwModuleError?: boolean;
 
@@ -20,103 +20,108 @@ export interface CloudRunWorkerModuleOptions extends ModuleOptions {
    * Max number of processor retry attempts. If an error occurs in a processor, it will try again.
    *
    * @type {number}
-   * @memberof CloudRunWorkerModuleOptions
+   * @memberof CloudRunQueueWorkerModuleOptions
    */
   maxRetryAttempts?: number;
 
   /**
    * extra config
    *
-   * @type {CloudRunWorkerExtraConfig}
-   * @memberof CloudRunWorkerModuleOptions
+   * @type {CloudRunQueueWorkerExtraConfig}
+   * @memberof CloudRunQueueWorkerModuleOptions
    */
-  extraConfig?: CloudRunWorkerExtraConfig;
+  extraConfig?: CloudRunQueueWorkerExtraConfig;
 
   /**
    * Define a Route for the controller.
    * Default: POST /
-   * @type {CloudRunWorkerControllerMetadata}
-   * @memberof CloudRunWorkerModuleOptions
+   * @type {CloudRunQueueWorkerControllerMetadata}
+   * @memberof CloudRunQueueWorkerModuleOptions
    */
-  workerController?: CloudRunWorkerControllerMetadata;
+  workerController?: CloudRunQueueWorkerControllerMetadata;
 }
-export type CloudRunWorkerModuleAsyncOptions = ModuleAsyncOptions<
-  Omit<CloudRunWorkerModuleOptions, "workerController">
+export type CloudRunQueueWorkerModuleAsyncOptions = ModuleAsyncOptions<
+  Omit<CloudRunQueueWorkerModuleOptions, "workerController">
 > &
-  Pick<CloudRunWorkerModuleOptions, "workerController">;
-export type CloudRunWorkerModuleOptionsFactory = ModuleOptionsFactory<
-  Omit<CloudRunWorkerModuleOptions, "workerController">
+  Pick<CloudRunQueueWorkerModuleOptions, "workerController">;
+export type CloudRunQueueWorkerModuleOptionsFactory = ModuleOptionsFactory<
+  Omit<CloudRunQueueWorkerModuleOptions, "workerController">
 > &
-  Pick<CloudRunWorkerModuleOptions, "workerController">;
+  Pick<CloudRunQueueWorkerModuleOptions, "workerController">;
 
-export type CloudRunWorkerProcessor = <T>(message: T, rawMessage: CloudRunWorkerRawMessage) => Promise<void> | void;
+export type CloudRunQueueWorkerProcessor = <T>(
+  message: T,
+  rawMessage: CloudRunQueueWorkerRawMessage,
+) => Promise<void> | void;
 
-export interface CloudRunWorkerMetadata extends CloudRunWorkerDecoratorArgs {
+export interface CloudRunQueueWorkerMetadata extends CloudRunQueueWorkerDecoratorArgs {
   instance: Injectable;
 
-  processors: CloudRunWorkerProcessorMetadata[];
+  processors: CloudRunQueueWorkerProcessorMetadata[];
 }
 
-export interface CloudRunWorkerProcessorMetadata extends CloudRunWorkerProcessDecoratorArgs {
-  processor: CloudRunWorkerProcessor;
+export interface CloudRunQueueWorkerProcessorMetadata extends CloudRunQueueWorkerProcessDecoratorArgs {
+  processor: CloudRunQueueWorkerProcessor;
 }
 
-export enum CloudRunWorkerProcessorStatus {
+export enum CloudRunQueueWorkerProcessorStatus {
   IN_PROGRESS = 0,
   SKIP = 1,
 }
 
-export type CloudRunWorkerExtraConfig = {
+export type CloudRunQueueWorkerExtraConfig = {
   // Run BEFORE the message is processed
   preProcessor?: (
     name: string,
-    ...args: Parameters<CloudRunWorkerProcessor>
-  ) => (CloudRunWorkerProcessorStatus | undefined | void) | Promise<CloudRunWorkerProcessorStatus | undefined | void>;
+    ...args: Parameters<CloudRunQueueWorkerProcessor>
+  ) =>
+    | (CloudRunQueueWorkerProcessorStatus | undefined | void)
+    | Promise<CloudRunQueueWorkerProcessorStatus | undefined | void>;
   // Run AFTER the message is processed
-  postProcessor?: (name: string, ...args: Parameters<CloudRunWorkerProcessor>) => void | Promise<void>;
+  postProcessor?: (name: string, ...args: Parameters<CloudRunQueueWorkerProcessor>) => void | Promise<void>;
 };
 
-export interface CloudRunWorkerDecoratorArgs {
-  name: CloudRunWorkerName;
+export interface CloudRunQueueWorkerDecoratorArgs {
+  name: CloudRunQueueWorkerName;
 
   /**
    * Highest priority is 0, and lower the larger integer you use.
    *
    * @type {number}
-   * @memberof CloudRunWorkerDecoratorArgs
+   * @memberof CloudRunQueueWorkerDecoratorArgs
    */
   priority: number;
 }
 
-export interface CloudRunWorkerProcessDecoratorArgs {
+export interface CloudRunQueueWorkerProcessDecoratorArgs {
   /**
    * Highest priority is 0, and lower the larger integer you use.
    *
    * @type {number}
-   * @memberof CloudRunWorkerProcessDecoratorArgs
+   * @memberof CloudRunQueueWorkerProcessDecoratorArgs
    */
   priority: number;
 }
 
-export type CloudRunWorkerRawMessage<T = Record<string, any>> = {
+export type CloudRunQueueWorkerRawMessage<T = Record<string, any>> = {
   readonly data?: string | Uint8Array | Buffer | null;
   readonly headers?: Record<string, string>;
 } & T;
 
 export type CloudRunReceivedMessage = {
-  readonly message: CloudRunWorkerRawMessage;
+  readonly message: CloudRunQueueWorkerRawMessage;
 };
 
-export interface CloudRunWorkerControllerMetadata extends RequestMappingMetadata {
+export interface CloudRunQueueWorkerControllerMetadata extends RequestMappingMetadata {
   /**
    * Default: 200
    *
    * @type {number}
-   * @memberof CloudRunWorkerControllerMetadata
+   * @memberof CloudRunQueueWorkerControllerMetadata
    */
   statusCode?: number;
 }
 
-export interface CloudRunWorkerControllerInterface {
+export interface CloudRunQueueWorkerControllerInterface {
   execute(body: CloudRunReceivedMessage, headers: Record<string, string>): Promise<void>;
 }

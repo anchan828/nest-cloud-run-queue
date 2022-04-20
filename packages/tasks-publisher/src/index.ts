@@ -1,11 +1,11 @@
 export {
-  CloudRunTasksPublisherModuleAsyncOptions,
-  CloudRunTasksPublisherModuleOptions,
-  CloudRunTasksPublisherModuleOptionsFactory,
+  CloudRunQueueTasksPublisherModuleAsyncOptions,
+  CloudRunQueueTasksPublisherModuleOptions,
+  CloudRunQueueTasksPublisherModuleOptionsFactory,
   PublishConfig,
   PublishData,
   PublishOptions,
 } from "./interfaces";
 export { CLOUD_RUN_TASKS_CLIENT } from "./constants";
-export { CloudRunTasksPublisherModule } from "./publish.module";
-export { CloudRunTasksPublisherService } from "./publish.service";
+export { CloudRunQueueTasksPublisherModule } from "./publish.module";
+export { CloudRunQueueTasksPublisherService } from "./publish.service";

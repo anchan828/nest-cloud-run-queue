@@ -1,12 +1,13 @@
 import { CloudTasksClient } from "@google-cloud/tasks";
 import { Inject, Injectable } from "@nestjs/common";
 import { CLOUD_RUN_TASKS_CLIENT, CLOUD_RUN_TASKS_PUBLISHER_MODULE_OPTIONS } from "./constants";
-import { CloudRunTasksPublisherModuleOptions, PublishData, PublishOptions } from "./interfaces";
+import { CloudRunQueueTasksPublisherModuleOptions, PublishData, PublishOptions } from "./interfaces";
 
 @Injectable()
-export class CloudRunTasksPublisherService {
+export class CloudRunQueueTasksPublisherService {
   constructor(
-    @Inject(CLOUD_RUN_TASKS_PUBLISHER_MODULE_OPTIONS) private readonly options: CloudRunTasksPublisherModuleOptions,
+    @Inject(CLOUD_RUN_TASKS_PUBLISHER_MODULE_OPTIONS)
+    private readonly options: CloudRunQueueTasksPublisherModuleOptions,
     @Inject(CLOUD_RUN_TASKS_CLIENT) private readonly client: CloudTasksClient,
   ) {}
 

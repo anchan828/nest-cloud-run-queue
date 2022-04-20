@@ -21,10 +21,10 @@ $ docker-compose up
 ### Access http://localhost:3000/pubsub
 
 ```ts
-@CloudRunWorker("pubsub")
+@CloudRunQueueWorker("pubsub")
 export class PubSubWorker {
-  @CloudRunWorkerProcess()
-  public async process(message: string, raw: CloudRunWorkerRawMessage): Promise<void> {
+  @CloudRunQueueWorkerProcess()
+  public async process(message: string, raw: CloudRunQueueWorkerRawMessage): Promise<void> {
     console.log("pubsub", message, raw);
   }
 }
@@ -36,10 +36,10 @@ export class PubSubWorker {
 ### Access http://localhost:3000/tasks
 
 ```ts
-@CloudRunWorker("tasks")
+@CloudRunQueueWorker("tasks")
 export class TasksWorker {
-  @CloudRunWorkerProcess()
-  public async process(message: string, raw: CloudRunWorkerRawMessage): Promise<void> {
+  @CloudRunQueueWorkerProcess()
+  public async process(message: string, raw: CloudRunQueueWorkerRawMessage): Promise<void> {
     console.log("tasks", message, raw);
   }
 }

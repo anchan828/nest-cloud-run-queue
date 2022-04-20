@@ -18,7 +18,7 @@ Therefore, I used Cloud Pub/Sub or Cloud Tasks so that I could implement Queue v
 ## Demo
 
 See [https://github.com/anchan828/nest-cloud-run-queue/tree/master/packages/demo](https://github.com/anchan828/nest-cloud-run-queue/tree/master/packages/demo#readme)
-
+nest-cloud-run-queue-workernest-cloud-run-queue-worker
 ## Packages
 
 There are two types of packages.
@@ -56,11 +56,11 @@ $ gcloud pubsub topics create myRunTopic
 ```ts
 @Module({
   imports: [
-    CloudRunPubSubPublisherModule.register({
+    CloudRunQueuePubSubPublisherModule.register({
       topic: "myRunTopic",
       clientConfig: {
         // If necessary
-        keyFilename: "path/to/file.json",
+        keyFilename: "path/to/file.json",nest-cloud-run-queue-worker
       },
     }),
   ],
@@ -72,7 +72,7 @@ export class PublisherAppModule {}
 
 ```ts
 export class Service {
-  constructor(private readonly pubsubService: CloudRunPubSubPublisherService) {}
+  constructor(private readonly pubsubService: CloudRunQueuePubSubPublisherService) {}
 
   public async sendMessage(): Promise<void> {
     await this.pubsubService.publish({
@@ -91,7 +91,7 @@ export class Service {
 
 ```ts
 @Module({
-  imports: [CloudRunPubSubWorkerModule.register()],
+  imports: [CloudRunQueueWorkerModule.register()],
 })
 export class WorkerAppModule {}
 ```
@@ -99,10 +99,10 @@ export class WorkerAppModule {}
 #### Create worker provider
 
 ```ts
-@CloudRunPubSubWorker("Worker name")
+@CloudRunQueuePubSubWorker("Worker name")
 class Worker {
-  @CloudRunPubSubWorkerProcess()
-  public async process(message: string | object, attributes: Record<string, any>, raw: any): Promise<void> {
+  @CloudRunQueuePubSubWorkerProcess()
+  public async process(message: string | object, raw: CloudRunQueueWorkerRawMessage): Promise<void> {
     console.log("Message: " + JSON.stringify(message));
     console.log("Attributes: " + JSON.stringify(attributes));
     console.log("request.body: " + JSON.stringify(raw));
@@ -114,7 +114,7 @@ class Worker {
 
 ```ts
 @Module({
-  imports: [CloudRunPubSubWorkerModule.register()],
+  imports: [CloudRunQueueWorkerModule.register()],
   providers: [Worker],
 })
 export class WorkerAppModule {}
@@ -124,9 +124,7 @@ export class WorkerAppModule {}
 
 ```ts
 async function bootstrap(): Promise<void> {
-  const app = await NestFactory.create(WorkerAppModule, {
-    bodyParser: true,
-  });
+  const app = await NestFactory.create(WorkerAppModule);
   await app.listen(process.env.PORT || 8080);
 }
 
@@ -160,7 +158,7 @@ If you want to test on your locally:
 1. Run pubsub emulator. And set `localhost:{PORT}` of emulator to PUBSUB_EMULATOR_HOST
 2. Run test server for receiving a Pub/Sub message from the topic. And set `localhost:${PORT}` of test server to `SERVICE-URL`
 
-See [docker-compose.yml](https://github.com/anchan828/nest-cloud-run-queue/blob/master/docker-compose.yml) and [jest.setup.js](https://github.com/anchan828/nest-cloud-run-queue/blob/master/jest.setup.js)
+See [docker-compose.yml](https://github.com/anchan828/nest-cloud-run-queue/blob/master/docker-compose.yml)
 
 ### 6. Done
 
@@ -200,9 +198,9 @@ Note: `throwModuleError: true` is not working if you set global events.
 You can listen to undefined worker name
 
 ```typescript
-@CloudRunPubSubWorker(CLOUD_RUN_UNHANDLED)
+@CloudRunQueuePubSubWorker(CLOUD_RUN_UNHANDLED)
 class Worker {
-  @CloudRunPubSubWorkerProcess()
+  @CloudRunQueuePubSubWorkerProcess()
   public async process(message: CloudRunQueueMessage<any>, attributes: Record<string, any>, raw: any): Promise<void> {
     console.log("Message: " + JSON.stringify(message));
     console.log("Attributes: " + JSON.stringify(attributes));
@@ -216,9 +214,9 @@ class Worker {
 You can listen to all workers
 
 ```typescript
-@CloudRunPubSubWorker(CLOUD_RUN_ALL_WORKERS)
+@CloudRunQueuePubSubWorker(CLOUD_RUN_ALL_WORKERS)
 class Worker {
-  @CloudRunPubSubWorkerProcess()
+  @CloudRunQueuePubSubWorkerProcess()nest-cloud-run-queue-worker
   public async process(message: CloudRunQueueMessage<any>, attributes: Record<string, any>, raw: any): Promise<void> {
     console.log("Message: " + JSON.stringify(message));
     console.log("Attributes: " + JSON.stringify(attributes));
@@ -231,15 +229,15 @@ class Worker {
 
 You can use woeker with pull subscription.
 
-You need to inject CloudRunPubSubWorkerService and call execute method.
+You need to inject CloudRunQueuePubSubWorkerService and call execute method.
 
 ```typescript
-import { CloudRunPubSubWorkerService } from "@anchan828/nest-cloud-run-queue-pubsub-worker";
+import { CloudRunQueuePubSubWorkerService } from "@anchan828/nest-cloud-run-queue-pubsub-worker";
 import { Message, PubSub, v1 } from "@google-cloud/pubsub";
 import { Logger } from "@nestjs/common";
 
 export class PullSubscriptionWorker {
-  constructor(private readonly workerService: CloudRunPubSubWorkerService) {}
+  constructor(private readonly workerService: CloudRunQueuePubSubWorkerService) {}
 
   /**
    * See: https://cloud.google.com/pubsub/docs/pull#asynchronous-pull

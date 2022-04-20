@@ -1,12 +1,12 @@
 import { Inject, Module, OnModuleInit } from "@nestjs/common";
-import { CloudRunWorkerModule } from "@anchan828/nest-cloud-run-queue-worker";
+import { CloudRunQueueWorkerModule } from "@anchan828/nest-cloud-run-queue-worker";
 import {
-  CloudRunPubSubPublisherModule,
-  CloudRunPubSubPublisherModuleOptions,
+  CloudRunQueuePubSubPublisherModule,
+  CloudRunQueuePubSubPublisherModuleOptions,
   CLOUD_RUN_PUBSUB,
   CLOUD_RUN_PUBSUB_PUBLISHER_MODULE_OPTIONS,
 } from "@anchan828/nest-cloud-run-queue-pubsub-publisher";
-import { CloudRunTasksPublisherModule } from "@anchan828/nest-cloud-run-queue-tasks-publisher";
+import { CloudRunQueueTasksPublisherModule } from "@anchan828/nest-cloud-run-queue-tasks-publisher";
 import { PubSub } from "@google-cloud/pubsub";
 import { PubSubWorker, TasksWorker } from "./processor";
 import { AppController } from "./app.controller";
@@ -15,12 +15,12 @@ import { credentials } from "@grpc/grpc-js";
 @Module({
   controllers: [AppController],
   imports: [
-    CloudRunWorkerModule.register(),
-    CloudRunPubSubPublisherModule.register({
+    CloudRunQueueWorkerModule.register(),
+    CloudRunQueuePubSubPublisherModule.register({
       clientConfig: { projectId: "test" },
       topic: "nest-cloud-run-queue-demo",
     }),
-    CloudRunTasksPublisherModule.register({
+    CloudRunQueueTasksPublisherModule.register({
       clientConfig: {
         apiEndpoint: "gcloud-tasks-emulator",
         port: 8123,
@@ -39,7 +39,8 @@ import { credentials } from "@grpc/grpc-js";
 })
 export class AppModule implements OnModuleInit {
   constructor(
-    @Inject(CLOUD_RUN_PUBSUB_PUBLISHER_MODULE_OPTIONS) private readonly options: CloudRunPubSubPublisherModuleOptions,
+    @Inject(CLOUD_RUN_PUBSUB_PUBLISHER_MODULE_OPTIONS)
+    private readonly options: CloudRunQueuePubSubPublisherModuleOptions,
     @Inject(CLOUD_RUN_PUBSUB) private readonly pubsub: PubSub,
   ) {}
 

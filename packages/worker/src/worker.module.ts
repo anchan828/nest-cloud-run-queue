@@ -3,41 +3,41 @@ import { DynamicModule, Logger, Module, Provider } from "@nestjs/common";
 import { DiscoveryModule } from "@nestjs/core";
 import { MetadataScanner } from "@nestjs/core/metadata-scanner";
 import { CLOUD_RUN_PUBSUB_WORKER_MODULE_OPTIONS } from "./constants";
-import { CloudRunWorkerExplorerService } from "./explorer.service";
-import { CloudRunWorkerModuleAsyncOptions, CloudRunWorkerModuleOptions } from "./interfaces";
+import { CloudRunQueueWorkerExplorerService } from "./explorer.service";
+import { CloudRunQueueWorkerModuleAsyncOptions, CloudRunQueueWorkerModuleOptions } from "./interfaces";
 import { getWorkerController } from "./worker.controller";
-import { CloudRunWorkerService } from "./worker.service";
+import { CloudRunQueueWorkerService } from "./worker.service";
 @Module({
-  exports: [CloudRunWorkerService],
+  exports: [CloudRunQueueWorkerService],
   imports: [DiscoveryModule],
   providers: [
     MetadataScanner,
-    CloudRunWorkerExplorerService,
-    CloudRunWorkerService,
-    { provide: Logger, useValue: new Logger("CloudRunWorkerModule") },
+    CloudRunQueueWorkerExplorerService,
+    CloudRunQueueWorkerService,
+    { provide: Logger, useValue: new Logger("CloudRunQueueWorkerModule") },
   ],
 })
-export class CloudRunWorkerModule {
-  public static register(options: CloudRunWorkerModuleOptions = {}): DynamicModule {
-    const CloudRunWorkerController = getWorkerController(options.workerController);
+export class CloudRunQueueWorkerModule {
+  public static register(options: CloudRunQueueWorkerModuleOptions = {}): DynamicModule {
+    const CloudRunQueueWorkerController = getWorkerController(options.workerController);
     const providers: Provider[] = [createOptionProvider(CLOUD_RUN_PUBSUB_WORKER_MODULE_OPTIONS, options)];
 
     return {
-      controllers: [CloudRunWorkerController],
+      controllers: [CloudRunQueueWorkerController],
       global: true,
-      module: CloudRunWorkerModule,
+      module: CloudRunQueueWorkerModule,
       providers,
     };
   }
 
-  public static registerAsync(options: CloudRunWorkerModuleAsyncOptions): DynamicModule {
-    const CloudRunWorkerController = getWorkerController(options.workerController);
+  public static registerAsync(options: CloudRunQueueWorkerModuleAsyncOptions): DynamicModule {
+    const CloudRunQueueWorkerController = getWorkerController(options.workerController);
     const providers = [...createAsyncProviders(CLOUD_RUN_PUBSUB_WORKER_MODULE_OPTIONS, options)];
     return {
-      controllers: [CloudRunWorkerController],
+      controllers: [CloudRunQueueWorkerController],
       global: true,
       imports: [...(options.imports || [])],
-      module: CloudRunWorkerModule,
+      module: CloudRunQueueWorkerModule,
       providers,
     };
   }

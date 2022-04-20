@@ -1,24 +1,24 @@
 import { Test } from "@nestjs/testing";
-import { CloudRunWorker, CloudRunWorkerProcess } from "./decorators";
-import { CloudRunWorkerExplorerService } from "./explorer.service";
-import { CloudRunWorkerModule } from "./worker.module";
-describe("CloudRunWorkerExplorerService", () => {
+import { CloudRunQueueWorker, CloudRunQueueWorkerProcess } from "./decorators";
+import { CloudRunQueueWorkerExplorerService } from "./explorer.service";
+import { CloudRunQueueWorkerModule } from "./worker.module";
+describe("CloudRunQueueWorkerExplorerService", () => {
   it("should get empty workers", async () => {
-    const app = await Test.createTestingModule({ imports: [CloudRunWorkerModule.register()] }).compile();
-    const explorer = app.get<CloudRunWorkerExplorerService>(CloudRunWorkerExplorerService);
+    const app = await Test.createTestingModule({ imports: [CloudRunQueueWorkerModule.register()] }).compile();
+    const explorer = app.get<CloudRunQueueWorkerExplorerService>(CloudRunQueueWorkerExplorerService);
     expect(explorer).toBeDefined();
     expect(explorer.explore()).toEqual([]);
   });
 
   it("should get worker", async () => {
-    @CloudRunWorker("TestWorker")
+    @CloudRunQueueWorker("TestWorker")
     class TestWorker {}
 
     const app = await Test.createTestingModule({
-      imports: [CloudRunWorkerModule.register()],
+      imports: [CloudRunQueueWorkerModule.register()],
       providers: [TestWorker],
     }).compile();
-    const explorer = app.get<CloudRunWorkerExplorerService>(CloudRunWorkerExplorerService);
+    const explorer = app.get<CloudRunQueueWorkerExplorerService>(CloudRunQueueWorkerExplorerService);
     expect(explorer).toBeDefined();
     expect(explorer.explore()).toEqual([
       {
@@ -31,9 +31,9 @@ describe("CloudRunWorkerExplorerService", () => {
   });
 
   it("should get worker and processor", async () => {
-    @CloudRunWorker("TestWorker")
+    @CloudRunQueueWorker("TestWorker")
     class TestWorker {
-      @CloudRunWorkerProcess()
+      @CloudRunQueueWorkerProcess()
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       public async process(): Promise<void> {}
 
@@ -42,10 +42,10 @@ describe("CloudRunWorkerExplorerService", () => {
     }
 
     const app = await Test.createTestingModule({
-      imports: [CloudRunWorkerModule.register()],
+      imports: [CloudRunQueueWorkerModule.register()],
       providers: [TestWorker],
     }).compile();
-    const explorer = app.get<CloudRunWorkerExplorerService>(CloudRunWorkerExplorerService);
+    const explorer = app.get<CloudRunQueueWorkerExplorerService>(CloudRunQueueWorkerExplorerService);
     expect(explorer).toBeDefined();
     expect(explorer.explore()).toEqual([
       {

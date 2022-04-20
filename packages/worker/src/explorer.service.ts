@@ -3,16 +3,16 @@ import { DiscoveryService } from "@nestjs/core";
 import { MetadataScanner } from "@nestjs/core/metadata-scanner";
 import { CLOUD_RUN_PUBSUB_WORKER_DECORATOR, CLOUD_RUN_PUBSUB_WORKER_PROCESS_DECORATOR } from "./constants";
 import {
-  CloudRunWorkerDecoratorArgs,
-  CloudRunWorkerMetadata,
-  CloudRunWorkerProcessDecoratorArgs,
-  CloudRunWorkerProcessorMetadata,
+  CloudRunQueueWorkerDecoratorArgs,
+  CloudRunQueueWorkerMetadata,
+  CloudRunQueueWorkerProcessDecoratorArgs,
+  CloudRunQueueWorkerProcessorMetadata,
 } from "./interfaces";
 @Injectable()
-export class CloudRunWorkerExplorerService {
+export class CloudRunQueueWorkerExplorerService {
   constructor(private readonly discoveryService: DiscoveryService, private readonly metadataScanner: MetadataScanner) {}
 
-  public explore(): CloudRunWorkerMetadata[] {
+  public explore(): CloudRunQueueWorkerMetadata[] {
     const workers = this.getWorkers();
 
     for (const worker of workers) {
@@ -22,15 +22,15 @@ export class CloudRunWorkerExplorerService {
     return workers;
   }
 
-  private getWorkers(): CloudRunWorkerMetadata[] {
-    const metadata: CloudRunWorkerMetadata[] = [];
+  private getWorkers(): CloudRunQueueWorkerMetadata[] {
+    const metadata: CloudRunQueueWorkerMetadata[] = [];
     for (const classInstanceWrapper of this.discoveryService
       .getProviders()
       .filter((instanceWrapper) => instanceWrapper.instance?.constructor)) {
       const args = Reflect.getMetadata(
         CLOUD_RUN_PUBSUB_WORKER_DECORATOR,
         classInstanceWrapper.instance.constructor,
-      ) as CloudRunWorkerDecoratorArgs;
+      ) as CloudRunQueueWorkerDecoratorArgs;
 
       if (args) {
         metadata.push({
@@ -44,8 +44,8 @@ export class CloudRunWorkerExplorerService {
     return metadata;
   }
 
-  private getWorkerProcessors(worker: CloudRunWorkerMetadata): CloudRunWorkerProcessorMetadata[] {
-    const metadata: CloudRunWorkerProcessorMetadata[] = [];
+  private getWorkerProcessors(worker: CloudRunQueueWorkerMetadata): CloudRunQueueWorkerProcessorMetadata[] {
+    const metadata: CloudRunQueueWorkerProcessorMetadata[] = [];
     const instance = worker.instance;
     const prototype = Object.getPrototypeOf(instance);
 
@@ -53,7 +53,7 @@ export class CloudRunWorkerExplorerService {
       const args = Reflect.getMetadata(
         CLOUD_RUN_PUBSUB_WORKER_PROCESS_DECORATOR,
         prototype[methodName],
-      ) as CloudRunWorkerProcessDecoratorArgs;
+      ) as CloudRunQueueWorkerProcessDecoratorArgs;
       if (args) {
         metadata.push({
           priority: args.priority || 0,
