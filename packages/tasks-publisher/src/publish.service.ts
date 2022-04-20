@@ -1,14 +1,14 @@
 import { CloudTasksClient } from "@google-cloud/tasks";
 import { Inject, Injectable } from "@nestjs/common";
-import { CLOUD_RUN_TASKS_CLIENT, CLOUD_RUN_TASKS_PUBLISHER_MODULE_OPTIONS } from "./constants";
-import { CloudRunQueueTasksPublisherModuleOptions, PublishData, PublishOptions } from "./interfaces";
+import { TASKS_CLIENT, TASKS_PUBLISHER_MODULE_OPTIONS } from "./constants";
+import { TasksPublisherModuleOptions, PublishData, PublishOptions } from "./interfaces";
 
 @Injectable()
-export class CloudRunQueueTasksPublisherService {
+export class TasksPublisherService {
   constructor(
-    @Inject(CLOUD_RUN_TASKS_PUBLISHER_MODULE_OPTIONS)
-    private readonly options: CloudRunQueueTasksPublisherModuleOptions,
-    @Inject(CLOUD_RUN_TASKS_CLIENT) private readonly client: CloudTasksClient,
+    @Inject(TASKS_PUBLISHER_MODULE_OPTIONS)
+    private readonly options: TasksPublisherModuleOptions,
+    @Inject(TASKS_CLIENT) private readonly client: CloudTasksClient,
   ) {}
 
   public async publish<T>(message: PublishData<T>, options?: PublishOptions): Promise<string> {
@@ -36,7 +36,7 @@ export class CloudRunQueueTasksPublisherService {
       },
     });
 
-    const taskName = task.name || "";
+    const taskName = task?.name || "";
 
     if (this.options.extraConfig?.postPublish) {
       await this.options.extraConfig?.postPublish(taskMessage, taskName);

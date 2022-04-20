@@ -26,4 +26,4 @@ services:
       - gcloud-tasks-emulator
     environment:
       PUBSUB_EMULATOR_HOST: gcloud-pubsub-emulator:8538
-      CLOUD_RUN_WORKER_ENDPOINT: http://demo:3000
+      WORKER_ENDPOINT: http://demo:3000

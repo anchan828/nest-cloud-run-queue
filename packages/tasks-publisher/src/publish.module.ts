@@ -2,34 +2,34 @@ import { createAsyncProviders, createOptionProvider } from "@anchan828/nest-clou
 import { CloudTasksClient } from "@google-cloud/tasks";
 import { DynamicModule, Module } from "@nestjs/common";
 import { FactoryProvider } from "@nestjs/common/interfaces";
-import { CLOUD_RUN_TASKS_CLIENT, CLOUD_RUN_TASKS_PUBLISHER_MODULE_OPTIONS } from "./constants";
-import { CloudRunQueueTasksPublisherModuleAsyncOptions, CloudRunQueueTasksPublisherModuleOptions } from "./interfaces";
+import { TASKS_CLIENT, TASKS_PUBLISHER_MODULE_OPTIONS } from "./constants";
+import { TasksPublisherModuleAsyncOptions, TasksPublisherModuleOptions } from "./interfaces";
 import { createClient } from "./providers";
-import { CloudRunQueueTasksPublisherService } from "./publish.service";
+import { TasksPublisherService } from "./publish.service";
 @Module({})
-export class CloudRunQueueTasksPublisherModule {
-  public static register(options: CloudRunQueueTasksPublisherModuleOptions = {}): DynamicModule {
+export class TasksPublisherModule {
+  public static register(options: TasksPublisherModuleOptions = {}): DynamicModule {
     const providers = [
-      createOptionProvider(CLOUD_RUN_TASKS_PUBLISHER_MODULE_OPTIONS, options),
-      CloudRunQueueTasksPublisherService,
-      { provide: CLOUD_RUN_TASKS_CLIENT, useValue: createClient(options) },
+      createOptionProvider(TASKS_PUBLISHER_MODULE_OPTIONS, options),
+      TasksPublisherService,
+      { provide: TASKS_CLIENT, useValue: createClient(options) },
     ];
     return {
       exports: providers,
       global: true,
-      module: CloudRunQueueTasksPublisherModule,
+      module: TasksPublisherModule,
       providers,
     };
   }
 
-  public static registerAsync(options: CloudRunQueueTasksPublisherModuleAsyncOptions): DynamicModule {
+  public static registerAsync(options: TasksPublisherModuleAsyncOptions): DynamicModule {
     const asyncProviders = [
-      ...createAsyncProviders(CLOUD_RUN_TASKS_PUBLISHER_MODULE_OPTIONS, options),
-      CloudRunQueueTasksPublisherService,
+      ...createAsyncProviders(TASKS_PUBLISHER_MODULE_OPTIONS, options),
+      TasksPublisherService,
       {
-        inject: [CLOUD_RUN_TASKS_PUBLISHER_MODULE_OPTIONS],
-        provide: CLOUD_RUN_TASKS_CLIENT,
-        useFactory: (options: CloudRunQueueTasksPublisherModuleOptions): CloudTasksClient => createClient(options),
+        inject: [TASKS_PUBLISHER_MODULE_OPTIONS],
+        provide: TASKS_CLIENT,
+        useFactory: (options: TasksPublisherModuleOptions): CloudTasksClient => createClient(options),
       } as FactoryProvider,
     ];
     const providers = [...asyncProviders];
@@ -37,7 +37,7 @@ export class CloudRunQueueTasksPublisherModule {
       exports: providers,
       global: true,
       imports: [...(options.imports || [])],
-      module: CloudRunQueueTasksPublisherModule,
+      module: TasksPublisherModule,
       providers,
     };
   }

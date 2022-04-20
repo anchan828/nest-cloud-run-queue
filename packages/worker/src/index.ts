@@ -1,19 +1,19 @@
 export {
-  CLOUD_RUN_ALL_WORKERS_WORKER_NAME as CLOUD_RUN_ALL_WORKERS,
-  CLOUD_RUN_UNHANDLED_WORKER_NAME as CLOUD_RUN_UNHANDLED,
+  ALL_WORKERS_QUEUE_WORKER_NAME as ALL_QUEUE_WORKERS,
+  UNHANDLED_QUEUE_WORKER_NAME as UNHANDLED_QUEUE_WORKER,
 } from "./constants";
-export { CloudRunQueueWorker, CloudRunQueueWorkerProcess } from "./decorators";
+export { QueueWorker as Worker, QueueWorkerProcess as WorkerProcess } from "./decorators";
 export {
-  CloudRunQueueWorkerModuleAsyncOptions,
-  CloudRunQueueWorkerModuleOptions,
-  CloudRunQueueWorkerModuleOptionsFactory,
-  CloudRunQueueWorkerProcessor,
-  CloudRunQueueWorkerProcessorStatus,
-  CloudRunQueueWorkerExtraConfig,
-  CloudRunQueueWorkerRawMessage,
-  CloudRunQueueWorkerControllerInterface,
-  CloudRunQueueWorkerControllerMetadata,
+  QueueWorkerModuleAsyncOptions,
+  QueueWorkerModuleOptions,
+  QueueWorkerModuleOptionsFactory,
+  QueueWorkerProcessor,
+  QueueWorkerProcessorStatus,
+  QueueWorkerExtraConfig,
+  QueueWorkerRawMessage,
+  QueueWorkerControllerInterface,
+  QueueWorkerControllerMetadata,
 } from "./interfaces";
 
-export { CloudRunQueueWorkerModule } from "./worker.module";
-export { CloudRunQueueWorkerService } from "./worker.service";
+export { QueueWorkerModule } from "./worker.module";
+export { QueueWorkerService } from "./worker.service";

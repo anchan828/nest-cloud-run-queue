@@ -1,5 +1,5 @@
 import {
-  CloudRunQueueMessage,
+  Message,
   ModuleAsyncOptions,
   ModuleOptions,
   ModuleOptionsFactory,
@@ -9,19 +9,17 @@ import { Attributes } from "@google-cloud/pubsub";
 import { ClientConfig } from "@google-cloud/pubsub/build/src/pubsub";
 import { PublishOptions } from "@google-cloud/pubsub/build/src/topic";
 
-export interface CloudRunQueuePubSubPublisherModuleOptions extends ModuleOptions {
+export interface PubSubPublisherModuleOptions extends ModuleOptions {
   // default topic
   topic?: string;
   clientConfig?: ClientConfig;
   publishConfig?: PublishOptions;
   extraConfig?: PublishExtraConfig<PublishData<any>>;
 }
-export type CloudRunQueuePubSubPublisherModuleAsyncOptions =
-  ModuleAsyncOptions<CloudRunQueuePubSubPublisherModuleOptions>;
+export type PubSubPublisherModuleAsyncOptions = ModuleAsyncOptions<PubSubPublisherModuleOptions>;
 
-export type CloudRunQueuePubSubPublisherModuleOptionsFactory =
-  ModuleOptionsFactory<CloudRunQueuePubSubPublisherModuleOptions>;
+export type PubSubPublisherModuleOptionsFactory = ModuleOptionsFactory<PubSubPublisherModuleOptions>;
 
-export interface PublishData<T> extends CloudRunQueueMessage<T> {
+export interface PublishData<T> extends Message<T> {
   attributes?: Attributes;
 }

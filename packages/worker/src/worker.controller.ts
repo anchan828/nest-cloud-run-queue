@@ -1,29 +1,20 @@
 import { Body, Controller, Headers, HttpCode, RequestMapping, RequestMethod, Type } from "@nestjs/common";
-import {
-  CloudRunQueueWorkerControllerInterface,
-  CloudRunReceivedMessage,
-  CloudRunQueueWorkerControllerMetadata,
-} from "./interfaces";
-import { CloudRunQueueWorkerService } from "./worker.service";
+import { QueueWorkerControllerInterface, ReceivedMessage, QueueWorkerControllerMetadata } from "./interfaces";
+import { QueueWorkerService } from "./worker.service";
 
-export function getWorkerController(
-  metadata?: CloudRunQueueWorkerControllerMetadata,
-): Type<CloudRunQueueWorkerControllerInterface> {
+export function getWorkerController(metadata?: QueueWorkerControllerMetadata): Type<QueueWorkerControllerInterface> {
   const path = metadata?.path;
   const method = metadata?.method || RequestMethod.POST;
   @Controller()
-  class CloudRunQueueWorkerController implements CloudRunQueueWorkerControllerInterface {
-    constructor(private readonly service: CloudRunQueueWorkerService) {}
+  class WorkerController implements QueueWorkerControllerInterface {
+    constructor(private readonly service: QueueWorkerService) {}
 
     @RequestMapping({ method, path })
     @HttpCode(metadata?.statusCode || 200)
-    public async execute(
-      @Body() body: CloudRunReceivedMessage,
-      @Headers() headers: Record<string, string>,
-    ): Promise<void> {
+    public async execute(@Body() body: ReceivedMessage, @Headers() headers: Record<string, string>): Promise<void> {
       await this.service.execute({ ...body.message, headers });
     }
   }
 
-  return CloudRunQueueWorkerController;
+  return WorkerController;
 }

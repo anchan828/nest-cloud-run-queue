@@ -2,37 +2,34 @@ import { createAsyncProviders, createOptionProvider } from "@anchan828/nest-clou
 import { PubSub } from "@google-cloud/pubsub";
 import { DynamicModule, Module } from "@nestjs/common";
 import { FactoryProvider } from "@nestjs/common/interfaces";
-import { CLOUD_RUN_PUBSUB, CLOUD_RUN_PUBSUB_PUBLISHER_MODULE_OPTIONS } from "./constants";
-import {
-  CloudRunQueuePubSubPublisherModuleAsyncOptions,
-  CloudRunQueuePubSubPublisherModuleOptions,
-} from "./interfaces";
+import { PUBSUB, PUBSUB_PUBLISHER_MODULE_OPTIONS } from "./constants";
+import { PubSubPublisherModuleAsyncOptions, PubSubPublisherModuleOptions } from "./interfaces";
 import { createPubSub } from "./providers";
-import { CloudRunQueuePubSubPublisherService } from "./publish.service";
+import { PubSubPublisherService } from "./publish.service";
 @Module({})
-export class CloudRunQueuePubSubPublisherModule {
-  public static register(options: CloudRunQueuePubSubPublisherModuleOptions = {}): DynamicModule {
+export class PubSubPublisherModule {
+  public static register(options: PubSubPublisherModuleOptions = {}): DynamicModule {
     const providers = [
-      createOptionProvider(CLOUD_RUN_PUBSUB_PUBLISHER_MODULE_OPTIONS, options),
-      CloudRunQueuePubSubPublisherService,
-      { provide: CLOUD_RUN_PUBSUB, useValue: createPubSub(options) },
+      createOptionProvider(PUBSUB_PUBLISHER_MODULE_OPTIONS, options),
+      PubSubPublisherService,
+      { provide: PUBSUB, useValue: createPubSub(options) },
     ];
     return {
       exports: providers,
       global: true,
-      module: CloudRunQueuePubSubPublisherModule,
+      module: PubSubPublisherModule,
       providers,
     };
   }
 
-  public static registerAsync(options: CloudRunQueuePubSubPublisherModuleAsyncOptions): DynamicModule {
+  public static registerAsync(options: PubSubPublisherModuleAsyncOptions): DynamicModule {
     const asyncProviders = [
-      ...createAsyncProviders(CLOUD_RUN_PUBSUB_PUBLISHER_MODULE_OPTIONS, options),
-      CloudRunQueuePubSubPublisherService,
+      ...createAsyncProviders(PUBSUB_PUBLISHER_MODULE_OPTIONS, options),
+      PubSubPublisherService,
       {
-        inject: [CLOUD_RUN_PUBSUB_PUBLISHER_MODULE_OPTIONS],
-        provide: CLOUD_RUN_PUBSUB,
-        useFactory: (options: CloudRunQueuePubSubPublisherModuleOptions): PubSub => createPubSub(options),
+        inject: [PUBSUB_PUBLISHER_MODULE_OPTIONS],
+        provide: PUBSUB,
+        useFactory: (options: PubSubPublisherModuleOptions): PubSub => createPubSub(options),
       } as FactoryProvider,
     ];
     const providers = [...asyncProviders];
@@ -40,7 +37,7 @@ export class CloudRunQueuePubSubPublisherModule {
       exports: providers,
       global: true,
       imports: [...(options.imports || [])],
-      module: CloudRunQueuePubSubPublisherModule,
+      module: PubSubPublisherModule,
       providers,
     };
   }

@@ -1,22 +1,22 @@
-import { CloudRunQueueMessage } from "@anchan828/nest-cloud-run-common";
+import { Message } from "@anchan828/nest-cloud-run-common";
 import { BadRequestException } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import {
-  CLOUD_RUN_ALL_WORKERS_WORKER_NAME,
-  CLOUD_RUN_UNHANDLED_WORKER_NAME,
+  ALL_WORKERS_QUEUE_WORKER_NAME,
+  UNHANDLED_QUEUE_WORKER_NAME,
   ERROR_INVALID_MESSAGE_FORMAT,
-  ERROR_WORKER_NAME_NOT_FOUND,
+  ERROR_QUEUE_WORKER_NAME_NOT_FOUND,
   ERROR_WORKER_NOT_FOUND,
 } from "./constants";
-import { CloudRunQueueWorkerExplorerService } from "./explorer.service";
+import { QueueWorkerExplorerService } from "./explorer.service";
 import {
-  CloudRunQueueWorkerRawMessage,
-  CloudRunQueueWorkerMetadata,
-  CloudRunQueueWorkerProcessor,
-  CloudRunQueueWorkerProcessorMetadata,
+  QueueWorkerRawMessage,
+  QueueWorkerMetadata,
+  QueueWorkerProcessor,
+  QueueWorkerProcessorMetadata,
 } from "./interfaces";
-import { CloudRunQueueWorkerModule } from "./worker.module";
-import { CloudRunQueueWorkerService } from "./worker.service";
+import { QueueWorkerModule } from "./worker.module";
+import { QueueWorkerService } from "./worker.service";
 
 function toBase64(json: object | string): string {
   if (typeof json === "object") {
@@ -26,15 +26,15 @@ function toBase64(json: object | string): string {
   return Buffer.from(json).toString("base64");
 }
 
-describe("CloudRunQueueWorkerService", () => {
-  let service: CloudRunQueueWorkerService;
-  let explorerService: CloudRunQueueWorkerExplorerService;
+describe("QueueWorkerService", () => {
+  let service: QueueWorkerService;
+  let explorerService: QueueWorkerExplorerService;
   beforeEach(async () => {
     const app = await Test.createTestingModule({
-      imports: [CloudRunQueueWorkerModule.register({ throwModuleError: true })],
+      imports: [QueueWorkerModule.register({ throwModuleError: true })],
     }).compile();
-    service = app.get<CloudRunQueueWorkerService>(CloudRunQueueWorkerService);
-    explorerService = app.get<CloudRunQueueWorkerExplorerService>(CloudRunQueueWorkerExplorerService);
+    service = app.get<QueueWorkerService>(QueueWorkerService);
+    explorerService = app.get<QueueWorkerExplorerService>(QueueWorkerExplorerService);
   });
 
   it("should be defined", () => {
@@ -43,44 +43,44 @@ describe("CloudRunQueueWorkerService", () => {
   });
   it("should ignore error if data invalid", async () => {
     const app = await Test.createTestingModule({
-      imports: [CloudRunQueueWorkerModule.registerAsync({ useFactory: () => ({} as any) })],
+      imports: [QueueWorkerModule.registerAsync({ useFactory: () => ({} as any) })],
     }).compile();
-    service = app.get<CloudRunQueueWorkerService>(CloudRunQueueWorkerService);
-    explorerService = app.get<CloudRunQueueWorkerExplorerService>(CloudRunQueueWorkerExplorerService);
-    await expect(service.execute({ data: "invalid" } as CloudRunQueueWorkerRawMessage)).resolves.toBeUndefined();
+    service = app.get<QueueWorkerService>(QueueWorkerService);
+    explorerService = app.get<QueueWorkerExplorerService>(QueueWorkerExplorerService);
+    await expect(service.execute({ data: "invalid" } as QueueWorkerRawMessage)).resolves.toBeUndefined();
   });
   it("should throw error if data invalid", async () => {
-    await expect(service.execute({ data: "invalid" } as CloudRunQueueWorkerRawMessage)).rejects.toThrowError(
+    await expect(service.execute({ data: "invalid" } as QueueWorkerRawMessage)).rejects.toThrowError(
       new BadRequestException(ERROR_INVALID_MESSAGE_FORMAT),
     );
   });
 
   it("should throw error if data is null", async () => {
-    await expect(service.execute({ data: null } as CloudRunQueueWorkerRawMessage)).rejects.toThrowError(
+    await expect(service.execute({ data: null } as QueueWorkerRawMessage)).rejects.toThrowError(
       new BadRequestException(ERROR_INVALID_MESSAGE_FORMAT),
     );
   });
 
   it("should throw error if data is not message object", async () => {
     await expect(
-      service.execute({ data: toBase64("testtest"), messageId: "1" } as CloudRunQueueWorkerRawMessage),
+      service.execute({ data: toBase64("testtest"), messageId: "1" } as QueueWorkerRawMessage),
     ).rejects.toThrowError(new BadRequestException(ERROR_INVALID_MESSAGE_FORMAT));
   });
 
   it("should throw error if message dosen't have name", async () => {
-    await expect(
-      service.execute({ data: toBase64({ data: "data" } as CloudRunQueueMessage), messageId: "1" }),
-    ).rejects.toThrowError(new BadRequestException(ERROR_WORKER_NAME_NOT_FOUND));
+    await expect(service.execute({ data: toBase64({ data: "data" } as Message), messageId: "1" })).rejects.toThrowError(
+      new BadRequestException(ERROR_QUEUE_WORKER_NAME_NOT_FOUND),
+    );
   });
 
   it("should throw error if worker not found", async () => {
-    await expect(
-      service.execute({ data: toBase64({ name: "name" } as CloudRunQueueMessage), messageId: "1" }),
-    ).rejects.toThrowError(new BadRequestException(ERROR_WORKER_NOT_FOUND("name")));
+    await expect(service.execute({ data: toBase64({ name: "name" } as Message), messageId: "1" })).rejects.toThrowError(
+      new BadRequestException(ERROR_WORKER_NOT_FOUND("name")),
+    );
   });
 
   it("should run processor if worker found (data is base64)", async () => {
-    const processor: CloudRunQueueWorkerProcessor = (message: any, raw: any) => {
+    const processor: QueueWorkerProcessor = (message: any, raw: any) => {
       expect(message).toEqual({ date: expect.any(Date), prop: 1 });
       expect(raw).toEqual({ attributes: { attr: 2 }, data: expect.anything(), messageId: "1" });
     };
@@ -96,7 +96,7 @@ describe("CloudRunQueueWorkerService", () => {
           { priority: 1, processor: processorMock },
         ],
       },
-    ] as CloudRunQueueWorkerMetadata[]);
+    ] as QueueWorkerMetadata[]);
     await expect(
       service.execute({
         attributes: { attr: 2 },
@@ -107,7 +107,7 @@ describe("CloudRunQueueWorkerService", () => {
     expect(processorMock).toBeCalledTimes(1);
   });
   it("should run processor if worker found (data is buffer)", async () => {
-    const processor: CloudRunQueueWorkerProcessor = (message: any, raw: any) => {
+    const processor: QueueWorkerProcessor = (message: any, raw: any) => {
       expect(message).toEqual({ date: expect.any(Date), prop: 1 });
       expect(raw).toEqual({ attributes: { attr: 2 }, data: expect.anything(), messageId: "1" });
     };
@@ -123,7 +123,7 @@ describe("CloudRunQueueWorkerService", () => {
           { priority: 1, processor: processorMock },
         ],
       },
-    ] as CloudRunQueueWorkerMetadata[]);
+    ] as QueueWorkerMetadata[]);
     await expect(
       service.execute({
         attributes: { attr: 2 },
@@ -135,7 +135,7 @@ describe("CloudRunQueueWorkerService", () => {
   });
 
   it("should run processor if worker found (data is Uint8Array)", async () => {
-    const processor: CloudRunQueueWorkerProcessor = (message: any, raw: any) => {
+    const processor: QueueWorkerProcessor = (message: any, raw: any) => {
       expect(message).toEqual({ date: expect.any(Date), prop: 1 });
       expect(raw).toEqual({ attributes: { attr: 2 }, data: expect.anything(), messageId: "1" });
     };
@@ -151,7 +151,7 @@ describe("CloudRunQueueWorkerService", () => {
           { priority: 1, processor: processorMock },
         ],
       },
-    ] as CloudRunQueueWorkerMetadata[]);
+    ] as QueueWorkerMetadata[]);
     await expect(
       service.execute({
         attributes: { attr: 2 },
@@ -161,15 +161,15 @@ describe("CloudRunQueueWorkerService", () => {
     ).resolves.toBeUndefined();
     expect(processorMock).toBeCalledTimes(1);
   });
-  it("should run processor if CLOUD_RUN_ALL_WORKERS_WORKER_NAME worker found", async () => {
+  it("should run processor if ALL_WORKERS_QUEUE_WORKER_NAME worker found", async () => {
     const processorMock = jest.fn().mockResolvedValueOnce("ok");
     jest.spyOn(explorerService, "explore").mockReturnValueOnce([
       {
-        name: CLOUD_RUN_ALL_WORKERS_WORKER_NAME,
+        name: ALL_WORKERS_QUEUE_WORKER_NAME,
         priority: 0,
-        processors: [{ priority: 0, processor: processorMock }] as CloudRunQueueWorkerProcessorMetadata[],
+        processors: [{ priority: 0, processor: processorMock }] as QueueWorkerProcessorMetadata[],
       },
-    ] as CloudRunQueueWorkerMetadata[]);
+    ] as QueueWorkerMetadata[]);
     const date = new Date();
     const encodeData = toBase64({ data: { date, prop: 1 }, name: "name" });
 
@@ -182,15 +182,15 @@ describe("CloudRunQueueWorkerService", () => {
     );
   });
 
-  it("should run processor if CLOUD_RUN_UNHANDLED_WORKER_NAME worker found", async () => {
+  it("should run processor if UNHANDLED_QUEUE_WORKER_NAME worker found", async () => {
     const processorMock = jest.fn().mockResolvedValueOnce("ok");
     jest.spyOn(explorerService, "explore").mockReturnValueOnce([
       {
-        name: CLOUD_RUN_UNHANDLED_WORKER_NAME,
+        name: UNHANDLED_QUEUE_WORKER_NAME,
         priority: 0,
-        processors: [{ priority: 0, processor: processorMock }] as CloudRunQueueWorkerProcessorMetadata[],
+        processors: [{ priority: 0, processor: processorMock }] as QueueWorkerProcessorMetadata[],
       },
-    ] as CloudRunQueueWorkerMetadata[]);
+    ] as QueueWorkerMetadata[]);
     await expect(
       service.execute({
         attributes: { attr: 2 },
@@ -211,7 +211,7 @@ describe("CloudRunQueueWorkerService", () => {
           { priority: 2, processor: () => processorMock(5) },
           { priority: 1, processor: () => processorMock(4) },
           { priority: 3, processor: () => processorMock(6) },
-        ] as CloudRunQueueWorkerProcessorMetadata[],
+        ] as QueueWorkerProcessorMetadata[],
       },
       {
         name: "name",
@@ -220,18 +220,18 @@ describe("CloudRunQueueWorkerService", () => {
           { priority: 2, processor: () => processorMock(2) },
           { priority: 1, processor: () => processorMock(1) },
           { priority: 3, processor: () => processorMock(3) },
-        ] as CloudRunQueueWorkerProcessorMetadata[],
+        ] as QueueWorkerProcessorMetadata[],
       },
       {
-        name: CLOUD_RUN_ALL_WORKERS_WORKER_NAME,
+        name: ALL_WORKERS_QUEUE_WORKER_NAME,
         priority: 1,
         processors: [
           { priority: 2, processor: () => processorMock(8) },
           { priority: 1, processor: () => processorMock(7) },
           { priority: 3, processor: () => processorMock(9) },
-        ] as CloudRunQueueWorkerProcessorMetadata[],
+        ] as QueueWorkerProcessorMetadata[],
       },
-    ] as CloudRunQueueWorkerMetadata[]);
+    ] as QueueWorkerMetadata[]);
 
     await expect(
       service.execute({
@@ -254,10 +254,10 @@ describe("CloudRunQueueWorkerService", () => {
 
   it("maxRetryAttempts", async () => {
     const app = await Test.createTestingModule({
-      imports: [CloudRunQueueWorkerModule.registerAsync({ useFactory: () => ({ maxRetryAttempts: 3 } as any) })],
+      imports: [QueueWorkerModule.registerAsync({ useFactory: () => ({ maxRetryAttempts: 3 } as any) })],
     }).compile();
-    service = app.get<CloudRunQueueWorkerService>(CloudRunQueueWorkerService);
-    explorerService = app.get<CloudRunQueueWorkerExplorerService>(CloudRunQueueWorkerExplorerService);
+    service = app.get<QueueWorkerService>(QueueWorkerService);
+    explorerService = app.get<QueueWorkerExplorerService>(QueueWorkerExplorerService);
 
     const mock = jest.fn().mockImplementation((): void => {
       throw new Error();
@@ -265,9 +265,9 @@ describe("CloudRunQueueWorkerService", () => {
     jest.spyOn(explorerService, "explore").mockReturnValueOnce([
       {
         name: "name",
-        processors: [{ priority: 0, processor: mock }] as CloudRunQueueWorkerProcessorMetadata[],
+        processors: [{ priority: 0, processor: mock }] as QueueWorkerProcessorMetadata[],
       },
-    ] as CloudRunQueueWorkerMetadata[]);
+    ] as QueueWorkerMetadata[]);
     await expect(
       service.execute({ attributes: { attr: 2 }, data: toBase64({ data: { prop: 1 }, name: "name" }), messageId: "1" }),
     ).resolves.toBeUndefined();

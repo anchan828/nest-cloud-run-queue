@@ -1,5 +1,5 @@
 import {
-  CloudRunQueueMessage,
+  Message,
   ModuleAsyncOptions,
   ModuleOptions,
   ModuleOptionsFactory,
@@ -7,18 +7,16 @@ import {
 } from "@anchan828/nest-cloud-run-common";
 import type { google } from "@google-cloud/tasks/build/protos/protos";
 import { ClientOptions, CallOptions } from "google-gax";
-export interface CloudRunQueueTasksPublisherModuleOptions extends ModuleOptions {
+export interface TasksPublisherModuleOptions extends ModuleOptions {
   // default topic
   queue?: string;
   clientConfig?: ClientOptions;
   publishConfig?: PublishConfig;
   extraConfig?: PublishExtraConfig;
 }
-export type CloudRunQueueTasksPublisherModuleAsyncOptions =
-  ModuleAsyncOptions<CloudRunQueueTasksPublisherModuleOptions>;
+export type TasksPublisherModuleAsyncOptions = ModuleAsyncOptions<TasksPublisherModuleOptions>;
 
-export type CloudRunQueueTasksPublisherModuleOptionsFactory =
-  ModuleOptionsFactory<CloudRunQueueTasksPublisherModuleOptions>;
+export type TasksPublisherModuleOptionsFactory = ModuleOptionsFactory<TasksPublisherModuleOptions>;
 
 export type PublishConfig = Omit<google.cloud.tasks.v2.ITask, "name">;
 
@@ -27,4 +25,4 @@ export type PublishOptions = {
   gaxOpts?: CallOptions;
 } & PublishConfig;
 
-export type PublishData<T> = CloudRunQueueMessage<T>;
+export type PublishData<T> = Message<T>;

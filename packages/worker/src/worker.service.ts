@@ -1,55 +1,55 @@
-import { CloudRunQueueMessage } from "@anchan828/nest-cloud-run-common";
+import { Message } from "@anchan828/nest-cloud-run-common";
 import { BadRequestException, Inject, Injectable, Logger } from "@nestjs/common";
 import { isBase64 } from "class-validator";
-import { CloudRunQueueWorkerModuleOptions } from "./interfaces";
+import { QueueWorkerModuleOptions } from "./interfaces";
 import {
-  CLOUD_RUN_ALL_WORKERS_WORKER_NAME,
-  CLOUD_RUN_PUBSUB_WORKER_MODULE_OPTIONS,
-  CLOUD_RUN_UNHANDLED_WORKER_NAME,
+  ALL_WORKERS_QUEUE_WORKER_NAME,
+  QUEUE_WORKER_MODULE_OPTIONS,
+  UNHANDLED_QUEUE_WORKER_NAME,
   ERROR_INVALID_MESSAGE_FORMAT,
-  ERROR_WORKER_NAME_NOT_FOUND,
+  ERROR_QUEUE_WORKER_NAME_NOT_FOUND,
   ERROR_WORKER_NOT_FOUND,
 } from "./constants";
-import { CloudRunQueueWorkerExplorerService } from "./explorer.service";
+import { QueueWorkerExplorerService } from "./explorer.service";
 import {
-  CloudRunQueueWorkerRawMessage,
-  CloudRunQueueWorkerMetadata,
-  CloudRunQueueWorkerProcessor,
-  CloudRunQueueWorkerProcessorStatus,
+  QueueWorkerRawMessage,
+  QueueWorkerMetadata,
+  QueueWorkerProcessor,
+  QueueWorkerProcessorStatus,
 } from "./interfaces";
 import { parseJSON, sortByPriority } from "./util";
 @Injectable()
-export class CloudRunQueueWorkerService {
-  #allWorkers: CloudRunQueueWorkerMetadata[] | undefined;
+export class QueueWorkerService {
+  #allWorkers: QueueWorkerMetadata[] | undefined;
 
   constructor(
-    @Inject(CLOUD_RUN_PUBSUB_WORKER_MODULE_OPTIONS)
-    private readonly options: CloudRunQueueWorkerModuleOptions,
+    @Inject(QUEUE_WORKER_MODULE_OPTIONS)
+    private readonly options: QueueWorkerModuleOptions,
     private readonly logger: Logger,
-    private readonly explorerService: CloudRunQueueWorkerExplorerService,
+    private readonly explorerService: QueueWorkerExplorerService,
   ) {}
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  public async execute(message: CloudRunQueueWorkerRawMessage): Promise<void> {
+  public async execute(message: QueueWorkerRawMessage): Promise<void> {
     if (!this.#allWorkers) {
       this.#allWorkers = this.explorerService.explore();
     }
 
     const maxRetryAttempts = this.options.maxRetryAttempts ?? 1;
-    const workers: CloudRunQueueWorkerMetadata[] = [];
-    const spetialWorkers: CloudRunQueueWorkerMetadata[] = [];
-    let data: CloudRunQueueMessage<any> = { name: "" };
+    const workers: QueueWorkerMetadata[] = [];
+    const spetialWorkers: QueueWorkerMetadata[] = [];
+    let data: Message<any> = { name: "" };
     try {
       data = this.decodeData(message.data);
       if (!data.name) {
-        throw new Error(ERROR_WORKER_NAME_NOT_FOUND);
+        throw new Error(ERROR_QUEUE_WORKER_NAME_NOT_FOUND);
       }
 
       workers.push(...this.#allWorkers.filter((worker) => data.name === worker.name));
 
       spetialWorkers.push(
         ...this.#allWorkers.filter((worker) =>
-          [CLOUD_RUN_ALL_WORKERS_WORKER_NAME, CLOUD_RUN_UNHANDLED_WORKER_NAME].includes(worker.name),
+          [ALL_WORKERS_QUEUE_WORKER_NAME, UNHANDLED_QUEUE_WORKER_NAME].includes(worker.name),
         ),
       );
 
@@ -69,7 +69,7 @@ export class CloudRunQueueWorkerService {
       .map((w) => sortByPriority(w.processors))
       .flat();
     const processorStatus = await this.options.extraConfig?.preProcessor?.(data.name, data.data, message);
-    if (processorStatus !== CloudRunQueueWorkerProcessorStatus.SKIP) {
+    if (processorStatus !== QueueWorkerProcessorStatus.SKIP) {
       for (const processor of processors) {
         await this.execProcessor(processor.processor, maxRetryAttempts, data.data, message);
       }
@@ -83,10 +83,10 @@ export class CloudRunQueueWorkerService {
   }
 
   private async execProcessor<T>(
-    processor: CloudRunQueueWorkerProcessor,
+    processor: QueueWorkerProcessor,
     maxRetryAttempts: number,
     data: T,
-    rawMessage: CloudRunQueueWorkerRawMessage,
+    rawMessage: QueueWorkerRawMessage,
   ): Promise<void> {
     for (let i = 0; i < maxRetryAttempts; i++) {
       try {
@@ -98,7 +98,7 @@ export class CloudRunQueueWorkerService {
     }
   }
 
-  private decodeData(data?: string | Uint8Array | Buffer | null): CloudRunQueueMessage {
+  private decodeData(data?: string | Uint8Array | Buffer | null): Message {
     if (!data) {
       throw new Error(ERROR_INVALID_MESSAGE_FORMAT);
     }
@@ -116,7 +116,7 @@ export class CloudRunQueueWorkerService {
     }
     try {
       if (typeof data === "string") {
-        return parseJSON(data) as CloudRunQueueMessage;
+        return parseJSON(data) as Message;
       }
 
       return data;
