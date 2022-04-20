@@ -1,6 +1,6 @@
 {
   "name": "@anchan828/nest-cloud-run-queue-tasks-publisher",
-  "version": "1.0.1-next.0",
+  "version": "1.0.2-next.0",
   "description": "> TODO: description",
   "homepage": "https://github.com/anchan828/nest-cloud-run-queue/tree/master/packages/pubsub-publish#readme",
   "bugs": {
@@ -33,7 +33,7 @@
     "watch": "tsc -w"
   },
   "dependencies": {
-    "@anchan828/nest-cloud-run-common": "^1.0.1-next.0",
+    "@anchan828/nest-cloud-run-common": "^1.0.2-next.0",
     "@google-cloud/tasks": "2.5.0"
   },
   "devDependencies": {
