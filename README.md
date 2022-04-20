@@ -18,7 +18,7 @@ Therefore, I used Cloud Pub/Sub or Cloud Tasks so that I could implement Queue v
 ## Demo
 
 See [https://github.com/anchan828/nest-cloud-run-queue/tree/master/packages/demo](https://github.com/anchan828/nest-cloud-run-queue/tree/master/packages/demo#readme)
-nest-cloud-run-queue-workernest-cloud-run-queue-worker
+
 
 ## Packages
 
