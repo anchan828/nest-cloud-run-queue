@@ -3,13 +3,21 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/3df1d40de6d47f4768ae/maintainability)](https://codeclimate.com/github/anchan828/nest-cloud-run-queue-pubsub/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/3df1d40de6d47f4768ae/test_coverage)](https://codeclimate.com/github/anchan828/nest-cloud-run-queue-pubsub/test_coverage)
 
-Using Pub/Sub and [NestJS](https://nestjs.com/) framework with Cloud Run.
+Create a Queue for [NestJS](https://nestjs.com/) application in Cloud Run.
 
-![](https://repository-images.githubusercontent.com/233642584/f7bba780-3c42-11ea-82b4-15ddc2651db8)
+![nest-cloud-run-queue](https://user-images.githubusercontent.com/694454/164212037-6afd1e3a-ab0f-4f61-b607-469826d04ffb.png)
+
+## Context
+
+I am wondering how to implement Queue when running an application with Cloud Run. While @nestjs/bull is a very good library, Cloud Run, which is serverless, cannot be used because the server is not always running.  You can use "CPU always allocated" for resolve this issue, but it doesn't make sense to use Cloud Run.
+
+Therefore, I used Cloud Pub/Sub or Cloud Tasks so that I could implement Queue via HTTP requests. This package supports both, so you can choose whichever you prefer.
+
+[Choose Cloud Tasks or Pub/Sub](https://cloud.google.com/tasks/docs/comp-pub-sub)
 
 ## Demo
 
-See [https://github.com/anchan828/nest-cloud-run-queue-demo](https://github.com/anchan828/nest-cloud-run-queue-demo#readme)
+See [https://github.com/anchan828/nest-cloud-run-queue/tree/master/packages/demo](https://github.com/anchan828/nest-cloud-run-queue/tree/master/packages/demo#readme)
 
 ## Overview
 
@@ -18,7 +26,8 @@ Create two applications using these packages.
 | Package                                                                                                                | Description                                                                |
 | :--------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------- |
 | [@anchan828/nest-cloud-run-queue-pubsub-publisher](https://www.npmjs.com/package/@anchan828/nest-cloud-run-queue-pubsub-publisher) | This is used by application of sending a Pub/Sub message to the topic.     |
-| [@anchan828/nest-cloud-run-queue-pubsub-worker](https://www.npmjs.com/package/@anchan828/nest-cloud-run-queue-pubsub-worker)       | This is used by application of receiving a Pub/Sub message from the topic. |
+| [@anchan828/nest-cloud-run-queue-tasks-publisher](https://www.npmjs.com/package/@anchan828/nest-cloud-run-queue-tasks-publisher) | This is used by application of sending a Tasks message to the topic.     |
+| [@anchan828/nest-cloud-run-queue-worker](https://www.npmjs.com/package/@anchan828/nest-cloud-run-queue-worker)       | This is used by application of receiving a Pub/Sub message from the topic. |
 
 ## Getting started
 
