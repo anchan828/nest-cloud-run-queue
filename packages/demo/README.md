@@ -17,13 +17,26 @@ $ npm i
 $ docker-compose up
 ```
 
+## Check operations
 
 ### Access http://localhost:3000/pubsub
 
 ```ts
-@Worker("pubsub")
+@Controller()
+export class AppController {
+  constructor(private readonly pubsubService: PubSubPublisherService) {}
+
+  @Get("/pubsub")
+  public async publishPubsubMessage(): Promise<string> {
+    return this.pubsubService.publish({ data: "message", name: "pubsub" });
+  }
+}
+```
+
+```ts
+@QueueWorker("pubsub")
 export class PubSubWorker {
-  @WorkerProcess()
+  @QueueWorkerProcess()
   public async process(message: string, raw: QueueWorkerRawMessage): Promise<void> {
     console.log("pubsub", message, raw);
   }
@@ -32,13 +45,24 @@ export class PubSubWorker {
 
 <img width="823" alt="9e29b5c3b998e6b78bcd2b8a15a3f4c9" src="https://user-images.githubusercontent.com/694454/164208898-86e81a94-cfad-42b5-8952-9ffaf1191dc2.png">
 
-
 ### Access http://localhost:3000/tasks
 
 ```ts
-@Worker("tasks")
+@Controller()
+export class AppController {
+  constructor(private readonly tasksService: TasksPublisherService) {}
+
+  @Get("/tasks")
+  public async publishTasksMessage(): Promise<string> {
+    return this.tasksService.publish({ data: "message", name: "tasks" });
+  }
+}
+```
+
+```ts
+@QueueWorker("tasks")
 export class TasksWorker {
-  @WorkerProcess()
+  @QueueWorkerProcess()
   public async process(message: string, raw: QueueWorkerRawMessage): Promise<void> {
     console.log("tasks", message, raw);
   }

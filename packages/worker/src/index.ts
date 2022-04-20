@@ -2,7 +2,7 @@ export {
   ALL_WORKERS_QUEUE_WORKER_NAME as ALL_QUEUE_WORKERS,
   UNHANDLED_QUEUE_WORKER_NAME as UNHANDLED_QUEUE_WORKER,
 } from "./constants";
-export { QueueWorker as Worker, QueueWorkerProcess as WorkerProcess } from "./decorators";
+export { QueueWorker, QueueWorkerProcess } from "./decorators";
 export {
   QueueWorkerModuleAsyncOptions,
   QueueWorkerModuleOptions,
