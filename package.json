@@ -13,8 +13,6 @@
   },
   "license": "MIT",
   "author": "anchan828 <anchan828@gmail.com>",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
   "workspaces": [
     "packages/*"
   ],
