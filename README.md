@@ -67,9 +67,8 @@ export class WorkerAppModule {}
 class Worker {
   @QueueWorkerProcess()
   public async process(message: string | object, raw: QueueWorkerRawMessage): Promise<void> {
-    console.log("Message: " + JSON.stringify(message));
-    console.log("Attributes: " + JSON.stringify(attributes));
-    console.log("request.body: " + JSON.stringify(raw));
+    console.log("Message:", message);
+    console.log("Raw message:" , raw);
   }
 }
 ```
