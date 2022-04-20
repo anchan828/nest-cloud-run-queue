@@ -2,13 +2,28 @@ version: "3.4"
 
 services:
   gcloud-pubsub-emulator:
-    image: messagebird/gcloud-pubsub-emulator
+    image: bigtruedata/gcloud-pubsub-emulator
+    command: 'start --host-port 0.0.0.0:8538'
+    expose:
+      - 8538
+
+  gcloud-tasks-emulator:
+    image: ghcr.io/aertje/cloud-tasks-emulator
+    command: -host 0.0.0.0 -port 8123 -queue "projects/test/locations/location/queues/nest-cloud-run-queue-demo"
+    expose:
+      - 8123
+
+  demo:
+    image: node:alpine
+    command: npm run start:demo
+    volumes:
+      - .:/work:delegated
+    working_dir: /work
     ports:
-      - "8681:8681"
+      - "3000:3000"
     depends_on:
-      - receiver
-  receiver:
-    build:
-      context: ./receiver
-    ports:
-      - "4363:4363"
+      - gcloud-pubsub-emulator
+      - gcloud-tasks-emulator
+    environment:
+      PUBSUB_EMULATOR_HOST: gcloud-pubsub-emulator:8538
+      CLOUD_RUN_WORKER_ENDPOINT: http://demo:3000

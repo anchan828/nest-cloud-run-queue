@@ -5,7 +5,7 @@ import { CLOUD_RUN_PUBSUB, CLOUD_RUN_PUBSUB_PUBLISHER_MODULE_OPTIONS, ERROR_TOPI
 import { CloudRunPubSubPublisherModuleOptions, PublishData } from "./interfaces";
 
 @Injectable()
-export class CloudRunPubSubService {
+export class CloudRunPubSubPublisherService {
   constructor(
     @Inject(CLOUD_RUN_PUBSUB_PUBLISHER_MODULE_OPTIONS) private readonly options: CloudRunPubSubPublisherModuleOptions,
     @Inject(CLOUD_RUN_PUBSUB) private readonly pubsub: PubSub,
@@ -19,7 +19,7 @@ export class CloudRunPubSubService {
       ? await this.options.extraConfig?.prePublish(message)
       : message;
 
-    const messageId = await topic.publishJSON(json, attributes);
+    const messageId = await topic.publishMessage({ attributes, json });
 
     if (this.options.extraConfig?.postPublish) {
       await this.options.extraConfig?.postPublish(message, messageId);

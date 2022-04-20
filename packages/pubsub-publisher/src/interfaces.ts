@@ -1,8 +1,9 @@
 import {
-  CloudRunPubSubMessage,
+  CloudRunQueueMessage,
   ModuleAsyncOptions,
   ModuleOptions,
   ModuleOptionsFactory,
+  PublishExtraConfig,
 } from "@anchan828/nest-cloud-run-common";
 import { Attributes } from "@google-cloud/pubsub";
 import { ClientConfig } from "@google-cloud/pubsub/build/src/pubsub";
@@ -13,18 +14,12 @@ export interface CloudRunPubSubPublisherModuleOptions extends ModuleOptions {
   topic?: string;
   clientConfig?: ClientConfig;
   publishConfig?: PublishOptions;
-
-  extraConfig?: PublishExtraConfig;
+  extraConfig?: PublishExtraConfig<PublishData<any>>;
 }
 export type CloudRunPubSubPublisherModuleAsyncOptions = ModuleAsyncOptions<CloudRunPubSubPublisherModuleOptions>;
 
 export type CloudRunPubSubPublisherModuleOptionsFactory = ModuleOptionsFactory<CloudRunPubSubPublisherModuleOptions>;
 
-export type PublishData<T> = CloudRunPubSubMessage<T> & { attributes?: Attributes };
-
-export type PublishExtraConfig = {
-  // Run BEFORE the message is published
-  prePublish?: (message: PublishData<any>) => PublishData<any> | Promise<PublishData<any>>;
-  // Run AFTER the message is published
-  postPublish?: (message: PublishData<any>, messageId: string) => void | Promise<void>;
-};
+export interface PublishData<T> extends CloudRunQueueMessage<T> {
+  attributes?: Attributes;
+}

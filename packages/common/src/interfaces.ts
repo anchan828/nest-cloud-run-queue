@@ -13,7 +13,14 @@ export interface ModuleOptionsFactory<T extends ModuleOptions = ModuleOptions> {
 }
 
 export type CloudRunWorkerName = string;
-export interface CloudRunPubSubMessage<T = any> {
+export interface CloudRunQueueMessage<T = any> {
   name: CloudRunWorkerName;
   data?: T;
 }
+
+export type PublishExtraConfig<T extends CloudRunQueueMessage = CloudRunQueueMessage> = {
+  // Run BEFORE the message is published
+  prePublish?: (message: T) => T | Promise<T>;
+  // Run AFTER the message is published
+  postPublish?: (message: T, messageId: string) => void | Promise<void>;
+};

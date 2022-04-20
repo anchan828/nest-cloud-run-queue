@@ -1,44 +1,43 @@
 {
   "name": "@anchan828/nest-cloud-run-queue-packages",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
   "description": "",
+  "homepage": "https://github.com/anchan828/nest-cloud-run-queue",
+  "bugs": {
+    "url": "https://github.com/anchan828/nest-cloud-run-queue/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anchan828/nest-cloud-run-queue.git"
+  },
+  "license": "MIT",
+  "author": "anchan828 <anchan828@gmail.com>",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "workspaces": [
     "packages/*"
   ],
   "scripts": {
-    "postinstall": "husky install",
-    "bootstrap": "lerna bootstrap",
     "build": "turbo run build",
     "compodoc": "compodoc -c .compodocrc.json",
     "format": "prettier --write '**/*.{js,json,yml,yaml,md}'",
+    "postinstall": "husky install",
     "lint": "eslint --ignore-pattern packages '**/*.ts' && turbo run lint",
     "lint:fix": "eslint --ignore-pattern packages --fix '**/*.ts' && turbo run lint:fix",
     "publish": "lerna publish --yes patch",
-    "publish:minor": "lerna publish --yes minor",
     "publish:major": "lerna publish --yes major",
+    "publish:minor": "lerna publish --yes minor",
     "test": "turbo run test",
-    "new": "ts-node scripts/new-package.ts",
-    "postnew": "ts-node scripts/generate-vs-launch.ts",
-    "watch": "turbo run watch"
+    "watch": "turbo run watch",
+    "start:demo": "turbo run start:demo --filter=@anchan828/nest-cloud-run-queue-demo"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/anchan828/nest-cloud-run-queue.git"
-  },
-  "author": "anchan828 <anchan828@gmail.com>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/anchan828/nest-cloud-run-queue/issues"
-  },
-  "homepage": "https://github.com/anchan828/nest-cloud-run-queue",
   "devDependencies": {
     "@commitlint/cli": "16.2.3",
     "@commitlint/config-conventional": "16.2.1",
     "@commitlint/config-lerna-scopes": "16.2.2",
     "@compodoc/compodoc": "1.1.19",
+    "@lerna-lite/cli": "1.0.5",
     "@nestjs/common": "8.4.4",
     "@nestjs/core": "8.4.4",
     "@nestjs/platform-express": "8.4.4",
@@ -58,7 +57,6 @@
     "glob": "8.0.1",
     "husky": "7.0.4",
     "jest": "27.5.1",
-    "@lerna-lite/cli": "1.0.5",
     "lint-staged": "12.3.8",
     "prettier": "2.6.2",
     "reflect-metadata": "0.1.13",
@@ -69,5 +67,6 @@
     "ts-node": "10.7.0",
     "turbo": "1.2.4",
     "typescript": "4.6.3"
-  }
+  },
+  "packageManager": "npm@8.3.1"
 }

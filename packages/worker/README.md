@@ -1,9 +1,9 @@
-# @anchan828/nest-cloud-run-queue-pubsub-publisher
+# @anchan828/nest-cloud-run-queue-pubsub-worker
 
 ## Install
 
 ```shell
-npm i @anchan828/nest-cloud-run-queue-pubsub-publisher
+npm i @anchan828/nest-cloud-run-queue-pubsub-worker
 ```
 
 ## Usage

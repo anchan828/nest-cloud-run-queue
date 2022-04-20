@@ -1,24 +1,23 @@
 import { PubSub } from "@google-cloud/pubsub";
 import { Test, TestingModule } from "@nestjs/testing";
-import { CLOUD_RUN_PUBSUB, CLOUD_RUN_PUBSUB_PUBLISHER_MODULE_OPTIONS, ERROR_TOPIC_NOT_FOUND } from "./constants";
-import { CloudRunPubSubPublisherModuleOptions, PublishData } from "./interfaces";
+import { CLOUD_RUN_PUBSUB, ERROR_TOPIC_NOT_FOUND } from "./constants";
+import { PublishData } from "./interfaces";
 import { CloudRunPubSubPublisherModule } from "./publish.module";
-import { CloudRunPubSubService } from "./publish.service";
-import { createTopicAndSubscription } from "./utils.spec";
-describe("CloudRunPubSubService", () => {
-  let service: CloudRunPubSubService;
+import { CloudRunPubSubPublisherService } from "./publish.service";
+describe("CloudRunPubSubPublisherService", () => {
+  let service: CloudRunPubSubPublisherService;
   let app: TestingModule;
   beforeEach(async () => {
     app = await Test.createTestingModule({
       imports: [CloudRunPubSubPublisherModule.register()],
     }).compile();
-    service = app.get<CloudRunPubSubService>(CloudRunPubSubService);
-  });
+    service = app.get<CloudRunPubSubPublisherService>(CloudRunPubSubPublisherService);
 
-  it("should be defined", () => {
-    expect(service).toBeDefined();
-    expect(app.get<PubSub>(CLOUD_RUN_PUBSUB)).toBeDefined();
-    expect(app.get<CloudRunPubSubPublisherModuleOptions>(CLOUD_RUN_PUBSUB_PUBLISHER_MODULE_OPTIONS)).toBeDefined();
+    const pubsub = app.get<PubSub>(CLOUD_RUN_PUBSUB);
+
+    jest.spyOn(pubsub, "topic").mockReturnValue({
+      publishMessage: jest.fn(async () => "messageId"),
+    } as any);
   });
 
   describe("publish", () => {
@@ -30,26 +29,26 @@ describe("CloudRunPubSubService", () => {
     });
 
     it("should publish message without data", async () => {
-      const topicName = await createTopicAndSubscription(service["pubsub"]);
+      const topicName = "test";
       await expect(service.publish({ name: "test" }, { topic: topicName })).resolves.toEqual(expect.any(String));
     });
 
     it("should publish message", async () => {
-      const topicName = await createTopicAndSubscription(service["pubsub"]);
+      const topicName = "test";
       await expect(service.publish({ data: { test: "test" }, name: "test" }, { topic: topicName })).resolves.toEqual(
         expect.any(String),
       );
     });
 
     it("should publish message with attributes", async () => {
-      const topicName = await createTopicAndSubscription(service["pubsub"]);
+      const topicName = "test";
       await expect(
         service.publish({ attributes: { attr: "attr" }, data: { test: "test" }, name: "test" }, { topic: topicName }),
       ).resolves.toEqual(expect.any(String));
     });
 
     it("should publish message with attributes", async () => {
-      const topicName = await createTopicAndSubscription(service["pubsub"]);
+      const topicName = "test";
       await expect(
         service.publish({ attributes: { attr: "attr" }, data: { test: "test" }, name: "test" }, { topic: topicName }),
       ).resolves.toEqual(expect.any(String));
@@ -57,7 +56,7 @@ describe("CloudRunPubSubService", () => {
   });
 });
 
-describe("CloudRunPubSubService [extra configs]", () => {
+describe("CloudRunPubSubPublisherService [extra configs]", () => {
   describe("prepublish", () => {
     it("should customize message", async () => {
       const app = await Test.createTestingModule({
@@ -74,8 +73,11 @@ describe("CloudRunPubSubService [extra configs]", () => {
           }),
         ],
       }).compile();
-      const service = app.get<CloudRunPubSubService>(CloudRunPubSubService);
-      const topicName = await createTopicAndSubscription(service["pubsub"]);
+      jest.spyOn(app.get<PubSub>(CLOUD_RUN_PUBSUB), "topic").mockReturnValue({
+        publishMessage: jest.fn(async () => "messageId"),
+      } as any);
+      const service = app.get<CloudRunPubSubPublisherService>(CloudRunPubSubPublisherService);
+      const topicName = "test";
       const message: PublishData<string> = { data: "data", name: "test" };
       await service.publish(message, { topic: topicName });
       expect(message).toEqual({ attributes: { id: "1" }, data: "changed", name: "test" });
@@ -94,8 +96,11 @@ describe("CloudRunPubSubService [extra configs]", () => {
           }),
         ],
       }).compile();
-      const service = app.get<CloudRunPubSubService>(CloudRunPubSubService);
-      const topicName = await createTopicAndSubscription(service["pubsub"]);
+      jest.spyOn(app.get<PubSub>(CLOUD_RUN_PUBSUB), "topic").mockReturnValue({
+        publishMessage: jest.fn(async () => "messageId"),
+      } as any);
+      const service = app.get<CloudRunPubSubPublisherService>(CloudRunPubSubPublisherService);
+      const topicName = "test";
       await service.publish({ data: "data", name: "test" }, { topic: topicName });
       expect(mock).toHaveBeenLastCalledWith({ data: "data", name: "test" }, expect.any(String));
     });
