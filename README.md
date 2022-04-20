@@ -143,10 +143,9 @@ You can listen to undefined worker name
 @QueueWorker(UNHANDLED_QUEUE_WORKER)
 class Worker {
   @QueueWorkerProcess()
-  public async process(message: Message<any>, attributes: Record<string, any>, raw: any): Promise<void> {
-    console.log("Message: " + JSON.stringify(message));
-    console.log("Attributes: " + JSON.stringify(attributes));
-    console.log("request.body: " + JSON.stringify(raw));
+  public async process(message: Message<any>, raw: QueueWorkerRawMessage): Promise<void> {
+    console.log("Message:", message);
+    console.log("Raw message:" , raw);
   }
 }
 ```
@@ -159,10 +158,9 @@ You can listen to all workers
 @QueueWorker(ALL_QUEUE_WORKERS)
 class Worker {
   @QueueWorkerProcess()nest-cloud-run-queue-worker
-  public async process(message: Message<any>, attributes: Record<string, any>, raw: any): Promise<void> {
-    console.log("Message: " + JSON.stringify(message));
-    console.log("Attributes: " + JSON.stringify(attributes));
-    console.log("request.body: " + JSON.stringify(raw));
+  public async process(message: Message<any>, raw: QueueWorkerRawMessage): Promise<void> {
+    console.log("Message:", message);
+    console.log("Raw message:" , raw);
   }
 }
 ```
