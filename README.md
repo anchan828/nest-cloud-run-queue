@@ -114,10 +114,10 @@ export class PublisherAppModule {}
 
 ```ts
 export class Service {
-  constructor(private readonly pubsubService: PubSubPublisherService) {}
+  constructor(private readonly tasksService: TasksPublisherService) {}
 
   public async sendMessage(): Promise<void> {
-    await this.pubsubService.publish({
+    await this.tasksService.publish({
       // Required. this property is used by @anchan828/nest-cloud-run-queue-worker
       name: "Worker name",
       // string or object. ex, { text: "text" }
