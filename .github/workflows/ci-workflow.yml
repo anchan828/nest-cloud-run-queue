@@ -16,8 +16,6 @@ jobs:
         with:
           node-version: 16
           cache: npm
-      - name: Run docker-compose
-        run: docker-compose up -d
       - name: Install npm packages
         run: npm ci
       - name: Lint
