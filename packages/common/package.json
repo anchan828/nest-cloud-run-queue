@@ -24,7 +24,7 @@
     "build": "tsc -p tsconfig.build.json",
     "build:watch": "tsc --watch",
     "copy:license": "cp ../../LICENSE ./",
-    "lint": "eslint --ignore-path ../../.eslintignore '**/*.ts'",
+    "lint": "TIMING=1 eslint --ignore-path ../../.eslintignore '**/*.ts'",
     "lint:fix": "npm run lint -- --fix",
     "prepublishOnly": "rm -rf dist && npm run build && rm -f dist/*.tsbuildinfo && npm run copy:license",
     "test": "jest --coverage --logHeapUsage --runInBand",
