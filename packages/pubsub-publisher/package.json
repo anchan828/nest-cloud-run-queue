@@ -34,7 +34,7 @@
   },
   "dependencies": {
     "@anchan828/nest-cloud-run-queue-common": "^1.0.4",
-    "@google-cloud/pubsub": "2.19.0"
+    "@google-cloud/pubsub": "2.19.3"
   },
   "devDependencies": {
     "@nestjs/common": "8.4.4",
