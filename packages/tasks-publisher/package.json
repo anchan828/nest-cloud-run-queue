@@ -37,7 +37,7 @@
     "@google-cloud/tasks": "2.6.0"
   },
   "devDependencies": {
-    "@nestjs/common": "8.4.4",
+    "@nestjs/common": "8.4.5",
     "rxjs": "7.5.5"
   },
   "peerDependencies": {
