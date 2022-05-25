@@ -32,13 +32,15 @@ export class QueueWorkerExplorerService {
         classInstanceWrapper.instance.constructor,
       ) as QueueWorkerDecoratorArgs;
 
-      if (args) {
-        metadata.push({
-          instance: classInstanceWrapper.instance,
-          name: args.name,
-          priority: args.priority || 0,
-          processors: [],
-        });
+      if (args && Array.isArray(args.names)) {
+        for (const name of args.names) {
+          metadata.push({
+            instance: classInstanceWrapper.instance,
+            name,
+            priority: args.priority || 0,
+            processors: [],
+          });
+        }
       }
     }
     return metadata;
