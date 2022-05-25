@@ -47,10 +47,14 @@ export type QueueWorkerModuleOptionsFactory = ModuleOptionsFactory<Omit<QueueWor
 
 export type QueueWorkerProcessor = <T>(message: T, rawMessage: QueueWorkerRawMessage) => Promise<void> | void;
 
-export interface QueueWorkerMetadata extends QueueWorkerDecoratorArgs {
+export interface QueueWorkerMetadata {
   instance: Injectable;
 
   processors: QueueWorkerProcessorMetadata[];
+
+  name: QueueWorkerName;
+
+  priority: number;
 }
 
 export interface QueueWorkerProcessorMetadata extends QueueWorkerProcessDecoratorArgs {
@@ -73,7 +77,7 @@ export type QueueWorkerExtraConfig = {
 };
 
 export interface QueueWorkerDecoratorArgs {
-  name: QueueWorkerName;
+  names: QueueWorkerName[];
 
   /**
    * Highest priority is 0, and lower the larger integer you use.

@@ -30,6 +30,32 @@ describe("QueueWorkerExplorerService", () => {
     ]);
   });
 
+  it("should get multiple workers", async () => {
+    @QueueWorker(["TestWorker1", "TestWorker2"])
+    class TestWorker {}
+
+    const app = await Test.createTestingModule({
+      imports: [QueueWorkerModule.register()],
+      providers: [TestWorker],
+    }).compile();
+    const explorer = app.get<QueueWorkerExplorerService>(QueueWorkerExplorerService);
+    expect(explorer).toBeDefined();
+    expect(explorer.explore()).toEqual([
+      {
+        instance: expect.any(TestWorker),
+        name: "TestWorker1",
+        priority: 0,
+        processors: [],
+      },
+      {
+        instance: expect.any(TestWorker),
+        name: "TestWorker2",
+        priority: 0,
+        processors: [],
+      },
+    ]);
+  });
+
   it("should get worker and processor", async () => {
     @QueueWorker("TestWorker")
     class TestWorker {
