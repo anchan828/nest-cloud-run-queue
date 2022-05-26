@@ -41,14 +41,7 @@ describe("QueueWorkerService", () => {
     expect(service).toBeDefined();
     expect(explorerService).toBeDefined();
   });
-  it("should ignore error if data invalid", async () => {
-    const app = await Test.createTestingModule({
-      imports: [QueueWorkerModule.registerAsync({ useFactory: () => ({} as any) })],
-    }).compile();
-    service = app.get<QueueWorkerService>(QueueWorkerService);
-    explorerService = app.get<QueueWorkerExplorerService>(QueueWorkerExplorerService);
-    await expect(service.execute({ data: "invalid" } as QueueWorkerRawMessage)).resolves.toBeUndefined();
-  });
+
   it("should throw error if data invalid", async () => {
     await expect(service.execute({ data: "invalid" } as QueueWorkerRawMessage)).rejects.toThrowError(
       new BadRequestException(ERROR_INVALID_MESSAGE_FORMAT),
