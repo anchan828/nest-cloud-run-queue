@@ -35,6 +35,6 @@
     "@nestjs/platform-express": "8.4.5"
   },
   "devDependencies": {
-    "ts-node-dev": "1.1.8"
+    "ts-node-dev": "2.0.0"
   }
 }
