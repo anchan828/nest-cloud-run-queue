@@ -1,5 +1,5 @@
 import { createAsyncProviders, createOptionProvider } from "@anchan828/nest-cloud-run-queue-common";
-import { DynamicModule, Logger, Module, Provider } from "@nestjs/common";
+import { DynamicModule, Logger, Module, Provider, Type } from "@nestjs/common";
 import { DiscoveryModule } from "@nestjs/core";
 import { MetadataScanner } from "@nestjs/core/metadata-scanner";
 import { QUEUE_WORKER_MODULE_OPTIONS } from "./constants";
@@ -19,11 +19,16 @@ import { QueueWorkerService } from "./worker.service";
 })
 export class QueueWorkerModule {
   public static register(options: QueueWorkerModuleOptions = {}): DynamicModule {
-    const WorkerController = getWorkerController(options.workerController);
+    const controllers: Type<any>[] = [];
     const providers: Provider[] = [createOptionProvider(QUEUE_WORKER_MODULE_OPTIONS, options)];
 
+    if (options.workerController !== null) {
+      const WorkerController = getWorkerController(options.workerController);
+      controllers.push(WorkerController);
+    }
+
     return {
-      controllers: [WorkerController],
+      controllers,
       global: true,
       module: QueueWorkerModule,
       providers,
@@ -31,10 +36,16 @@ export class QueueWorkerModule {
   }
 
   public static registerAsync(options: QueueWorkerModuleAsyncOptions): DynamicModule {
-    const WorkerController = getWorkerController(options.workerController);
+    const controllers: Type<any>[] = [];
     const providers = [...createAsyncProviders(QUEUE_WORKER_MODULE_OPTIONS, options)];
+
+    if (options.workerController !== null) {
+      const WorkerController = getWorkerController(options.workerController);
+      controllers.push(WorkerController);
+    }
+
     return {
-      controllers: [WorkerController],
+      controllers,
       global: true,
       imports: [...(options.imports || [])],
       module: QueueWorkerModule,

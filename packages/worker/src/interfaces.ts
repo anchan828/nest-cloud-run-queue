@@ -35,10 +35,11 @@ export interface QueueWorkerModuleOptions extends ModuleOptions {
   /**
    * Define a Route for the controller.
    * Default: POST /
-   * @type {QueueWorkerControllerMetadata}
+   * If you provide your own Controller, set it to null.
+   * @type {(QueueWorkerControllerMetadata | null)}
    * @memberof QueueWorkerModuleOptions
    */
-  workerController?: QueueWorkerControllerMetadata;
+  workerController?: QueueWorkerControllerMetadata | null;
 }
 export type QueueWorkerModuleAsyncOptions = ModuleAsyncOptions<Omit<QueueWorkerModuleOptions, "workerController">> &
   Pick<QueueWorkerModuleOptions, "workerController">;
@@ -103,7 +104,7 @@ export type QueueWorkerRawMessage<T = Record<string, any>> = {
   readonly headers?: Record<string, string>;
 } & T;
 
-export type ReceivedMessage = {
+export type QueueWorkerReceivedMessage = {
   readonly message: QueueWorkerRawMessage;
 };
 
@@ -118,5 +119,5 @@ export interface QueueWorkerControllerMetadata extends RequestMappingMetadata {
 }
 
 export interface QueueWorkerControllerInterface {
-  execute(body: ReceivedMessage, headers: Record<string, string>): Promise<void>;
+  execute(body: QueueWorkerReceivedMessage, headers: Record<string, string>): Promise<void>;
 }
