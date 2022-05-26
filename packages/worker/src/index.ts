@@ -14,6 +14,7 @@ export {
   QueueWorkerControllerInterface,
   QueueWorkerControllerMetadata,
   QueueWorkerReceivedMessage,
+  QueueWorkerDecodedMessage,
 } from "./interfaces";
 
 export { QueueWorkerModule } from "./worker.module";

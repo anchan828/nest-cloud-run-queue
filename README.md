@@ -116,7 +116,12 @@ class WorkerController {
 
   @Post()
   public async execute(@Body() body: QueueWorkerReceivedMessage): Promise<void> {
-    await this.service.execute({ ...body.message });
+    await this.service.execute(body.message);
+
+    // or
+
+    // const decodedMessage = this.service.decodeMessage(body.message);
+    // await this.service.execute(decodedMessage);
   }
 }
 

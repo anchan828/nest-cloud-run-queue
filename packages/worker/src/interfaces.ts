@@ -3,6 +3,7 @@ import {
   ModuleAsyncOptions,
   ModuleOptions,
   ModuleOptionsFactory,
+  Message,
 } from "@anchan828/nest-cloud-run-queue-common";
 import { RequestMappingMetadata } from "@nestjs/common";
 import { Injectable } from "@nestjs/common/interfaces";
@@ -46,7 +47,7 @@ export type QueueWorkerModuleAsyncOptions = ModuleAsyncOptions<Omit<QueueWorkerM
 export type QueueWorkerModuleOptionsFactory = ModuleOptionsFactory<Omit<QueueWorkerModuleOptions, "workerController">> &
   Pick<QueueWorkerModuleOptions, "workerController">;
 
-export type QueueWorkerProcessor = <T>(message: T, rawMessage: QueueWorkerRawMessage) => Promise<void> | void;
+export type QueueWorkerProcessor = <T>(message: T, raw: QueueWorkerRawMessage) => Promise<void> | void;
 
 export interface QueueWorkerMetadata {
   instance: Injectable;
@@ -99,10 +100,15 @@ export interface QueueWorkerProcessDecoratorArgs {
   priority: number;
 }
 
-export type QueueWorkerRawMessage<T = Record<string, any>> = {
+export type QueueWorkerRawMessage = {
   readonly data?: string | Uint8Array | Buffer | null;
   readonly headers?: Record<string, string>;
-} & T;
+} & Record<string, any>;
+export type QueueWorkerDecodedMessage<T = any> = {
+  readonly data: Message<T>;
+  readonly headers?: Record<string, string>;
+  readonly raw: QueueWorkerRawMessage;
+};
 
 export type QueueWorkerReceivedMessage = {
   readonly message: QueueWorkerRawMessage;
