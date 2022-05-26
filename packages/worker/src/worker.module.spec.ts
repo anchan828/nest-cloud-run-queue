@@ -1,4 +1,4 @@
-import { Logger } from "@nestjs/common";
+import { Logger, RequestMethod } from "@nestjs/common";
 import { MetadataScanner } from "@nestjs/core/metadata-scanner";
 import { Test } from "@nestjs/testing";
 import { QUEUE_WORKER_MODULE_OPTIONS } from "./constants";
@@ -22,6 +22,10 @@ describe("QueueWorkerModule", () => {
       imports: [
         QueueWorkerModule.registerAsync({
           useFactory: () => ({}),
+          workerController: {
+            method: RequestMethod.GET,
+            path: "/worker",
+          },
         }),
       ],
     }).compile();

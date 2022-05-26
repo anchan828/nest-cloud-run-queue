@@ -13,6 +13,7 @@ export {
   QueueWorkerRawMessage,
   QueueWorkerControllerInterface,
   QueueWorkerControllerMetadata,
+  QueueWorkerReceivedMessage,
 } from "./interfaces";
 
 export { QueueWorkerModule } from "./worker.module";

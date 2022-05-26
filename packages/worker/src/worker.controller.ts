@@ -1,5 +1,9 @@
 import { Body, Controller, Headers, HttpCode, RequestMapping, RequestMethod, Type } from "@nestjs/common";
-import { QueueWorkerControllerInterface, ReceivedMessage, QueueWorkerControllerMetadata } from "./interfaces";
+import {
+  QueueWorkerControllerInterface,
+  QueueWorkerReceivedMessage,
+  QueueWorkerControllerMetadata,
+} from "./interfaces";
 import { QueueWorkerService } from "./worker.service";
 
 export function getWorkerController(metadata?: QueueWorkerControllerMetadata): Type<QueueWorkerControllerInterface> {
@@ -11,7 +15,10 @@ export function getWorkerController(metadata?: QueueWorkerControllerMetadata): T
 
     @RequestMapping({ method, path })
     @HttpCode(metadata?.statusCode || 200)
-    public async execute(@Body() body: ReceivedMessage, @Headers() headers: Record<string, string>): Promise<void> {
+    public async execute(
+      @Body() body: QueueWorkerReceivedMessage,
+      @Headers() headers: Record<string, string>,
+    ): Promise<void> {
       await this.service.execute({ ...body.message, headers });
     }
   }

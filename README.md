@@ -48,7 +48,6 @@ See: [@anchan828/nest-cloud-run-queue-pubsub-publisher - README.md](https://gith
 
 See: [@anchan828/nest-cloud-run-queue-tasks-publisher - README.md](https://github.com/anchan828/nest-cloud-run-queue/tree/master/packages/tasks-publisher#readme)
 
-
 ## 2. Create worker application
 
 #### Import worker module
@@ -68,7 +67,7 @@ class Worker {
   @QueueWorkerProcess()
   public async process(message: string | object, raw: QueueWorkerRawMessage): Promise<void> {
     console.log("Message:", message);
-    console.log("Raw message:" , raw);
+    console.log("Raw message:", raw);
   }
 }
 ```
@@ -78,6 +77,56 @@ class Worker {
 ```ts
 @Module({
   imports: [QueueWorkerModule.register()],
+  providers: [Worker],
+})
+export class WorkerAppModule {}
+```
+
+### Customize worker controller
+
+The Controller who receives the message is automatically defined. You can customize it.
+
+```ts
+@Module({
+  imports: [
+    QueueWorkerModule.register({
+      workerController: {
+        method: RequestMethod.GET,
+        path: "/worker",
+      },
+
+      // Default
+      // workerController: {
+      //   method: RequestMethod.POST,
+      //   path: "/",
+      // },
+    }),
+  ],
+  providers: [Worker],
+})
+export class WorkerAppModule {}
+```
+
+You can also define your own Controller. In that case, set workerController to null.
+
+```ts
+@Controller("/worker")
+class WorkerController {
+  constructor(private readonly service: QueueWorkerService) {}
+
+  @Post()
+  public async execute(@Body() body: QueueWorkerReceivedMessage): Promise<void> {
+    await this.service.execute({ ...body.message });
+  }
+}
+
+@Module({
+  controllers: [WorkerController],
+  imports: [
+    QueueWorkerModule.register({
+      workerController: null,
+    }),
+  ],
   providers: [Worker],
 })
 export class WorkerAppModule {}
@@ -144,7 +193,7 @@ class Worker {
   @QueueWorkerProcess()
   public async process(message: Message<any>, raw: QueueWorkerRawMessage): Promise<void> {
     console.log("Message:", message);
-    console.log("Raw message:" , raw);
+    console.log("Raw message:", raw);
   }
 }
 ```
@@ -159,7 +208,7 @@ class Worker {
   @QueueWorkerProcess()
   public async process(message: Message<any>, raw: QueueWorkerRawMessage): Promise<void> {
     console.log("Message:", message);
-    console.log("Raw message:" , raw);
+    console.log("Raw message:", raw);
   }
 }
 ```
