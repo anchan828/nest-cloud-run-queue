@@ -20,7 +20,7 @@ export class PubSubPublisherService {
       ? await this.options.extraConfig?.prePublish(message)
       : message;
 
-    const messageId = await topic.publishMessage({ attributes, json });
+    const messageId = await topic.publishMessage({ attributes, json: json || {} });
 
     if (this.options.extraConfig?.postPublish) {
       await this.options.extraConfig?.postPublish(message, messageId);

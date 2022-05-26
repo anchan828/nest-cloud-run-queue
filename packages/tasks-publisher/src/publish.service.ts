@@ -22,7 +22,7 @@ export class TasksPublisherService {
         ...this.options.publishConfig,
         ...options,
         httpRequest: {
-          body: Buffer.from(JSON.stringify({ message: { data: taskMessage } })).toString("base64"),
+          body: Buffer.from(JSON.stringify({ message: { data: taskMessage || {} } })).toString("base64"),
           headers: {
             "content-type": "application/json",
             ...options?.httpRequest?.headers,
