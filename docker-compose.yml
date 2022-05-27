@@ -18,7 +18,7 @@ services:
     command: npm run start:demo
     volumes:
       - .:/work:delegated
-    working_dir: /work
+    working_dir: /work/packages/demo
     ports:
       - "3000:3000"
     depends_on:
