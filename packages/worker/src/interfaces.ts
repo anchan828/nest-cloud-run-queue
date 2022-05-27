@@ -100,8 +100,8 @@ export interface QueueWorkerProcessDecoratorArgs {
   priority: number;
 }
 
-export type QueueWorkerRawMessage = {
-  readonly data?: string | Uint8Array | Buffer | null;
+export type QueueWorkerRawMessage<T = any> = {
+  readonly data?: string | null | Message<T>;
   readonly headers?: Record<string, string>;
 } & Record<string, any>;
 export type QueueWorkerDecodedMessage<T = any> = {

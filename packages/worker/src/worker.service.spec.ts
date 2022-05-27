@@ -42,118 +42,120 @@ describe("QueueWorkerService", () => {
     expect(explorerService).toBeDefined();
   });
 
-  it("should throw error if data invalid", async () => {
-    await expect(service.execute({ data: "invalid" } as QueueWorkerRawMessage)).rejects.toThrowError(
-      new BadRequestException(ERROR_INVALID_MESSAGE_FORMAT),
-    );
-  });
-
-  it("should throw error if data is null", async () => {
-    await expect(service.execute({ data: null } as QueueWorkerRawMessage)).rejects.toThrowError(
-      new BadRequestException(ERROR_INVALID_MESSAGE_FORMAT),
-    );
-  });
-
-  it("should throw error if data is not message object", async () => {
-    await expect(
-      service.execute({ data: toBase64("testtest"), messageId: "1" } as QueueWorkerRawMessage),
-    ).rejects.toThrowError(new BadRequestException(ERROR_INVALID_MESSAGE_FORMAT));
-  });
-
-  it("should throw error if message dosen't have name", async () => {
-    await expect(service.execute({ data: toBase64({ data: "data" } as Message), messageId: "1" })).rejects.toThrowError(
-      new BadRequestException(ERROR_QUEUE_WORKER_NAME_NOT_FOUND),
-    );
-  });
-
-  it("should throw error if worker not found", async () => {
-    await expect(service.execute({ data: toBase64({ name: "name" } as Message), messageId: "1" })).rejects.toThrowError(
-      new BadRequestException(ERROR_WORKER_NOT_FOUND("name")),
-    );
-  });
-
-  it("should run processor if worker found (data is base64)", async () => {
-    const processor: QueueWorkerProcessor = (message: any, raw: any) => {
-      expect(message).toEqual({ date: expect.any(Date), prop: 1 });
-      expect(raw).toEqual({ attributes: { attr: 2 }, data: expect.anything(), messageId: "1" });
-    };
-    const processorMock = jest.fn().mockImplementation((): void => {
-      throw new Error();
+  describe("pubsub style", () => {
+    it("should throw error if data is not message object", async () => {
+      await expect(
+        service.execute({ data: toBase64("testtest"), messageId: "1" } as QueueWorkerRawMessage),
+      ).rejects.toThrowError(new BadRequestException(ERROR_INVALID_MESSAGE_FORMAT));
     });
-    jest.spyOn(explorerService, "explore").mockReturnValueOnce([
-      {
-        name: "name",
-        priority: 0,
-        processors: [
-          { priority: 0, processor },
-          { priority: 1, processor: processorMock },
-        ],
-      },
-    ] as QueueWorkerMetadata[]);
-    await expect(
-      service.execute({
-        attributes: { attr: 2 },
-        data: toBase64({ data: { date: new Date(), prop: 1 }, name: "name" }),
-        messageId: "1",
-      }),
-    ).resolves.toBeUndefined();
-    expect(processorMock).toBeCalledTimes(1);
-  });
-  it("should run processor if worker found (data is buffer)", async () => {
-    const processor: QueueWorkerProcessor = (message: any, raw: any) => {
-      expect(message).toEqual({ date: expect.any(Date), prop: 1 });
-      expect(raw).toEqual({ attributes: { attr: 2 }, data: expect.anything(), messageId: "1" });
-    };
-    const processorMock = jest.fn().mockImplementation((): void => {
-      throw new Error();
+
+    it("should throw error if data invalid", async () => {
+      await expect(service.execute({ data: "invalid" } as QueueWorkerRawMessage)).rejects.toThrowError(
+        new BadRequestException(ERROR_QUEUE_WORKER_NAME_NOT_FOUND),
+      );
     });
-    jest.spyOn(explorerService, "explore").mockReturnValueOnce([
-      {
-        name: "name",
-        priority: 0,
-        processors: [
-          { priority: 0, processor },
-          { priority: 1, processor: processorMock },
-        ],
-      },
-    ] as QueueWorkerMetadata[]);
-    await expect(
-      service.execute({
-        attributes: { attr: 2 },
-        data: Buffer.from(JSON.stringify({ data: { date: new Date(), prop: 1 }, name: "name" })),
-        messageId: "1",
-      }),
-    ).resolves.toBeUndefined();
-    expect(processorMock).toBeCalledTimes(1);
+
+    it("should throw error if data is null", async () => {
+      await expect(service.execute({ data: null } as QueueWorkerRawMessage)).rejects.toThrowError(
+        new BadRequestException(ERROR_QUEUE_WORKER_NAME_NOT_FOUND),
+      );
+    });
+
+    it("should throw error if message dosen't have name", async () => {
+      await expect(
+        service.execute({ data: toBase64({ data: "data" } as Message), messageId: "1" }),
+      ).rejects.toThrowError(new BadRequestException(ERROR_QUEUE_WORKER_NAME_NOT_FOUND));
+    });
+
+    it("should throw error if worker not found", async () => {
+      await expect(
+        service.execute({ data: toBase64({ name: "name" } as Message), messageId: "1" }),
+      ).rejects.toThrowError(new BadRequestException(ERROR_WORKER_NOT_FOUND("name")));
+    });
+
+    it("should run processor if worker found (data is base64)", async () => {
+      const processor: QueueWorkerProcessor = (message: any, raw: any) => {
+        expect(message).toEqual({ date: expect.any(Date), prop: 1 });
+        expect(raw).toEqual({ attributes: { attr: 2 }, data: expect.anything(), messageId: "1" });
+      };
+      const processorMock = jest.fn().mockImplementation((): void => {
+        throw new Error();
+      });
+      jest.spyOn(explorerService, "explore").mockReturnValueOnce([
+        {
+          name: "name",
+          priority: 0,
+          processors: [
+            { priority: 0, processor },
+            { priority: 1, processor: processorMock },
+          ],
+        },
+      ] as QueueWorkerMetadata[]);
+      await expect(
+        service.execute({
+          attributes: { attr: 2 },
+          data: toBase64({ data: { date: new Date(), prop: 1 }, name: "name" }),
+          messageId: "1",
+        }),
+      ).resolves.toBeUndefined();
+      expect(processorMock).toBeCalledTimes(1);
+    });
   });
 
-  it("should run processor if worker found (data is Uint8Array)", async () => {
-    const processor: QueueWorkerProcessor = (message: any, raw: any) => {
-      expect(message).toEqual({ date: expect.any(Date), prop: 1 });
-      expect(raw).toEqual({ attributes: { attr: 2 }, data: expect.anything(), messageId: "1" });
-    };
-    const processorMock = jest.fn().mockImplementation((): void => {
-      throw new Error();
+  describe("tasks/http style", () => {
+    it("should throw error if message is empty", async () => {
+      await expect(service.execute({} as QueueWorkerRawMessage)).rejects.toThrowError(
+        new BadRequestException(ERROR_QUEUE_WORKER_NAME_NOT_FOUND),
+      );
     });
-    jest.spyOn(explorerService, "explore").mockReturnValueOnce([
-      {
-        name: "name",
-        priority: 0,
-        processors: [
-          { priority: 0, processor },
-          { priority: 1, processor: processorMock },
-        ],
-      },
-    ] as QueueWorkerMetadata[]);
-    await expect(
-      service.execute({
-        attributes: { attr: 2 },
-        data: new TextEncoder().encode(JSON.stringify({ data: { date: new Date(), prop: 1 }, name: "name" })),
-        messageId: "1",
-      }),
-    ).resolves.toBeUndefined();
-    expect(processorMock).toBeCalledTimes(1);
+
+    it("should throw error if data is not message object", async () => {
+      await expect(service.execute({ test: "test" } as QueueWorkerRawMessage)).rejects.toThrowError(
+        ERROR_QUEUE_WORKER_NAME_NOT_FOUND,
+      );
+    });
+
+    it("should throw error if message name is null", async () => {
+      await expect(service.execute({ name: null } as QueueWorkerRawMessage)).rejects.toThrowError(
+        new BadRequestException(ERROR_QUEUE_WORKER_NAME_NOT_FOUND),
+      );
+    });
+
+    it("should throw error if worker not found", async () => {
+      await expect(service.execute({ name: "name" })).rejects.toThrowError(
+        new BadRequestException(ERROR_WORKER_NOT_FOUND("name")),
+      );
+    });
+
+    it("should run processor if worker found", async () => {
+      const processor: QueueWorkerProcessor = (message: any, raw: any) => {
+        expect(message).toEqual({ date: expect.any(Date), prop: 1 });
+        expect(raw).toEqual({ attributes: { attr: 2 }, data: expect.anything(), messageId: "1" });
+      };
+      const processorMock = jest.fn().mockImplementation((): void => {
+        throw new Error();
+      });
+      jest.spyOn(explorerService, "explore").mockReturnValueOnce([
+        {
+          name: "name",
+          priority: 0,
+          processors: [
+            { priority: 0, processor },
+            { priority: 1, processor: processorMock },
+          ],
+        },
+      ] as QueueWorkerMetadata[]);
+      await expect(
+        service.execute({
+          attributes: { attr: 2 },
+          data: toBase64({ data: { date: new Date(), prop: 1 }, name: "name" }),
+          messageId: "1",
+        }),
+      ).resolves.toBeUndefined();
+      expect(processorMock).toBeCalledTimes(1);
+    });
   });
+
   it("should run processor if ALL_WORKERS_QUEUE_WORKER_NAME worker found", async () => {
     const processorMock = jest.fn().mockResolvedValueOnce("ok");
     jest.spyOn(explorerService, "explore").mockReturnValueOnce([

@@ -1,6 +1,6 @@
 import { Message } from "@anchan828/nest-cloud-run-queue-common";
 import { BadRequestException, Inject, Injectable, Logger } from "@nestjs/common";
-import { isBase64 } from "class-validator";
+
 import { QueueWorkerDecodedMessage, QueueWorkerModuleOptions } from "./interfaces";
 import {
   ALL_WORKERS_QUEUE_WORKER_NAME,
@@ -17,7 +17,7 @@ import {
   QueueWorkerProcessor,
   QueueWorkerProcessorStatus,
 } from "./interfaces";
-import { parseJSON, sortByPriority } from "./util";
+import { isBase64, parseJSON, sortByPriority } from "./util";
 
 @Injectable()
 export class QueueWorkerService {
@@ -49,7 +49,14 @@ export class QueueWorkerService {
   }
 
   public decodeMessage<T = any>(message: QueueWorkerRawMessage): QueueWorkerDecodedMessage<T> {
-    const data = this.decodeData<T>(message.data);
+    let data: Message<T>;
+    if (isBase64(message.data)) {
+      // pubsub
+      data = this.decodeData<T>(message.data);
+    } else {
+      // tasks / http
+      data = message as Message<T>;
+    }
 
     if (!data.name) {
       throw new BadRequestException(ERROR_QUEUE_WORKER_NAME_NOT_FOUND);

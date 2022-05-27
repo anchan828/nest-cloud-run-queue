@@ -43,7 +43,7 @@ describe("TasksPublisherService", () => {
         parent: "projects/projectId/locations/location/queues/nest-cloud-run-queue-tasks-publisher",
         task: {
           httpRequest: {
-            body: "eyJtZXNzYWdlIjp7ImRhdGEiOnsiZGF0YSI6eyJ0ZXN0Ijoib2sifSwibmFtZSI6InRlc3QifX19",
+            body: "eyJtZXNzYWdlIjp7ImRhdGEiOnsidGVzdCI6Im9rIn0sIm5hbWUiOiJ0ZXN0In19",
             headers: {
               "X-DefaultHeader": "test",
               "X-Header": "test",

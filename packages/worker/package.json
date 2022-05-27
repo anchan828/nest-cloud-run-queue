@@ -33,8 +33,7 @@
     "watch": "tsc -w"
   },
   "dependencies": {
-    "@anchan828/nest-cloud-run-queue-common": "^1.0.12",
-    "class-validator": "0.13.2"
+    "@anchan828/nest-cloud-run-queue-common": "^1.0.12"
   },
   "devDependencies": {
     "@nestjs/common": "8.4.5",
