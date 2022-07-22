@@ -36,7 +36,7 @@
     "@anchan828/nest-cloud-run-queue-common": "^2.0.1"
   },
   "devDependencies": {
-    "@nestjs/common": "9.0.1",
+    "@nestjs/common": "9.0.5",
     "rxjs": "7.5.6"
   },
   "peerDependencies": {

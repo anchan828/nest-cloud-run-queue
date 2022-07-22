@@ -33,7 +33,7 @@
     "watch": "tsc -w"
   },
   "devDependencies": {
-    "@nestjs/common": "9.0.1",
+    "@nestjs/common": "9.0.5",
     "rxjs": "7.5.6"
   },
   "peerDependencies": {
