@@ -12,6 +12,8 @@ Therefore, I used Cloud Pub/Sub or Cloud Tasks so that I could implement Queue v
 
 [Choose Cloud Tasks or Pub/Sub](https://cloud.google.com/tasks/docs/comp-pub-sub)
 
+Of course, these packages can work without using Cloud Run on workers since they handle tasks via HTTP requests.
+
 ## Demo
 
 See [https://github.com/anchan828/nest-cloud-run-queue/tree/master/packages/demo](https://github.com/anchan828/nest-cloud-run-queue/tree/master/packages/demo#readme)
