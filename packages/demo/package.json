@@ -30,9 +30,9 @@
     "@anchan828/nest-cloud-run-queue-pubsub-publisher": "^2.0.6",
     "@anchan828/nest-cloud-run-queue-tasks-publisher": "^2.0.6",
     "@anchan828/nest-cloud-run-queue-worker": "^2.0.6",
-    "@nestjs/common": "9.0.9",
-    "@nestjs/core": "9.0.9",
-    "@nestjs/platform-express": "9.0.9"
+    "@nestjs/common": "9.0.11",
+    "@nestjs/core": "9.0.11",
+    "@nestjs/platform-express": "9.0.11"
   },
   "devDependencies": {
     "ts-node-dev": "2.0.0"
