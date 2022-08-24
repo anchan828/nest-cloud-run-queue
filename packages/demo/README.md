@@ -1,19 +1,10 @@
-# @anchan828/nest-cloud-run-queue-common
+# Demo
 
-This is demo repository
+This is demo package.
 
-## Usage
-
-## Install packages
+## Run demo site with docker-compose
 
 ```bash
-npm i
-```
-
-## Run docker-compose services
-
-```bash
-$ npm i
 $ docker-compose up
 ```
 
