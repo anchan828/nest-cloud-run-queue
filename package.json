@@ -31,9 +31,9 @@
     "start:demo": "turbo run start:demo --filter=@anchan828/nest-cloud-run-queue-demo"
   },
   "devDependencies": {
-    "@commitlint/cli": "^17.1.2",
-    "@commitlint/config-conventional": "^17.1.0",
-    "@commitlint/config-lerna-scopes": "^17.0.2",
+    "@commitlint/cli": "^17.2.0",
+    "@commitlint/config-conventional": "^17.2.0",
+    "@commitlint/config-lerna-scopes": "^17.2.0",
     "@compodoc/compodoc": "^1.1.19",
     "@lerna-lite/cli": "^1.12.0",
     "@nestjs/common": "^9.1.6",
@@ -46,8 +46,8 @@
     "@types/prettier": "^2.7.1",
     "@types/rimraf": "^3.0.2",
     "@types/supertest": "^2.0.12",
-    "@typescript-eslint/eslint-plugin": "^5.41.0",
-    "@typescript-eslint/parser": "^5.41.0",
+    "@typescript-eslint/eslint-plugin": "^5.42.0",
+    "@typescript-eslint/parser": "^5.42.0",
     "eslint": "^8.26.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
