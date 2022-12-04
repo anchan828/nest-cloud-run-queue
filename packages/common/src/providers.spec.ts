@@ -11,10 +11,11 @@ it("createAsyncOptionsProvider", () => {
     useFactory: expect.any(Function),
   });
 
-  expect(createAsyncOptionsProvider("test", { useFactory: expect.any(Function) })).toEqual({
+  const useFactoryMock = jest.fn();
+  expect(createAsyncOptionsProvider("test", { useFactory: useFactoryMock })).toEqual({
     inject: [],
     provide: "test",
-    useFactory: expect.any(Function),
+    useFactory: useFactoryMock,
   });
 
   const res = createAsyncOptionsProvider("test", {});
