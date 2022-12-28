@@ -7,7 +7,7 @@
     "experimentalDecorators": true,
     "target": "es2021",
     "lib": ["es2019.array"],
-    "sourceMap": false,
+    "sourceMap": true,
     "strict": true,
     "outDir": "./dist",
     "baseUrl": "./",
