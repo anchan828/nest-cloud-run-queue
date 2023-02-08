@@ -35,7 +35,7 @@
     "@commitlint/config-conventional": "^17.4.2",
     "@commitlint/config-lerna-scopes": "^17.4.2",
     "@compodoc/compodoc": "^1.1.19",
-    "@lerna-lite/cli": "^1.15.0",
+    "@lerna-lite/cli": "^1.15.1",
     "@nestjs/common": "^9.3.5",
     "@nestjs/core": "^9.3.5",
     "@nestjs/platform-express": "^9.3.5",
