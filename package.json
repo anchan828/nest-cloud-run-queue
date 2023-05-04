@@ -66,5 +66,5 @@
     "turbo": "^1.9.3",
     "typescript": "^5.0.4"
   },
-  "packageManager": "npm@9.6.5"
+  "packageManager": "npm@9.6.6"
 }
