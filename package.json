@@ -43,7 +43,7 @@
     "@nestjs/testing": "^9.4.2",
     "@types/glob": "^8.1.0",
     "@types/jest": "^29.5.1",
-    "@types/node": "^20.2.3",
+    "@types/node": "^20.2.4",
     "@types/prettier": "^2.7.2",
     "@types/rimraf": "^3.0.2",
     "@types/supertest": "^2.0.12",
