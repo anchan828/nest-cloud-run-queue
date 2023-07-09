@@ -1,13 +1,11 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const prettierRc = require("./.prettierrc");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require("path");
 module.exports = {
   env: {
     jest: true,
     node: true,
   },
-  extends: ["plugin:@typescript-eslint/recommended", "plugin:prettier/recommended"],
+  extends: ["plugin:@typescript-eslint/recommended", "prettier"],
   parser: "@typescript-eslint/parser",
   parserOptions: {
     project: path.resolve(__dirname, "tsconfig.eslint.json"),
@@ -22,7 +20,6 @@ module.exports = {
     "lines-between-class-members": ["error", "always"],
     "no-unused-vars": "off",
     "no-useless-constructor": "off",
-    "prettier/prettier": ["error", prettierRc],
     "sort-keys-fix/sort-keys-fix": "error",
   },
 };
