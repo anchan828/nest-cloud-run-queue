@@ -1,5 +1,9 @@
 {
-  "compilerOptions": { "baseUrl": "./src", "outDir": "./dist" },
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "outDir": "./dist",
+    "declarationMap": true
+  },
   "exclude": ["node_modules", "coverage", "dist", "scripts"],
   "extends": "../../tsconfig.base.json"
 }
