@@ -1,9 +1,9 @@
+import { CloudTasksClient } from "@google-cloud/tasks";
+import { credentials } from "@grpc/grpc-js";
 import { Test } from "@nestjs/testing";
+import { TASKS_CLIENT } from "./constants";
 import { TasksPublisherModule } from "./publish.module";
 import { TasksPublisherService } from "./publish.service";
-import { credentials } from "@grpc/grpc-js";
-import { CloudTasksClient } from "@google-cloud/tasks";
-import { TASKS_CLIENT } from "./constants";
 describe("TasksPublisherService", () => {
   let service: TasksPublisherService;
   let client: CloudTasksClient;
