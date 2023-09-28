@@ -31,7 +31,7 @@
     "start:demo": "turbo run start:demo --filter=@anchan828/nest-cloud-run-queue-demo"
   },
   "devDependencies": {
-    "@commitlint/cli": "^17.7.1",
+    "@commitlint/cli": "^17.7.2",
     "@commitlint/config-conventional": "^17.7.0",
     "@compodoc/compodoc": "^1.1.21",
     "@lerna-lite/cli": "^2.5.1",
