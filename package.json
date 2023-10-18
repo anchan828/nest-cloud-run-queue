@@ -33,7 +33,7 @@
   "devDependencies": {
     "@commitlint/cli": "17.8.0",
     "@commitlint/config-conventional": "17.8.0",
-    "@compodoc/compodoc": "1.1.21",
+    "@compodoc/compodoc": "1.1.22",
     "@lerna-lite/cli": "2.6.0",
     "@lerna-lite/publish": "2.6.0",
     "@nestjs/common": "10.2.7",
@@ -45,7 +45,7 @@
     "@types/node": "20.8.7",
     "@types/prettier": "2.7.3",
     "@types/rimraf": "3.0.2",
-    "@types/supertest": "2.0.14",
+    "@types/supertest": "2.0.15",
     "@typescript-eslint/eslint-plugin": "6.8.0",
     "@typescript-eslint/parser": "6.8.0",
     "eslint": "8.51.0",
