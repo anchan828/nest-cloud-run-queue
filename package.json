@@ -31,8 +31,8 @@
     "start:demo": "turbo run start:demo --filter=@anchan828/nest-cloud-run-queue-demo"
   },
   "devDependencies": {
-    "@commitlint/cli": "18.4.4",
-    "@commitlint/config-conventional": "18.4.4",
+    "@commitlint/cli": "18.5.0",
+    "@commitlint/config-conventional": "18.5.0",
     "@compodoc/compodoc": "1.1.23",
     "@lerna-lite/cli": "3.2.1",
     "@lerna-lite/publish": "3.2.1",
@@ -61,7 +61,7 @@
     "rimraf": "5.0.5",
     "rxjs": "7.8.1",
     "supertest": "6.3.4",
-    "ts-jest": "29.1.1",
+    "ts-jest": "29.1.2",
     "ts-node": "10.9.2",
     "turbo": "1.11.3",
     "typescript": "5.3.3"
