@@ -1,15 +1,15 @@
 {
   "[typescript]": {
     "editor.codeActionsOnSave": {
-      "source.organizeImports": true,
-      "source.fixAll": true
+      "source.organizeImports": "explicit",
+      "source.fixAll": "explicit"
     },
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "editor.codeActionsOnSaveTimeout": 2000,
   "editor.codeActionsOnSave": {
-    "source.organizeImports": true,
-    "source.fixAll": true
+    "source.organizeImports": "explicit",
+    "source.fixAll": "explicit"
   },
   "editor.formatOnSave": true,
   "eslint.options": {
