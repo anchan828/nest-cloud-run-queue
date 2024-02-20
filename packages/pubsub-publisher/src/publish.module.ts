@@ -12,7 +12,7 @@ export class PubSubPublisherModule {
     const providers = [
       createOptionProvider(PUBSUB_PUBLISHER_MODULE_OPTIONS, options),
       PubSubPublisherService,
-      { provide: PUBSUB, useValue: createPubSub(options) },
+      { provide: PUBSUB, useFactory: () => createPubSub(options) },
     ];
     return {
       exports: providers,

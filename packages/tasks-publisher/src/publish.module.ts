@@ -12,7 +12,7 @@ export class TasksPublisherModule {
     const providers = [
       createOptionProvider(TASKS_PUBLISHER_MODULE_OPTIONS, options),
       TasksPublisherService,
-      { provide: TASKS_CLIENT, useValue: createClient(options) },
+      { provide: TASKS_CLIENT, useFactory: () => createClient(options) },
     ];
     return {
       exports: providers,
