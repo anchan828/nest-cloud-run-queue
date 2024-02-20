@@ -1,30 +1,29 @@
-import { Inject, Module, OnModuleInit } from "@nestjs/common";
-import { QueueWorkerModule } from "@anchan828/nest-cloud-run-queue-worker";
 import {
-  PubSubPublisherModule,
-  PubSubPublisherModuleOptions,
   PUBSUB,
   PUBSUB_PUBLISHER_MODULE_OPTIONS,
+  PubSubPublisherModule,
+  PubSubPublisherModuleOptions,
 } from "@anchan828/nest-cloud-run-queue-pubsub-publisher";
 import { TasksPublisherModule } from "@anchan828/nest-cloud-run-queue-tasks-publisher";
+import { QueueWorkerModule } from "@anchan828/nest-cloud-run-queue-worker";
 import { PubSub } from "@google-cloud/pubsub";
-import { PubSubWorker, TasksWorker } from "./processor";
-import { AppController } from "./app.controller";
 import { credentials } from "@grpc/grpc-js";
+import { Inject, Module, OnModuleInit } from "@nestjs/common";
+import { AppController } from "./app.controller";
+import { PubSubWorker, TasksWorker } from "./processor";
 
 @Module({
   controllers: [AppController],
   imports: [
     QueueWorkerModule.register(),
     PubSubPublisherModule.register({
-      clientConfig: { projectId: "test" },
+      clientConfig: {},
       topic: "nest-cloud-run-queue-demo",
     }),
     TasksPublisherModule.register({
       clientConfig: {
         apiEndpoint: "gcloud-tasks-emulator",
         port: 8123,
-        projectId: "test",
         sslCreds: credentials.createInsecure(),
       },
       publishConfig: {

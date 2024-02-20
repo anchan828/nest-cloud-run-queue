@@ -26,6 +26,7 @@ services:
       - gcloud-pubsub-emulator
       - gcloud-tasks-emulator
     environment:
+      GOOGLE_CLOUD_PROJECT: test
       PUBSUB_EMULATOR_HOST: gcloud-pubsub-emulator:8538
       WORKER_ENDPOINT: http://demo:3000
 
