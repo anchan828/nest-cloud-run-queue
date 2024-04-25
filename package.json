@@ -63,7 +63,7 @@
     "supertest": "6.3.4",
     "ts-jest": "29.1.2",
     "ts-node": "10.9.2",
-    "turbo": "1.13.2",
+    "turbo": "1.13.3",
     "typescript": "5.4.5"
   },
   "packageManager": "npm@10.5.2"
