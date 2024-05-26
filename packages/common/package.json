@@ -1,6 +1,6 @@
 {
   "name": "@anchan828/nest-cloud-run-queue-common",
-  "version": "2.1.13",
+  "version": "2.1.14",
   "description": "> TODO: description",
   "homepage": "https://github.com/anchan828/nest-cloud-run-queue/tree/master/packages/common#readme",
   "bugs": {
