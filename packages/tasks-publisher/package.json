@@ -45,5 +45,6 @@
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "packageManager": "npm@10.7.0"
 }
