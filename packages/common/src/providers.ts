@@ -5,7 +5,7 @@ import { ModuleAsyncOptions, ModuleOptions, ModuleOptionsFactory } from "./inter
 type ProvideType = string | symbol | Type<any> | Abstract<any> | Function;
 
 export function createOptionProvider(provide: ProvideType, options: ModuleOptions): Provider {
-  return { provide, useValue: options };
+  return { provide, useFactory: () => options };
 }
 
 export function createAsyncOptionsProvider(provide: ProvideType, options: ModuleAsyncOptions): FactoryProvider {

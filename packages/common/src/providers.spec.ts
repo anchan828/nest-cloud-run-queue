@@ -1,7 +1,7 @@
 import { ModuleOptions, ModuleOptionsFactory } from "./interfaces";
 import { createAsyncOptionsProvider, createAsyncProviders, createOptionProvider } from "./providers";
 it("createOptionProvider", () => {
-  expect(createOptionProvider("test", {})).toEqual({ provide: "test", useValue: {} });
+  expect(createOptionProvider("test", {})).toEqual({ provide: "test", useFactory: expect.any(Function) });
 });
 
 it("createAsyncOptionsProvider", () => {
