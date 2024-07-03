@@ -1,12 +1,13 @@
+import { Message } from "@anchan828/nest-cloud-run-queue-common";
 import { Body, Controller, Logger, Post, RequestMethod } from "@nestjs/common";
 import { MetadataScanner } from "@nestjs/core/metadata-scanner";
 import { Test } from "@nestjs/testing";
 import { QUEUE_WORKER_MODULE_OPTIONS } from "./constants";
+import { QueueWorker, QueueWorkerProcess } from "./decorators";
 import { QueueWorkerExplorerService } from "./explorer.service";
-import { QueueWorkerModuleOptions, QueueWorkerReceivedMessage } from "./interfaces";
+import { QueueWorkerModuleOptions, QueueWorkerRawMessage, QueueWorkerReceivedMessage } from "./interfaces";
 import { QueueWorkerModule } from "./worker.module";
 import { QueueWorkerService } from "./worker.service";
-
 describe("QueueWorkerModule", () => {
   it("should compile with register", async () => {
     const app = await Test.createTestingModule({
@@ -86,5 +87,41 @@ describe("QueueWorkerModule", () => {
     expect(app.get<QueueWorkerModuleOptions>(QUEUE_WORKER_MODULE_OPTIONS)).toBeDefined();
     expect(app.get<WorkerController>(WorkerController)).toBeDefined();
     expect(app.get(QueueWorkerService)).toBeDefined();
+  });
+
+  it("should call worker", async () => {
+    let processArgs: { message: Message<any>; raw: QueueWorkerRawMessage } | undefined = undefined;
+
+    @QueueWorker("test")
+    class Worker {
+      @QueueWorkerProcess()
+      public async process(message: Message<any>, raw: QueueWorkerRawMessage): Promise<void> {
+        processArgs = { message, raw };
+      }
+    }
+
+    const app = await Test.createTestingModule({
+      imports: [QueueWorkerModule.register({ workerController: null })],
+      providers: [Worker],
+    }).compile();
+
+    await app.get<QueueWorkerService>(QueueWorkerService).execute({
+      data: {
+        test: "test",
+      },
+      name: "test",
+    });
+
+    expect(processArgs).toEqual({
+      message: {
+        test: "test",
+      },
+      raw: {
+        data: {
+          test: "test",
+        },
+        name: "test",
+      },
+    });
   });
 });
