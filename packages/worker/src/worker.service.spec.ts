@@ -3,17 +3,17 @@ import { BadRequestException } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import {
   ALL_WORKERS_QUEUE_WORKER_NAME,
-  UNHANDLED_QUEUE_WORKER_NAME,
   ERROR_INVALID_MESSAGE_FORMAT,
   ERROR_QUEUE_WORKER_NAME_NOT_FOUND,
   ERROR_WORKER_NOT_FOUND,
+  UNHANDLED_QUEUE_WORKER_NAME,
 } from "./constants";
 import { QueueWorkerExplorerService } from "./explorer.service";
 import {
-  QueueWorkerRawMessage,
   QueueWorkerMetadata,
   QueueWorkerProcessor,
   QueueWorkerProcessorMetadata,
+  QueueWorkerRawMessage,
 } from "./interfaces";
 import { QueueWorkerModule } from "./worker.module";
 import { QueueWorkerService } from "./worker.service";
@@ -98,7 +98,7 @@ describe("QueueWorkerService", () => {
           messageId: "1",
         }),
       ).resolves.toBeUndefined();
-      expect(processorMock).toBeCalledTimes(1);
+      expect(processorMock).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -152,7 +152,7 @@ describe("QueueWorkerService", () => {
           messageId: "1",
         }),
       ).resolves.toBeUndefined();
-      expect(processorMock).toBeCalledTimes(1);
+      expect(processorMock).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -193,7 +193,7 @@ describe("QueueWorkerService", () => {
         messageId: "1",
       }),
     ).resolves.toBeUndefined();
-    expect(processorMock).toBeCalledTimes(1);
+    expect(processorMock).toHaveBeenCalledTimes(1);
   });
 
   it("priority", async () => {
@@ -235,21 +235,21 @@ describe("QueueWorkerService", () => {
         messageId: "1",
       }),
     ).resolves.toBeUndefined();
-    expect(processorMock).toBeCalledTimes(9);
-    expect(processorMock).nthCalledWith(1, 1);
-    expect(processorMock).nthCalledWith(2, 2);
-    expect(processorMock).nthCalledWith(3, 3);
-    expect(processorMock).nthCalledWith(4, 4);
-    expect(processorMock).nthCalledWith(5, 5);
-    expect(processorMock).nthCalledWith(6, 6);
-    expect(processorMock).nthCalledWith(7, 7);
-    expect(processorMock).nthCalledWith(8, 8);
-    expect(processorMock).nthCalledWith(9, 9);
+    expect(processorMock).toHaveBeenCalledTimes(9);
+    expect(processorMock).toHaveBeenNthCalledWith(1, 1);
+    expect(processorMock).toHaveBeenNthCalledWith(2, 2);
+    expect(processorMock).toHaveBeenNthCalledWith(3, 3);
+    expect(processorMock).toHaveBeenNthCalledWith(4, 4);
+    expect(processorMock).toHaveBeenNthCalledWith(5, 5);
+    expect(processorMock).toHaveBeenNthCalledWith(6, 6);
+    expect(processorMock).toHaveBeenNthCalledWith(7, 7);
+    expect(processorMock).toHaveBeenNthCalledWith(8, 8);
+    expect(processorMock).toHaveBeenNthCalledWith(9, 9);
   });
 
   it("maxRetryAttempts", async () => {
     const app = await Test.createTestingModule({
-      imports: [QueueWorkerModule.registerAsync({ useFactory: () => ({ maxRetryAttempts: 3 } as any) })],
+      imports: [QueueWorkerModule.registerAsync({ useFactory: () => ({ maxRetryAttempts: 3 }) as any })],
     }).compile();
     service = app.get<QueueWorkerService>(QueueWorkerService);
     explorerService = app.get<QueueWorkerExplorerService>(QueueWorkerExplorerService);
@@ -266,6 +266,25 @@ describe("QueueWorkerService", () => {
     await expect(
       service.execute({ attributes: { attr: 2 }, data: toBase64({ data: { prop: 1 }, name: "name" }), messageId: "1" }),
     ).resolves.toBeUndefined();
-    expect(mock).toBeCalledTimes(3);
+    expect(mock).toHaveBeenCalledTimes(3);
+  });
+
+  it("assuming manual invocation", async () => {
+    const processorMock = jest.fn().mockReturnThis();
+
+    jest.spyOn(explorerService, "explore").mockReturnValueOnce([
+      {
+        name: "name",
+        priority: 0,
+        processors: [{ priority: 0, processor: processorMock } as QueueWorkerProcessorMetadata],
+      },
+    ] as QueueWorkerMetadata[]);
+    await expect(
+      service.execute({
+        data: { prop: 1 },
+        name: "name",
+      }),
+    ).resolves.toBeUndefined();
+    expect(processorMock).toHaveBeenCalledWith({ prop: 1 }, { data: { prop: 1 }, name: "name" });
   });
 });

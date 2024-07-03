@@ -1,23 +1,22 @@
-import { Message } from "@anchan828/nest-cloud-run-queue-common";
 import { BadRequestException, Inject, Injectable, Logger } from "@nestjs/common";
 
-import { QueueWorkerDecodedMessage, QueueWorkerModuleOptions } from "./interfaces";
+import { Message } from "@anchan828/nest-cloud-run-queue-common";
 import {
   ALL_WORKERS_QUEUE_WORKER_NAME,
+  ERROR_WORKER_NOT_FOUND,
   QUEUE_WORKER_MODULE_OPTIONS,
   UNHANDLED_QUEUE_WORKER_NAME,
-  ERROR_INVALID_MESSAGE_FORMAT,
-  ERROR_QUEUE_WORKER_NAME_NOT_FOUND,
-  ERROR_WORKER_NOT_FOUND,
 } from "./constants";
 import { QueueWorkerExplorerService } from "./explorer.service";
 import {
-  QueueWorkerRawMessage,
+  QueueWorkerDecodedMessage,
   QueueWorkerMetadata,
+  QueueWorkerModuleOptions,
   QueueWorkerProcessor,
   QueueWorkerProcessorStatus,
+  QueueWorkerRawMessage,
 } from "./interfaces";
-import { isBase64, parseJSON, sortByPriority } from "./util";
+import { decodeMessage, sortByPriority } from "./util";
 
 @Injectable()
 export class QueueWorkerService {
@@ -43,30 +42,23 @@ export class QueueWorkerService {
     private readonly explorerService: QueueWorkerExplorerService,
   ) {}
 
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  public async execute(rawMessage: QueueWorkerRawMessage | QueueWorkerDecodedMessage): Promise<void> {
-    await this.runWorkers(this.isDecodedMessage(rawMessage) ? rawMessage : this.decodeMessage(rawMessage));
+  public async execute<T = any>(meessage: Message<T>): Promise<void>;
+
+  public async execute<T = any>(meessage: QueueWorkerDecodedMessage<T>): Promise<void>;
+
+  public async execute<T = any>(meessage: QueueWorkerRawMessage<T>): Promise<void>;
+
+  public async execute<T = any>(
+    meessage: QueueWorkerRawMessage<T> | QueueWorkerDecodedMessage<T> | Message<T>,
+  ): Promise<void> {
+    await this.runWorkers(this.isDecodedMessage(meessage) ? meessage : decodeMessage(meessage));
   }
 
-  public decodeMessage<T = any>(message: QueueWorkerRawMessage): QueueWorkerDecodedMessage<T> {
-    let data: Message<T>;
-    if (isBase64(message.data)) {
-      // pubsub
-      data = this.decodeData<T>(message.data);
-    } else {
-      // tasks / http
-      data = message as Message<T>;
-    }
-
-    if (!data.name) {
-      throw new BadRequestException(ERROR_QUEUE_WORKER_NAME_NOT_FOUND);
-    }
-
-    return {
-      data,
-      headers: message.headers,
-      raw: message,
-    };
+  /**
+   * @deprecated Use `decodeMessage` function instead.
+   */
+  public decodeMessage<T = any>(message: QueueWorkerRawMessage | Message): QueueWorkerDecodedMessage<T> {
+    return decodeMessage(message);
   }
 
   private async runWorkers(decodedMessage: QueueWorkerDecodedMessage): Promise<void> {
@@ -110,37 +102,10 @@ export class QueueWorkerService {
     );
   }
 
-  private isDecodedMessage(
-    message: QueueWorkerRawMessage | QueueWorkerDecodedMessage,
-  ): message is QueueWorkerDecodedMessage {
-    return !!message.raw;
-  }
-
-  private decodeData<T = any>(data?: string | Uint8Array | Buffer | null): Message<T> {
-    if (!data) {
-      throw new BadRequestException(ERROR_INVALID_MESSAGE_FORMAT);
-    }
-
-    if (Buffer.isBuffer(data)) {
-      data = data.toString();
-    }
-
-    if (data instanceof Uint8Array) {
-      data = new TextDecoder("utf8").decode(data);
-    }
-
-    if (isBase64(data)) {
-      data = Buffer.from(data, "base64").toString();
-    }
-    try {
-      if (typeof data === "string") {
-        return parseJSON(data) as Message;
-      }
-
-      return data;
-    } catch {
-      throw new BadRequestException(ERROR_INVALID_MESSAGE_FORMAT);
-    }
+  private isDecodedMessage<T = any>(
+    message: QueueWorkerRawMessage<T> | QueueWorkerDecodedMessage<T> | Message<T>,
+  ): message is QueueWorkerDecodedMessage<T> {
+    return "raw" in message;
   }
 
   private async execProcessor<T>(

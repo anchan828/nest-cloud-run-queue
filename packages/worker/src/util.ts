@@ -1,4 +1,7 @@
 import { Message } from "@anchan828/nest-cloud-run-queue-common";
+import { BadRequestException } from "@nestjs/common";
+import { ERROR_INVALID_MESSAGE_FORMAT, ERROR_QUEUE_WORKER_NAME_NOT_FOUND } from "./constants";
+import { QueueWorkerDecodedMessage, QueueWorkerRawMessage } from "./interfaces";
 
 const dateRegExp = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 
@@ -63,4 +66,53 @@ export function isBase64(value?: string | null | Message): value is string {
   return (
     firstPaddingChar === -1 || firstPaddingChar === len - 1 || (firstPaddingChar === len - 2 && value[len - 1] === "=")
   );
+}
+
+export function decodeMessage<T = any>(message: QueueWorkerRawMessage | Message): QueueWorkerDecodedMessage<T> {
+  let data: Message<T>;
+
+  if (isBase64(message.data)) {
+    // pubsub
+    data = decodeData<T>(message.data);
+  } else {
+    // tasks / http
+    data = message as Message<T>;
+  }
+
+  if (!data.name) {
+    throw new BadRequestException(ERROR_QUEUE_WORKER_NAME_NOT_FOUND);
+  }
+
+  return {
+    data,
+    headers: "headers" in message ? message.headers : undefined,
+    raw: message,
+  };
+}
+
+function decodeData<T = any>(data?: string | Uint8Array | Buffer | null): Message<T> {
+  if (!data) {
+    throw new BadRequestException(ERROR_INVALID_MESSAGE_FORMAT);
+  }
+
+  if (Buffer.isBuffer(data)) {
+    data = data.toString();
+  }
+
+  if (data instanceof Uint8Array) {
+    data = new TextDecoder("utf8").decode(data);
+  }
+
+  if (isBase64(data)) {
+    data = Buffer.from(data, "base64").toString();
+  }
+  try {
+    if (typeof data === "string") {
+      return parseJSON(data) as Message;
+    }
+
+    return data;
+  } catch {
+    throw new BadRequestException(ERROR_INVALID_MESSAGE_FORMAT);
+  }
 }
