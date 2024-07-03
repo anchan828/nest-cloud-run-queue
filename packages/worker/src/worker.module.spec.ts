@@ -17,6 +17,7 @@ describe("QueueWorkerModule", () => {
     expect(app.get<QueueWorkerExplorerService>(QueueWorkerExplorerService)).toBeDefined();
     expect(app.get<Logger>(Logger)).toBeDefined();
     expect(app.get<QueueWorkerModuleOptions>(QUEUE_WORKER_MODULE_OPTIONS)).toBeDefined();
+    expect(app.get(QueueWorkerService)).toBeDefined();
   });
 
   it("should use custom controller", async () => {
@@ -40,6 +41,7 @@ describe("QueueWorkerModule", () => {
     expect(app.get<Logger>(Logger)).toBeDefined();
     expect(app.get<QueueWorkerModuleOptions>(QUEUE_WORKER_MODULE_OPTIONS)).toBeDefined();
     expect(app.get<WorkerController>(WorkerController)).toBeDefined();
+    expect(app.get(QueueWorkerService)).toBeDefined();
   });
 
   it("should compile with registerAsync", async () => {
@@ -59,6 +61,7 @@ describe("QueueWorkerModule", () => {
     expect(app.get<QueueWorkerExplorerService>(QueueWorkerExplorerService)).toBeDefined();
     expect(app.get<Logger>(Logger)).toBeDefined();
     expect(app.get<QueueWorkerModuleOptions>(QUEUE_WORKER_MODULE_OPTIONS)).toBeDefined();
+    expect(app.get(QueueWorkerService)).toBeDefined();
   });
 
   it("should use custom controller", async () => {
@@ -82,5 +85,6 @@ describe("QueueWorkerModule", () => {
     expect(app.get<Logger>(Logger)).toBeDefined();
     expect(app.get<QueueWorkerModuleOptions>(QUEUE_WORKER_MODULE_OPTIONS)).toBeDefined();
     expect(app.get<WorkerController>(WorkerController)).toBeDefined();
+    expect(app.get(QueueWorkerService)).toBeDefined();
   });
 });

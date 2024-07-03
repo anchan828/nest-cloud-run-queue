@@ -20,7 +20,6 @@ See [https://github.com/anchan828/nest-cloud-run-queue/tree/master/packages/demo
 
 This demo uses an emulator, which runs PubSub and Tasks locally. Please see [docker-compose.yml](https://github.com/anchan828/nest-cloud-run-queue/blob/master/docker-compose.yml) if you are interested.
 
-
 ## Packages
 
 There are two types of packages.
@@ -122,7 +121,7 @@ class WorkerController {
 
     // or
 
-    // const decodedMessage = this.service.decodeMessage(body.message);
+    // const decodedMessage = decodeMessage(body.message);
     // await this.service.execute(decodedMessage);
   }
 }
@@ -157,6 +156,24 @@ You can use Cloud Scheduler as trigger.
 Payload is JSON string `{"name": "worker name", "data": "str"}`
 
 ![](https://i.gyazo.com/a778c6a67eed6e525c38dd42378aa8bf.png)
+
+## Using as standalone
+
+There may be times when you want to use it for a one-time call, such as Cloud Run jobs.
+
+```ts
+import { QueueWorkerService } from "@anchan828/nest-cloud-run-queue-worker";
+
+async function bootstrap(): Promise<void> {
+  const app = await NestFactory.createApplicationContext(WorkerAppModule);
+  await app.get(QueueWorkerService).execute({
+    name: "worker name",
+    data: "str",
+  });
+}
+
+bootstrap();
+```
 
 ## Global Events
 
