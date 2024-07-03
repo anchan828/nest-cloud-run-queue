@@ -98,7 +98,7 @@ describe("QueueWorkerService", () => {
           messageId: "1",
         }),
       ).resolves.toBeUndefined();
-      expect(processorMock).toHaveBeenCalledWith(1);
+      expect(processorMock).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -152,7 +152,7 @@ describe("QueueWorkerService", () => {
           messageId: "1",
         }),
       ).resolves.toBeUndefined();
-      expect(processorMock).toHaveBeenCalledWith(1);
+      expect(processorMock).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -193,7 +193,7 @@ describe("QueueWorkerService", () => {
         messageId: "1",
       }),
     ).resolves.toBeUndefined();
-    expect(processorMock).toHaveBeenCalledWith(1);
+    expect(processorMock).toHaveBeenCalledTimes(1);
   });
 
   it("priority", async () => {
@@ -235,16 +235,16 @@ describe("QueueWorkerService", () => {
         messageId: "1",
       }),
     ).resolves.toBeUndefined();
-    expect(processorMock).toHaveBeenCalledWith(9);
-    expect(processorMock).nthCalledWith(1, 1);
-    expect(processorMock).nthCalledWith(2, 2);
-    expect(processorMock).nthCalledWith(3, 3);
-    expect(processorMock).nthCalledWith(4, 4);
-    expect(processorMock).nthCalledWith(5, 5);
-    expect(processorMock).nthCalledWith(6, 6);
-    expect(processorMock).nthCalledWith(7, 7);
-    expect(processorMock).nthCalledWith(8, 8);
-    expect(processorMock).nthCalledWith(9, 9);
+    expect(processorMock).toHaveBeenCalledTimes(9);
+    expect(processorMock).toHaveBeenNthCalledWith(1, 1);
+    expect(processorMock).toHaveBeenNthCalledWith(2, 2);
+    expect(processorMock).toHaveBeenNthCalledWith(3, 3);
+    expect(processorMock).toHaveBeenNthCalledWith(4, 4);
+    expect(processorMock).toHaveBeenNthCalledWith(5, 5);
+    expect(processorMock).toHaveBeenNthCalledWith(6, 6);
+    expect(processorMock).toHaveBeenNthCalledWith(7, 7);
+    expect(processorMock).toHaveBeenNthCalledWith(8, 8);
+    expect(processorMock).toHaveBeenNthCalledWith(9, 9);
   });
 
   it("maxRetryAttempts", async () => {
@@ -266,7 +266,7 @@ describe("QueueWorkerService", () => {
     await expect(
       service.execute({ attributes: { attr: 2 }, data: toBase64({ data: { prop: 1 }, name: "name" }), messageId: "1" }),
     ).resolves.toBeUndefined();
-    expect(mock).toHaveBeenCalledWith(3);
+    expect(mock).toHaveBeenCalledTimes(3);
   });
 
   it("assuming manual invocation", async () => {
