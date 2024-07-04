@@ -33,8 +33,9 @@ export function QueueWorker(
   }
 
   return SetMetadata(QUEUE_WORKER_DECORATOR, {
+    enabled: nameOrOptions.enabled,
     names: Array.isArray(nameOrOptions.name) ? nameOrOptions.name : [nameOrOptions.name],
-    priority,
+    priority: nameOrOptions.priority || 0,
   } as QueueWorkerDecoratorArgs);
 }
 

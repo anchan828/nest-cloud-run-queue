@@ -35,6 +35,10 @@ export class QueueWorkerExplorerService {
         classInstanceWrapper.instance.constructor,
       ) as QueueWorkerDecoratorArgs;
       if (args && Array.isArray(args.names)) {
+        if (args.enabled === false) {
+          continue;
+        }
+
         for (const name of args.names) {
           metadata.push({
             instance: classInstanceWrapper.instance,
@@ -59,6 +63,9 @@ export class QueueWorkerExplorerService {
         prototype[methodName],
       ) as QueueWorkerProcessDecoratorArgs;
       if (args) {
+        if (args.enabled === false) {
+          continue;
+        }
         metadata.push({
           priority: args.priority || 0,
           processor: prototype[methodName].bind(instance),

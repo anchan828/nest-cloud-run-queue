@@ -106,4 +106,37 @@ describe("QueueWorkerExplorerService", () => {
       },
     ]);
   });
+
+  it("should not get disabled worker and processor", async () => {
+    @QueueWorker({ enabled: false, name: "TestWorker" })
+    class TestWorker {
+      @QueueWorkerProcess()
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      public async process(): Promise<void> {}
+    }
+
+    @QueueWorker("TestWorker2")
+    class TestWorker2 {
+      @QueueWorkerProcess()
+      public async process(): Promise<void> {}
+
+      @QueueWorkerProcess({ enabled: false })
+      public async process2(): Promise<void> {}
+    }
+
+    const app = await Test.createTestingModule({
+      imports: [QueueWorkerModule.register()],
+      providers: [TestWorker, TestWorker2],
+    }).compile();
+    const explorer = app.get<QueueWorkerExplorerService>(QueueWorkerExplorerService);
+    expect(explorer).toBeDefined();
+    expect(explorer.explore()).toEqual([
+      {
+        instance: expect.any(TestWorker2),
+        name: "TestWorker2",
+        priority: 0,
+        processors: [expect.anything()],
+      },
+    ]);
+  });
 });
