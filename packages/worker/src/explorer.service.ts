@@ -10,7 +10,10 @@ import {
 } from "./interfaces";
 @Injectable()
 export class QueueWorkerExplorerService {
-  constructor(private readonly discoveryService: DiscoveryService, private readonly metadataScanner: MetadataScanner) {}
+  constructor(
+    private readonly discoveryService: DiscoveryService,
+    private readonly metadataScanner: MetadataScanner,
+  ) {}
 
   public explore(): QueueWorkerMetadata[] {
     const workers = this.getWorkers();
@@ -31,7 +34,6 @@ export class QueueWorkerExplorerService {
         QUEUE_WORKER_DECORATOR,
         classInstanceWrapper.instance.constructor,
       ) as QueueWorkerDecoratorArgs;
-
       if (args && Array.isArray(args.names)) {
         for (const name of args.names) {
           metadata.push({
@@ -51,7 +53,7 @@ export class QueueWorkerExplorerService {
     const instance = worker.instance;
     const prototype = Object.getPrototypeOf(instance);
 
-    for (const methodName of this.metadataScanner.getAllFilteredMethodNames(prototype)) {
+    for (const methodName of this.metadataScanner.getAllMethodNames(prototype)) {
       const args = Reflect.getMetadata(
         QUEUE_WORKER_PROCESS_DECORATOR,
         prototype[methodName],

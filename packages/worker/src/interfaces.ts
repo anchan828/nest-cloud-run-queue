@@ -1,9 +1,9 @@
 import {
-  QueueWorkerName,
+  Message,
   ModuleAsyncOptions,
   ModuleOptions,
   ModuleOptionsFactory,
-  Message,
+  QueueWorkerName,
 } from "@anchan828/nest-cloud-run-queue-common";
 import { RequestMappingMetadata } from "@nestjs/common";
 import { Injectable } from "@nestjs/common/interfaces";
@@ -126,4 +126,13 @@ export interface QueueWorkerControllerMetadata extends RequestMappingMetadata {
 
 export interface QueueWorkerControllerInterface {
   execute(body: QueueWorkerReceivedMessage, headers: Record<string, string>): Promise<void>;
+}
+
+export interface QueueWorkerOptions {
+  name: QueueWorkerName | QueueWorkerName[];
+  priority?: number;
+}
+
+export interface QueueWorkerProcessOptions {
+  priority?: number;
 }
