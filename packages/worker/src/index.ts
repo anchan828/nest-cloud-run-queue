@@ -4,17 +4,19 @@ export {
 } from "./constants";
 export { QueueWorker, QueueWorkerProcess } from "./decorators";
 export {
+  QueueWorkerControllerInterface,
+  QueueWorkerControllerMetadata,
+  QueueWorkerDecodedMessage,
+  QueueWorkerExtraConfig,
   QueueWorkerModuleAsyncOptions,
   QueueWorkerModuleOptions,
   QueueWorkerModuleOptionsFactory,
+  QueueWorkerOptions,
+  QueueWorkerProcessOptions,
   QueueWorkerProcessor,
   QueueWorkerProcessorStatus,
-  QueueWorkerExtraConfig,
   QueueWorkerRawMessage,
-  QueueWorkerControllerInterface,
-  QueueWorkerControllerMetadata,
   QueueWorkerReceivedMessage,
-  QueueWorkerDecodedMessage,
 } from "./interfaces";
 
 export { QueueWorkerModule } from "./worker.module";

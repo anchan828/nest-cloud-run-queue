@@ -88,6 +88,11 @@ export interface QueueWorkerDecoratorArgs {
    * @memberof QueueWorkerDecoratorArgs
    */
   priority: number;
+
+  /**
+   * If you want to disable the worker, set it to false.
+   */
+  enabled?: boolean;
 }
 
 export interface QueueWorkerProcessDecoratorArgs {
@@ -98,6 +103,11 @@ export interface QueueWorkerProcessDecoratorArgs {
    * @memberof QueueWorkerProcessDecoratorArgs
    */
   priority: number;
+
+  /**
+   * If you want to disable the process, set it to false.
+   */
+  enabled?: boolean;
 }
 
 export type QueueWorkerRawMessage<T = any> = {
@@ -129,10 +139,29 @@ export interface QueueWorkerControllerInterface {
 }
 
 export interface QueueWorkerOptions {
+  /**
+   * Worker name. If you want to define multiple names, use an array.
+   */
   name: QueueWorkerName | QueueWorkerName[];
+
+  /**
+   * Highest priority is 0, and lower the larger integer you use.
+   */
   priority?: number;
+
+  /**
+   * If you want to disable the worker, set it to false.
+   */
+  enabled?: boolean;
 }
 
 export interface QueueWorkerProcessOptions {
+  /**
+   * Highest priority is 0, and lower the larger integer you use.
+   */
   priority?: number;
+  /**
+   * If you want to disable the process, set it to false.
+   */
+  enabled?: boolean;
 }
