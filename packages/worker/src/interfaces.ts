@@ -90,7 +90,7 @@ export interface QueueWorkerDecoratorArgs {
   priority: number;
 
   /**
-   * If you want to disable the worker, set it to false.
+   * If you want to disable the worker, set it to false. Defaults to true.
    */
   enabled?: boolean;
 }
@@ -105,7 +105,7 @@ export interface QueueWorkerProcessDecoratorArgs {
   priority: number;
 
   /**
-   * If you want to disable the process, set it to false.
+   * If you want to disable the process, set it to false. Defaults to true.
    */
   enabled?: boolean;
 }
@@ -150,7 +150,7 @@ export interface QueueWorkerOptions {
   priority?: number;
 
   /**
-   * If you want to disable the worker, set it to false.
+   * If you want to disable the worker, set it to false. Defaults to true.
    */
   enabled?: boolean;
 }
@@ -161,7 +161,7 @@ export interface QueueWorkerProcessOptions {
    */
   priority?: number;
   /**
-   * If you want to disable the process, set it to false.
+   * If you want to disable the process, set it to false. Defaults to true.
    */
   enabled?: boolean;
 }
