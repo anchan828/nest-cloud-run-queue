@@ -14,9 +14,12 @@ describe("QueueWorkerExplorerService", () => {
     @QueueWorker("TestWorker")
     class TestWorker {}
 
+    @QueueWorker({ name: "TestWorker2" })
+    class TestWorker2 {}
+
     const app = await Test.createTestingModule({
       imports: [QueueWorkerModule.register()],
-      providers: [TestWorker],
+      providers: [TestWorker, TestWorker2],
     }).compile();
     const explorer = app.get<QueueWorkerExplorerService>(QueueWorkerExplorerService);
     expect(explorer).toBeDefined();
@@ -27,6 +30,12 @@ describe("QueueWorkerExplorerService", () => {
         priority: 0,
         processors: [],
       },
+      {
+        instance: expect.any(TestWorker2),
+        name: "TestWorker2",
+        priority: 0,
+        processors: [],
+      },
     ]);
   });
 
@@ -34,9 +43,12 @@ describe("QueueWorkerExplorerService", () => {
     @QueueWorker(["TestWorker1", "TestWorker2"])
     class TestWorker {}
 
+    @QueueWorker({ name: ["TestWorker3", "TestWorker4"] })
+    class TestWorker2 {}
+
     const app = await Test.createTestingModule({
       imports: [QueueWorkerModule.register()],
-      providers: [TestWorker],
+      providers: [TestWorker, TestWorker2],
     }).compile();
     const explorer = app.get<QueueWorkerExplorerService>(QueueWorkerExplorerService);
     expect(explorer).toBeDefined();
@@ -50,6 +62,18 @@ describe("QueueWorkerExplorerService", () => {
       {
         instance: expect.any(TestWorker),
         name: "TestWorker2",
+        priority: 0,
+        processors: [],
+      },
+      {
+        instance: expect.any(TestWorker2),
+        name: "TestWorker3",
+        priority: 0,
+        processors: [],
+      },
+      {
+        instance: expect.any(TestWorker2),
+        name: "TestWorker4",
         priority: 0,
         processors: [],
       },

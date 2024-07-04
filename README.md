@@ -64,6 +64,7 @@ export class WorkerAppModule {}
 
 ```ts
 @QueueWorker("Worker name")
+// @QueueWorker({ name: "Worker name" })
 class Worker {
   @QueueWorkerProcess()
   public async process(message: string | object, raw: QueueWorkerRawMessage): Promise<void> {
