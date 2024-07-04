@@ -150,6 +150,25 @@ async function bootstrap(): Promise<void> {
 bootstrap();
 ```
 
+## Disable worker/provider
+
+You can disable worker/provider by setting `enabled` to false.
+For example, if you are reusing the same application, you can disable process on Cloud Run Service and enable it to run on Cloud Run Job.
+
+```ts
+@QueueWorker({ name: "Worker name", enabled: config.isEnabledWorker })
+class Worker {
+  @QueueWorkerProcess({ enabled: config.isEnabledProcess })
+  public async process(message: string | object, raw: QueueWorkerRawMessage): Promise<void> {}
+
+  @QueueWorkerProcess()
+  public async process2(message: string | object, raw: QueueWorkerRawMessage): Promise<void> {
+    console.log("Message:", message);
+    console.log("Raw message:", raw);
+  }
+}
+```
+
 ## Using Cloud Scheduler
 
 You can use Cloud Scheduler as trigger.
