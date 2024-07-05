@@ -120,6 +120,7 @@ export class QueueWorkerService {
         i = maxRetryAttempts;
       } catch (error: any) {
         this.logger.error(error.message);
+        await this.options.extraConfig?.catchProcessorException?.(error, raw);
       }
     }
   }
