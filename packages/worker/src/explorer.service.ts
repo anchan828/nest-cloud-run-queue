@@ -41,6 +41,7 @@ export class QueueWorkerExplorerService {
 
         for (const name of args.names) {
           metadata.push({
+            className: classInstanceWrapper.metatype.name,
             instance: classInstanceWrapper.instance,
             name,
             priority: args.priority || 0,
@@ -69,6 +70,8 @@ export class QueueWorkerExplorerService {
         metadata.push({
           priority: args.priority || 0,
           processor: prototype[methodName].bind(instance),
+          processorName: `${worker.className}.${methodName}`,
+          workerName: worker.name,
         });
       }
     }

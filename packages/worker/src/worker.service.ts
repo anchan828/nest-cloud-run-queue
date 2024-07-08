@@ -12,8 +12,9 @@ import {
   QueueWorkerDecodedMessage,
   QueueWorkerMetadata,
   QueueWorkerModuleOptions,
-  QueueWorkerProcessor,
+  QueueWorkerProcessorMetadata,
   QueueWorkerProcessorStatus,
+  QueueWorkerProcessResult,
   QueueWorkerRawMessage,
 } from "./interfaces";
 import { decodeMessage, sortByPriority } from "./util";
@@ -42,16 +43,16 @@ export class QueueWorkerService {
     private readonly explorerService: QueueWorkerExplorerService,
   ) {}
 
-  public async execute<T = any>(meessage: Message<T>): Promise<void>;
+  public async execute<T = any>(meessage: Message<T>): Promise<QueueWorkerProcessResult<T>[]>;
 
-  public async execute<T = any>(meessage: QueueWorkerDecodedMessage<T>): Promise<void>;
+  public async execute<T = any>(meessage: QueueWorkerDecodedMessage<T>): Promise<QueueWorkerProcessResult<T>[]>;
 
-  public async execute<T = any>(meessage: QueueWorkerRawMessage<T>): Promise<void>;
+  public async execute<T = any>(meessage: QueueWorkerRawMessage<T>): Promise<QueueWorkerProcessResult<T>[]>;
 
   public async execute<T = any>(
     meessage: QueueWorkerRawMessage<T> | QueueWorkerDecodedMessage<T> | Message<T>,
-  ): Promise<void> {
-    await this.runWorkers(this.isDecodedMessage(meessage) ? meessage : decodeMessage(meessage));
+  ): Promise<QueueWorkerProcessResult<T>[]> {
+    return await this.runWorkers(this.isDecodedMessage(meessage) ? meessage : decodeMessage(meessage));
   }
 
   /**
@@ -61,7 +62,9 @@ export class QueueWorkerService {
     return decodeMessage(message);
   }
 
-  private async runWorkers(decodedMessage: QueueWorkerDecodedMessage): Promise<void> {
+  private async runWorkers<T = any>(
+    decodedMessage: QueueWorkerDecodedMessage<T>,
+  ): Promise<QueueWorkerProcessResult<T>[]> {
     const maxRetryAttempts = this.options.maxRetryAttempts ?? 1;
     const workers: QueueWorkerMetadata[] = [];
 
@@ -78,7 +81,7 @@ export class QueueWorkerService {
     const spetialProcessors = sortByPriority(this.#spetialWorkers)
       .map((w) => sortByPriority(w.processors))
       .flat();
-
+    const QueueWorkerProcessResults: QueueWorkerProcessResult<T>[] = [];
     const processorStatus = await this.options.extraConfig?.preProcessor?.(
       decodedMessage.data.name,
       decodedMessage.data.data,
@@ -87,11 +90,13 @@ export class QueueWorkerService {
 
     if (processorStatus !== QueueWorkerProcessorStatus.SKIP) {
       for (const processor of processors) {
-        await this.execProcessor(processor.processor, maxRetryAttempts, decodedMessage.data.data, decodedMessage.raw);
+        QueueWorkerProcessResults.push(
+          await this.executeProcessor(processor, maxRetryAttempts, decodedMessage.data.data, decodedMessage.raw),
+        );
       }
 
       for (const processor of spetialProcessors) {
-        await this.execProcessor(processor.processor, maxRetryAttempts, decodedMessage.data, decodedMessage.raw);
+        await this.executeProcessor(processor, maxRetryAttempts, decodedMessage.data, decodedMessage.raw);
       }
     }
 
@@ -100,6 +105,8 @@ export class QueueWorkerService {
       decodedMessage.data.data,
       decodedMessage.raw,
     );
+
+    return QueueWorkerProcessResults;
   }
 
   private isDecodedMessage<T = any>(
@@ -108,20 +115,37 @@ export class QueueWorkerService {
     return "raw" in message;
   }
 
-  private async execProcessor<T>(
-    processor: QueueWorkerProcessor,
+  private async executeProcessor<T = any>(
+    processorMetadata: QueueWorkerProcessorMetadata,
     maxRetryAttempts: number,
-    data: T,
+    data: T | undefined,
     raw: QueueWorkerRawMessage,
-  ): Promise<void> {
+  ): Promise<QueueWorkerProcessResult<T>> {
     for (let i = 0; i < maxRetryAttempts; i++) {
       try {
-        await processor(data, raw);
+        await processorMetadata.processor(data, raw);
         i = maxRetryAttempts;
       } catch (error: any) {
         this.logger.error(error.message);
-        await this.options.extraConfig?.catchProcessorException?.(error, raw);
+        if (maxRetryAttempts === i + 1) {
+          return {
+            data,
+            error,
+            processorName: processorMetadata.processorName,
+            raw,
+            success: false,
+            workerName: processorMetadata.workerName,
+          };
+        }
       }
     }
+
+    return {
+      data,
+      processorName: processorMetadata.processorName,
+      raw,
+      success: true,
+      workerName: processorMetadata.workerName,
+    };
   }
 }

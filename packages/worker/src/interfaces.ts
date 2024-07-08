@@ -50,6 +50,7 @@ export type QueueWorkerModuleOptionsFactory = ModuleOptionsFactory<Omit<QueueWor
 export type QueueWorkerProcessor = <T>(message: T, raw: QueueWorkerRawMessage) => Promise<void> | void;
 
 export interface QueueWorkerMetadata {
+  className: string;
   instance: Injectable;
 
   processors: QueueWorkerProcessorMetadata[];
@@ -60,6 +61,8 @@ export interface QueueWorkerMetadata {
 }
 
 export interface QueueWorkerProcessorMetadata extends QueueWorkerProcessDecoratorArgs {
+  workerName: QueueWorkerName;
+  processorName: string;
   processor: QueueWorkerProcessor;
 }
 
@@ -76,25 +79,6 @@ export type QueueWorkerExtraConfig = {
   ) => (QueueWorkerProcessorStatus | undefined | void) | Promise<QueueWorkerProcessorStatus | undefined | void>;
   // Run AFTER the message is processed
   postProcessor?: (name: string, ...args: Parameters<QueueWorkerProcessor>) => void | Promise<void>;
-
-  /**
-   * Exceptions thrown in the processor do not reach the top level and are not detected by the application. If you want to do something with processor exceptions, use this property.
-   * @example
-   * ```ts
-   * catchProcessorException: (error: Error) => {
-   *   captureException(error); // Sentry
-   * }
-   * ```
-   *
-   * @example
-   * ```ts
-   * catchProcessorException: async (error: Error) => {
-   *  // You can throw errors and let them reach the top level. Use an ExceptionFilter or similar to handle them appropriately.
-   *  throw error;
-   * }
-   * ```
-   */
-  catchProcessorException?: <T extends Error = Error>(error: T, raw: QueueWorkerRawMessage) => void | Promise<void>;
 };
 
 export interface QueueWorkerDecoratorArgs {
@@ -184,3 +168,21 @@ export interface QueueWorkerProcessOptions {
    */
   enabled?: boolean;
 }
+
+type QueueWorkerProcessResultBase<T = any> = {
+  workerName: QueueWorkerName;
+  processorName: string;
+  data?: T;
+  raw: QueueWorkerRawMessage<T>;
+};
+
+export type QueueWorkerProcessSuccessResult<T = any> = {
+  success: true;
+} & QueueWorkerProcessResultBase<T>;
+
+export type QueueWorkerProcessFailureResult<T = any> = {
+  success: false;
+  error: Error;
+} & QueueWorkerProcessResultBase<T>;
+
+export type QueueWorkerProcessResult<T = any> = QueueWorkerProcessSuccessResult<T> | QueueWorkerProcessFailureResult<T>;

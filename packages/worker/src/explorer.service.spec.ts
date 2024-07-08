@@ -25,12 +25,14 @@ describe("QueueWorkerExplorerService", () => {
     expect(explorer).toBeDefined();
     expect(explorer.explore()).toEqual([
       {
+        className: "TestWorker",
         instance: expect.any(TestWorker),
         name: "TestWorker",
         priority: 0,
         processors: [],
       },
       {
+        className: "TestWorker2",
         instance: expect.any(TestWorker2),
         name: "TestWorker2",
         priority: 0,
@@ -54,24 +56,28 @@ describe("QueueWorkerExplorerService", () => {
     expect(explorer).toBeDefined();
     expect(explorer.explore()).toEqual([
       {
+        className: "TestWorker",
         instance: expect.any(TestWorker),
         name: "TestWorker1",
         priority: 0,
         processors: [],
       },
       {
+        className: "TestWorker",
         instance: expect.any(TestWorker),
         name: "TestWorker2",
         priority: 0,
         processors: [],
       },
       {
+        className: "TestWorker2",
         instance: expect.any(TestWorker2),
         name: "TestWorker3",
         priority: 0,
         processors: [],
       },
       {
+        className: "TestWorker2",
         instance: expect.any(TestWorker2),
         name: "TestWorker4",
         priority: 0,
@@ -99,6 +105,7 @@ describe("QueueWorkerExplorerService", () => {
     expect(explorer).toBeDefined();
     expect(explorer.explore()).toEqual([
       {
+        className: "TestWorker",
         instance: expect.any(TestWorker),
         name: "TestWorker",
         priority: 0,
@@ -132,6 +139,7 @@ describe("QueueWorkerExplorerService", () => {
     expect(explorer).toBeDefined();
     expect(explorer.explore()).toEqual([
       {
+        className: "TestWorker2",
         instance: expect.any(TestWorker2),
         name: "TestWorker2",
         priority: 0,
