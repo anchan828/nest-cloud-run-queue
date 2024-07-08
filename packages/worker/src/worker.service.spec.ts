@@ -83,21 +83,56 @@ describe("QueueWorkerService", () => {
       });
       jest.spyOn(explorerService, "explore").mockReturnValueOnce([
         {
+          className: "className",
           name: "name",
           priority: 0,
           processors: [
-            { priority: 0, processor },
-            { priority: 1, processor: processorMock },
+            { priority: 0, processor, processorName: "className.processorName", workerName: "name" },
+            { priority: 1, processor: processorMock, processorName: "className.processorName2", workerName: "name" },
           ],
         },
       ] as QueueWorkerMetadata[]);
       await expect(
         service.execute({
           attributes: { attr: 2 },
-          data: toBase64({ data: { date: new Date(), prop: 1 }, name: "name" }),
+          data: toBase64({ data: { date: new Date("2024-07-08"), prop: 1 }, name: "name" }),
           messageId: "1",
         }),
-      ).resolves.toBeUndefined();
+      ).resolves.toEqual([
+        {
+          data: {
+            date: new Date("2024-07-08"),
+            prop: 1,
+          },
+          processorName: "className.processorName",
+          raw: {
+            attributes: {
+              attr: 2,
+            },
+            data: "eyJkYXRhIjp7ImRhdGUiOiIyMDI0LTA3LTA4VDAwOjAwOjAwLjAwMFoiLCJwcm9wIjoxfSwibmFtZSI6Im5hbWUifQ==",
+            messageId: "1",
+          },
+          success: true,
+          workerName: "name",
+        },
+        {
+          data: {
+            date: new Date("2024-07-08"),
+            prop: 1,
+          },
+          error: expect.any(Error),
+          processorName: "className.processorName2",
+          raw: {
+            attributes: {
+              attr: 2,
+            },
+            data: "eyJkYXRhIjp7ImRhdGUiOiIyMDI0LTA3LTA4VDAwOjAwOjAwLjAwMFoiLCJwcm9wIjoxfSwibmFtZSI6Im5hbWUifQ==",
+            messageId: "1",
+          },
+          success: false,
+          workerName: "name",
+        },
+      ]);
       expect(processorMock).toHaveBeenCalledTimes(1);
     });
   });
@@ -140,8 +175,8 @@ describe("QueueWorkerService", () => {
           name: "name",
           priority: 0,
           processors: [
-            { priority: 0, processor },
-            { priority: 1, processor: processorMock },
+            { priority: 0, processor, processorName: "processor", workerName: "worker" },
+            { priority: 1, processor: processorMock, processorName: "processor", workerName: "worker" },
           ],
         },
       ] as QueueWorkerMetadata[]);
@@ -151,7 +186,7 @@ describe("QueueWorkerService", () => {
           data: toBase64({ data: { date: new Date(), prop: 1 }, name: "name" }),
           messageId: "1",
         }),
-      ).resolves.toBeUndefined();
+      ).resolves.toHaveLength(2);
       expect(processorMock).toHaveBeenCalledTimes(1);
     });
   });
@@ -160,17 +195,18 @@ describe("QueueWorkerService", () => {
     const processorMock = jest.fn().mockResolvedValueOnce("ok");
     jest.spyOn(explorerService, "explore").mockReturnValueOnce([
       {
+        className: "className",
         name: ALL_WORKERS_QUEUE_WORKER_NAME,
         priority: 0,
-        processors: [{ priority: 0, processor: processorMock }] as QueueWorkerProcessorMetadata[],
+        processors: [
+          { priority: 0, processor: processorMock, processorName: "processor", workerName: "worker" },
+        ] as QueueWorkerProcessorMetadata[],
       },
     ] as QueueWorkerMetadata[]);
     const date = new Date();
     const encodeData = toBase64({ data: { date, prop: 1 }, name: "name" });
 
-    await expect(
-      service.execute({ attributes: { attr: 2 }, data: encodeData, messageId: "1" }),
-    ).resolves.toBeUndefined();
+    await expect(service.execute({ attributes: { attr: 2 }, data: encodeData, messageId: "1" })).resolves.toEqual([]);
     expect(processorMock).toHaveBeenCalledWith(
       { data: { date, prop: 1 }, name: "name" },
       { attributes: { attr: 2 }, data: encodeData, messageId: "1" },
@@ -183,7 +219,9 @@ describe("QueueWorkerService", () => {
       {
         name: UNHANDLED_QUEUE_WORKER_NAME,
         priority: 0,
-        processors: [{ priority: 0, processor: processorMock }] as QueueWorkerProcessorMetadata[],
+        processors: [
+          { priority: 0, processor: processorMock, processorName: "processor", workerName: "worker" },
+        ] as QueueWorkerProcessorMetadata[],
       },
     ] as QueueWorkerMetadata[]);
     await expect(
@@ -192,7 +230,7 @@ describe("QueueWorkerService", () => {
         data: toBase64({ data: { date: new Date(), prop: 1 }, name: "name" }),
         messageId: "1",
       }),
-    ).resolves.toBeUndefined();
+    ).resolves.toEqual([]);
     expect(processorMock).toHaveBeenCalledTimes(1);
   });
 
@@ -203,27 +241,27 @@ describe("QueueWorkerService", () => {
         name: "name",
         priority: 2,
         processors: [
-          { priority: 2, processor: () => processorMock(5) },
-          { priority: 1, processor: () => processorMock(4) },
-          { priority: 3, processor: () => processorMock(6) },
+          { priority: 2, processor: () => processorMock(5), processorName: "processor", workerName: "worker" },
+          { priority: 1, processor: () => processorMock(4), processorName: "processor", workerName: "worker" },
+          { priority: 3, processor: () => processorMock(6), processorName: "processor", workerName: "worker" },
         ] as QueueWorkerProcessorMetadata[],
       },
       {
         name: "name",
         priority: 1,
         processors: [
-          { priority: 2, processor: () => processorMock(2) },
-          { priority: 1, processor: () => processorMock(1) },
-          { priority: 3, processor: () => processorMock(3) },
+          { priority: 2, processor: () => processorMock(2), processorName: "processor", workerName: "worker" },
+          { priority: 1, processor: () => processorMock(1), processorName: "processor", workerName: "worker" },
+          { priority: 3, processor: () => processorMock(3), processorName: "processor", workerName: "worker" },
         ] as QueueWorkerProcessorMetadata[],
       },
       {
         name: ALL_WORKERS_QUEUE_WORKER_NAME,
         priority: 1,
         processors: [
-          { priority: 2, processor: () => processorMock(8) },
-          { priority: 1, processor: () => processorMock(7) },
-          { priority: 3, processor: () => processorMock(9) },
+          { priority: 2, processor: () => processorMock(8), processorName: "processor", workerName: "worker" },
+          { priority: 1, processor: () => processorMock(7), processorName: "processor", workerName: "worker" },
+          { priority: 3, processor: () => processorMock(9), processorName: "processor", workerName: "worker" },
         ] as QueueWorkerProcessorMetadata[],
       },
     ] as QueueWorkerMetadata[]);
@@ -234,7 +272,7 @@ describe("QueueWorkerService", () => {
         data: toBase64({ data: { date: new Date(), prop: 1 }, name: "name" }),
         messageId: "1",
       }),
-    ).resolves.toBeUndefined();
+    ).resolves.toHaveLength(6);
     expect(processorMock).toHaveBeenCalledTimes(9);
     expect(processorMock).toHaveBeenNthCalledWith(1, 1);
     expect(processorMock).toHaveBeenNthCalledWith(2, 2);
@@ -260,12 +298,23 @@ describe("QueueWorkerService", () => {
     jest.spyOn(explorerService, "explore").mockReturnValueOnce([
       {
         name: "name",
-        processors: [{ priority: 0, processor: mock }] as QueueWorkerProcessorMetadata[],
+        processors: [
+          { priority: 0, processor: mock, processorName: "processor", workerName: "worker" },
+        ] as QueueWorkerProcessorMetadata[],
       },
     ] as QueueWorkerMetadata[]);
     await expect(
       service.execute({ attributes: { attr: 2 }, data: toBase64({ data: { prop: 1 }, name: "name" }), messageId: "1" }),
-    ).resolves.toBeUndefined();
+    ).resolves.toEqual([
+      {
+        data: { prop: 1 },
+        error: expect.any(Error),
+        processorName: "processor",
+        raw: { attributes: { attr: 2 }, data: "eyJkYXRhIjp7InByb3AiOjF9LCJuYW1lIjoibmFtZSJ9", messageId: "1" },
+        success: false,
+        workerName: "worker",
+      },
+    ]);
     expect(mock).toHaveBeenCalledTimes(3);
   });
 
@@ -276,7 +325,14 @@ describe("QueueWorkerService", () => {
       {
         name: "name",
         priority: 0,
-        processors: [{ priority: 0, processor: processorMock } as QueueWorkerProcessorMetadata],
+        processors: [
+          {
+            priority: 0,
+            processor: processorMock,
+            processorName: "processor",
+            workerName: "worker",
+          } as QueueWorkerProcessorMetadata,
+        ],
       },
     ] as QueueWorkerMetadata[]);
     await expect(
@@ -284,7 +340,7 @@ describe("QueueWorkerService", () => {
         data: { prop: 1 },
         name: "name",
       }),
-    ).resolves.toBeUndefined();
+    ).resolves.toHaveLength(1);
     expect(processorMock).toHaveBeenCalledWith({ prop: 1 }, { data: { prop: 1 }, name: "name" });
   });
 });
