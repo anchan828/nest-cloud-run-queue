@@ -22,5 +22,6 @@ export {
   QueueWorkerReceivedMessage,
 } from "./interfaces";
 
+export { decodeMessage } from "./util";
 export { QueueWorkerModule } from "./worker.module";
 export { QueueWorkerService } from "./worker.service";
