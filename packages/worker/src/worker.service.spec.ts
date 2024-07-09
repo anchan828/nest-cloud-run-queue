@@ -56,13 +56,13 @@ describe("QueueWorkerService", () => {
     });
 
     it("should throw error if message dosen't have name", async () => {
-      await expect(service.execute({ data: toBase64({ data: "data" } as Message), messageId: "1" })).rejects.toThrow(
+      await expect(service.execute({ data: toBase64({ data: "data" } as Message), id: "1" })).rejects.toThrow(
         new BadRequestException(ERROR_QUEUE_WORKER_NAME_NOT_FOUND),
       );
     });
 
     it("should throw error if worker not found", async () => {
-      await expect(service.execute({ data: toBase64({ name: "name" } as Message), messageId: "1" })).rejects.toThrow(
+      await expect(service.execute({ data: toBase64({ name: "name" } as Message), id: "1" })).rejects.toThrow(
         new BadRequestException(ERROR_WORKER_NOT_FOUND("name")),
       );
     });
@@ -178,7 +178,7 @@ describe("QueueWorkerService", () => {
         service.execute({
           attributes: { attr: 2 },
           data: toBase64({ data: { date: new Date(), prop: 1 }, name: "name" }),
-          messageId: "1",
+          id: "1",
         }),
       ).resolves.toHaveLength(2);
       expect(processorMock).toHaveBeenCalledTimes(1);
@@ -271,6 +271,7 @@ describe("QueueWorkerService", () => {
         {
           message: {
             data: { data: { prop: 1 }, name: "name" },
+            id: "",
             raw: { data: { prop: 1 }, name: "name" },
           },
           metadata: {

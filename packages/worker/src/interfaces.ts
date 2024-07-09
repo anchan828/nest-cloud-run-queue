@@ -89,9 +89,17 @@ export interface QueueWorkerProcessDecoratorArgs {
 
 export type QueueWorkerRawMessage<T = any> = {
   readonly data?: string | null | Message<T>;
+  readonly messageId?: string;
   readonly headers?: Record<string, string>;
 } & Record<string, any>;
 export type QueueWorkerDecodedMessage<T = any> = {
+  /**
+   * The message ID is a unique identifier.
+   * If controller recieve from Pub/Sub, it will be body.message.messageId.
+   * If controller recieve from Cloud Tasks, it will be body.message.headers["X-CloudTasks-TaskName"].
+   * If nothing is obtained, it will be an empty string.
+   */
+  readonly id: string;
   readonly data: Message<T>;
   readonly headers?: Record<string, string>;
   readonly raw: QueueWorkerRawMessage;
