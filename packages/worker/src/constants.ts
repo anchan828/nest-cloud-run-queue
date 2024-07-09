@@ -6,6 +6,3 @@ export const QUEUE_WORKER_PROCESS_DECORATOR = "QUEUE_WORKER_PROCESS_DECORATOR";
 export const ERROR_INVALID_MESSAGE_FORMAT = "Invalid message format.";
 export const ERROR_QUEUE_WORKER_NAME_NOT_FOUND = "QueueWorker name not found.";
 export const ERROR_WORKER_NOT_FOUND = (name: string): string => `QueueWorker '${name}' not found.`;
-
-export const UNHANDLED_QUEUE_WORKER_NAME = "__unhandled_queue_worker";
-export const ALL_WORKERS_QUEUE_WORKER_NAME = "__all_queue_workers";
