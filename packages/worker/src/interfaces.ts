@@ -26,14 +26,6 @@ export interface QueueWorkerModuleOptions extends ModuleOptions {
   maxRetryAttempts?: number;
 
   /**
-   * extra config
-   *
-   * @type {QueueWorkerExtraConfig}
-   * @memberof QueueWorkerModuleOptions
-   */
-  extraConfig?: QueueWorkerExtraConfig;
-
-  /**
    * Define a Route for the controller.
    * Default: POST /
    * If you provide your own Controller, set it to null.
@@ -52,11 +44,8 @@ export type QueueWorkerProcessor = <T>(message: T, raw: QueueWorkerRawMessage) =
 export interface QueueWorkerMetadata {
   className: string;
   instance: Injectable;
-
   processors: QueueWorkerProcessorMetadata[];
-
   name: QueueWorkerName;
-
   priority: number;
 }
 
@@ -65,21 +54,6 @@ export interface QueueWorkerProcessorMetadata extends QueueWorkerProcessDecorato
   processorName: string;
   processor: QueueWorkerProcessor;
 }
-
-export enum QueueWorkerProcessorStatus {
-  IN_PROGRESS = 0,
-  SKIP = 1,
-}
-
-export type QueueWorkerExtraConfig = {
-  // Run BEFORE the message is processed
-  preProcessor?: (
-    name: string,
-    ...args: Parameters<QueueWorkerProcessor>
-  ) => (QueueWorkerProcessorStatus | undefined | void) | Promise<QueueWorkerProcessorStatus | undefined | void>;
-  // Run AFTER the message is processed
-  postProcessor?: (name: string, ...args: Parameters<QueueWorkerProcessor>) => void | Promise<void>;
-};
 
 export interface QueueWorkerDecoratorArgs {
   names: QueueWorkerName[];
@@ -169,7 +143,7 @@ export interface QueueWorkerProcessOptions {
   enabled?: boolean;
 }
 
-type QueueWorkerProcessResultBase<T = any> = {
+export type QueueWorkerProcessResultBase<T = any> = {
   workerName: QueueWorkerName;
   processorName: string;
   data?: T;

@@ -1,6 +1,6 @@
 import { Message } from "@anchan828/nest-cloud-run-queue-common";
 import { BadRequestException } from "@nestjs/common";
-import { ERROR_INVALID_MESSAGE_FORMAT, ERROR_QUEUE_WORKER_NAME_NOT_FOUND } from "./constants";
+import { ERROR_INVALID_MESSAGE_FORMAT } from "./constants";
 import { QueueWorkerDecodedMessage, QueueWorkerRawMessage } from "./interfaces";
 
 const dateRegExp = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
@@ -77,10 +77,6 @@ export function decodeMessage<T = any>(message: QueueWorkerRawMessage | Message)
   } else {
     // tasks / http
     data = message as Message<T>;
-  }
-
-  if (!data.name) {
-    throw new BadRequestException(ERROR_QUEUE_WORKER_NAME_NOT_FOUND);
   }
 
   return {

@@ -19,7 +19,6 @@ export function getWorkerController(metadata?: QueueWorkerControllerMetadata): T
       @Body() body: QueueWorkerReceivedMessage,
       @Headers() headers: Record<string, string>,
     ): Promise<void> {
-      this.service.execute({});
       await this.service.execute({ ...body.message, headers });
     }
   }

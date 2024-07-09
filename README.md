@@ -173,6 +173,36 @@ class Worker {
 }
 ```
 
+## Execute worker/processor manually
+
+You can execute worker/processor manually.
+
+```ts
+@Controller("/worker")
+class WorkerController {
+  constructor(private readonly service: QueueWorkerService) {}
+
+  @Post()
+  public async execute(@Body() body: QueueWorkerReceivedMessage): Promise<void> {
+    const workers = await this.service.getWorkers(body.message);
+
+    for (const worker of workers) {
+      const processors = worker.getProcessors();
+
+      for (const processor of processors) {
+        const result = await processor.execute();
+
+        if (result.success) {
+          console.log("Success");
+        } else {
+          console.log("Failed:" + result.error.message);
+        }
+      }
+    }
+  }
+}
+```
+
 ## Using Cloud Scheduler
 
 You can use Cloud Scheduler as trigger.
@@ -197,40 +227,4 @@ async function bootstrap(): Promise<void> {
 }
 
 bootstrap();
-```
-
-## Global Events
-
-This package is defined special event handlers.
-
-Note: `throwModuleError: true` is not working if you set global events.
-
-### UNHANDLED_QUEUE_WORKER
-
-You can listen to undefined worker name
-
-```typescript
-@QueueWorker(UNHANDLED_QUEUE_WORKER)
-class Worker {
-  @QueueWorkerProcess()
-  public async process(message: Message<any>, raw: QueueWorkerRawMessage): Promise<void> {
-    console.log("Message:", message);
-    console.log("Raw message:", raw);
-  }
-}
-```
-
-### ALL_QUEUE_WORKERS
-
-You can listen to all workers
-
-```typescript
-@QueueWorker(ALL_QUEUE_WORKERS)
-class Worker {
-  @QueueWorkerProcess()
-  public async process(message: Message<any>, raw: QueueWorkerRawMessage): Promise<void> {
-    console.log("Message:", message);
-    console.log("Raw message:", raw);
-  }
-}
 ```

@@ -8,6 +8,7 @@ import {
   QueueWorkerProcessDecoratorArgs,
   QueueWorkerProcessorMetadata,
 } from "./interfaces";
+import { sortByPriority } from "./util";
 @Injectable()
 export class QueueWorkerExplorerService {
   constructor(
@@ -19,10 +20,10 @@ export class QueueWorkerExplorerService {
     const workers = this.getWorkers();
 
     for (const worker of workers) {
-      worker.processors = this.getQueueWorkerProcessors(worker);
+      worker.processors = sortByPriority(this.getQueueWorkerProcessors(worker));
     }
 
-    return workers;
+    return sortByPriority(workers);
   }
 
   private getWorkers(): QueueWorkerMetadata[] {
