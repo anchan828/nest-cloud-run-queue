@@ -82,8 +82,13 @@ export function decodeMessage<T = any>(message: QueueWorkerRawMessage | Message)
   return {
     data,
     headers: "headers" in message ? message.headers : undefined,
+    id: getMessageId(message),
     raw: message,
   };
+}
+
+function getMessageId(raw: QueueWorkerRawMessage): string {
+  return raw.messageId ?? raw.headers?.["x-cloudtasks-taskname"] ?? "";
 }
 
 function decodeData<T = any>(data?: string | Uint8Array | Buffer | null): Message<T> {

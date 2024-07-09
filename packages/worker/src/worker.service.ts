@@ -33,6 +33,12 @@ export class QueueWorkerService {
   /**
    * Execute all workers that match the worker name. If you want to execute a each worker, use `getWorkers` method.
    */
+  public async execute<T = any>(meessage: QueueWorkerRawMessage<T>): Promise<QueueWorkerProcessResult<T>[]>;
+
+  public async execute<T = any>(meessage: Message<T>): Promise<QueueWorkerProcessResult<T>[]>;
+
+  public async execute<T = any>(meessage: QueueWorkerDecodedMessage<T>): Promise<QueueWorkerProcessResult<T>[]>;
+
   public async execute<T = any>(
     meessage: QueueWorkerRawMessage<T> | QueueWorkerDecodedMessage<T> | Message<T>,
   ): Promise<QueueWorkerProcessResult<T>[]> {
@@ -61,6 +67,12 @@ export class QueueWorkerService {
    * Get all workers that match the worker name. Use this method to execute manually when you want to execute only on specific conditions using metadata such as class name or processor name.
    * If you want to execute all workers simply, use `execute` method.
    */
+  public getWorkers<T = any>(meessage: QueueWorkerRawMessage<T>): Worker<T>[];
+
+  public getWorkers<T = any>(meessage: Message<T>): Worker<T>[];
+
+  public getWorkers<T = any>(meessage: QueueWorkerDecodedMessage<T>): Worker<T>[];
+
   public getWorkers<T = any>(
     meessage: QueueWorkerRawMessage<T> | QueueWorkerDecodedMessage<T> | Message<T>,
   ): Worker<T>[] {
