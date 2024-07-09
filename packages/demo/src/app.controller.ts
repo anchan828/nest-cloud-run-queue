@@ -11,7 +11,12 @@ export class AppController {
 
   @Get()
   public hello(): string {
-    return "hello";
+    const port = process.env.PORT || 3000;
+    return [
+      "Demo link:",
+      `<div><a href="http://localhost:${port}/pubsub">http://localhost:${port}/pubsub</a></div>`,
+      `<div><a href="http://localhost:${port}/tasks">http://localhost:${port}/tasks</a></div>`,
+    ].join("\n\n");
   }
 
   @Get("/pubsub")

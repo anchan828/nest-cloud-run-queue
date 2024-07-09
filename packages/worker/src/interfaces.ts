@@ -109,6 +109,11 @@ export interface QueueWorkerControllerMetadata extends RequestMappingMetadata {
    * @memberof QueueWorkerControllerMetadata
    */
   statusCode?: number;
+
+  /**
+   * Whether to throw the error as is when Processor throws an error. Default is true.
+   */
+  throwError?: boolean;
 }
 
 export interface QueueWorkerControllerInterface {
