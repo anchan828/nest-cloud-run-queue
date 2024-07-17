@@ -23,4 +23,6 @@ export type PublishExtraConfig<T extends Message = Message> = {
   prePublish?: (message: T) => T | Promise<T>;
   // Run AFTER the message is published
   postPublish?: (message: T, resultId: string) => void | Promise<void>;
+  // Use to serialize (JSON.stringify(data, stringifyReplacer)) the message data before publishing
+  stringifyReplacer?: (key: string, value: any) => any;
 };

@@ -1,7 +1,7 @@
 import { CloudTasksClient } from "@google-cloud/tasks";
 import { Inject, Injectable } from "@nestjs/common";
 import { TASKS_CLIENT, TASKS_PUBLISHER_MODULE_OPTIONS } from "./constants";
-import { TasksPublisherModuleOptions, PublishData, PublishOptions } from "./interfaces";
+import { PublishData, PublishOptions, TasksPublisherModuleOptions } from "./interfaces";
 
 @Injectable()
 export class TasksPublisherService {
@@ -22,7 +22,9 @@ export class TasksPublisherService {
         ...this.options.publishConfig,
         ...options,
         httpRequest: {
-          body: Buffer.from(JSON.stringify({ message: taskMessage || {} })).toString("base64"),
+          body: Buffer.from(
+            JSON.stringify({ message: taskMessage || {} }, this.options.extraConfig?.stringifyReplacer),
+          ).toString("base64"),
           headers: {
             "content-type": "application/json",
             ...options?.httpRequest?.headers,

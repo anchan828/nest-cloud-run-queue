@@ -42,7 +42,9 @@ export class QueueWorkerService {
   public async execute<T = any>(
     meessage: QueueWorkerRawMessage<T> | QueueWorkerDecodedMessage<T> | Message<T>,
   ): Promise<QueueWorkerProcessResult<T>[]> {
-    const decodedMessage = isDecodedMessage(meessage) ? meessage : decodeMessage(meessage);
+    const decodedMessage = isDecodedMessage(meessage)
+      ? meessage
+      : decodeMessage(meessage, this.options.extraConfig?.parseReviver);
 
     if (this.options.throwModuleError && !decodedMessage.data.name) {
       throw new BadRequestException(ERROR_QUEUE_WORKER_NAME_NOT_FOUND);
@@ -76,7 +78,9 @@ export class QueueWorkerService {
   public getWorkers<T = any>(
     meessage: QueueWorkerRawMessage<T> | QueueWorkerDecodedMessage<T> | Message<T>,
   ): Worker<T>[] {
-    const decodedMessage = isDecodedMessage(meessage) ? meessage : decodeMessage(meessage);
+    const decodedMessage = isDecodedMessage(meessage)
+      ? meessage
+      : decodeMessage(meessage, this.options.extraConfig?.parseReviver);
     if (!decodedMessage.data.name) {
       return [];
     }
