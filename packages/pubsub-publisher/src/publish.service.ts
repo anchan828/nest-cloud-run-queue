@@ -1,7 +1,7 @@
 import { PubSub } from "@google-cloud/pubsub";
 import { PublishOptions } from "@google-cloud/pubsub/build/src/topic";
 import { Inject, Injectable } from "@nestjs/common";
-import { PUBSUB, PUBSUB_PUBLISHER_MODULE_OPTIONS, ERROR_TOPIC_NOT_FOUND } from "./constants";
+import { ERROR_TOPIC_NOT_FOUND, PUBSUB, PUBSUB_PUBLISHER_MODULE_OPTIONS } from "./constants";
 import { PubSubPublisherModuleOptions, PublishData } from "./interfaces";
 
 @Injectable()
@@ -16,12 +16,14 @@ export class PubSubPublisherService {
     const topicName = this.getTopicName(options);
     const topic = this.pubsub.topic(topicName, Object.assign({}, this.options.publishConfig, options));
 
-    const { attributes, ...json } = this.options.extraConfig?.prePublish
+    const { attributes, ...data } = this.options.extraConfig?.prePublish
       ? await this.options.extraConfig?.prePublish(message)
       : message;
 
-    const messageId = await topic.publishMessage({ attributes, json: json || {} });
-
+    const messageId = await topic.publishMessage({
+      attributes,
+      data: Buffer.from(JSON.stringify(data, this.options.extraConfig?.stringifyReplacer)),
+    });
     if (this.options.extraConfig?.postPublish) {
       await this.options.extraConfig?.postPublish(message, messageId);
     }

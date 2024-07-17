@@ -21,11 +21,11 @@ export class AppController {
 
   @Get("/pubsub")
   public async publishPubsubMessage(): Promise<string> {
-    return this.pubsubService.publish({ data: "message", name: "pubsub" });
+    return this.pubsubService.publish({ data: { organizationId: BigInt(1), text: "message" }, name: "pubsub" });
   }
 
   @Get("/tasks")
   public async publishTasksMessage(): Promise<string> {
-    return this.tasksService.publish({ data: "message", name: "tasks" });
+    return this.tasksService.publish({ data: { organizationId: BigInt(1), text: "message" }, name: "tasks" });
   }
 }

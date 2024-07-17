@@ -15,9 +15,26 @@ import { PubSubWorker, TasksWorker } from "./processor";
 @Module({
   controllers: [AppController],
   imports: [
-    QueueWorkerModule.register(),
+    QueueWorkerModule.register({
+      extraConfig: {
+        parseReviver(key, value) {
+          if (key === "organizationId") {
+            return BigInt(value);
+          }
+          return value;
+        },
+      },
+    }),
     PubSubPublisherModule.register({
       clientConfig: {},
+      extraConfig: {
+        stringifyReplacer(key, value) {
+          if (key === "organizationId") {
+            return value.toString();
+          }
+          return value;
+        },
+      },
       topic: "nest-cloud-run-queue-demo",
     }),
     TasksPublisherModule.register({
@@ -25,6 +42,14 @@ import { PubSubWorker, TasksWorker } from "./processor";
         apiEndpoint: "gcloud-tasks-emulator",
         port: 8123,
         sslCreds: credentials.createInsecure(),
+      },
+      extraConfig: {
+        stringifyReplacer(key, value) {
+          if (key === "organizationId") {
+            return value.toString();
+          }
+          return value;
+        },
       },
       publishConfig: {
         httpRequest: {

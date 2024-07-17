@@ -26,6 +26,14 @@ export interface QueueWorkerModuleOptions extends ModuleOptions {
   maxRetryAttempts?: number;
 
   /**
+   * extra config
+   *
+   * @type {QueueWorkerExtraConfig}
+   * @memberof QueueWorkerModuleOptions
+   */
+  extraConfig?: QueueWorkerExtraConfig;
+
+  /**
    * Define a Route for the controller.
    * Default: POST /
    * If you provide your own Controller, set it to null.
@@ -54,7 +62,10 @@ export interface QueueWorkerProcessorMetadata extends QueueWorkerProcessDecorato
   processorName: string;
   processor: QueueWorkerProcessor;
 }
-
+export type QueueWorkerExtraConfig = {
+  // Use to parse (JSON.parse(data, parseReviver)) the message data before processing
+  parseReviver?: (key: string, value: any) => any;
+};
 export interface QueueWorkerDecoratorArgs {
   names: QueueWorkerName[];
 

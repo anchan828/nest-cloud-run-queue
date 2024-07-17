@@ -10,17 +10,21 @@ const dateRegExp = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
  * JSON.parse has receiver for Date.parse.
  * @param json
  */
-export const parseJSON = <T>(json: string): T => {
-  return JSON.parse(json, (_: string, value: any): any => {
-    if (typeof value === "string" && value.length === 24 && dateRegExp.test(value)) {
-      const date = new Date(value);
-      if (+date === +date) {
-        return date;
-      }
-    }
-    return value;
-  });
+export const parseJSON = <T>(json: string, reviver?: (key: string, value: any) => any): T => {
+  return JSON.parse(json, (key: string, value: any): any =>
+    reviver ? reviver(key, parseDate(key, value)) : parseDate(key, value),
+  );
 };
+
+function parseDate(key: string, value: any): any {
+  if (typeof value === "string" && value.length === 24 && dateRegExp.test(value)) {
+    const date = new Date(value);
+    if (+date === +date) {
+      return date;
+    }
+  }
+  return value;
+}
 
 /**
  * sort array by priority prop
@@ -68,15 +72,17 @@ export function isBase64<T = any>(value?: string | null | Message<T>): value is 
   );
 }
 
-export function decodeMessage<T = any>(message: QueueWorkerRawMessage<T> | Message): QueueWorkerDecodedMessage<T> {
+export function decodeMessage<T = any>(
+  message: QueueWorkerRawMessage<T> | Message,
+  reviver?: (key: string, value: any) => any,
+): QueueWorkerDecodedMessage<T> {
   let data: Message<T>;
-
   if (isBase64(message.data)) {
     // pubsub
-    data = decodeData<T>(message.data);
+    data = decodeData<T>(message.data, reviver);
   } else if (isTaskMessage<T>(message)) {
     // tasks
-    data = { data: message.data, name: message.name };
+    data = { data: JSON.parse(JSON.stringify(message.data), reviver), name: message.name };
   } else {
     // http / raw
     const _message = isMessage<T>(message) ? message : isMessage<T>(message.data) ? message.data : undefined;
@@ -142,7 +148,10 @@ function getMessageId<T>(raw: QueueWorkerRawMessage<T> | Message<T>): string {
   return "";
 }
 
-function decodeData<T = any>(data?: string | Uint8Array | Buffer | null): Message<T> {
+function decodeData<T = any>(
+  data?: string | Uint8Array | Buffer | null,
+  reviver?: (key: string, value: any) => any,
+): Message<T> {
   if (!data) {
     throw new BadRequestException(ERROR_INVALID_MESSAGE_FORMAT);
   }
@@ -160,7 +169,7 @@ function decodeData<T = any>(data?: string | Uint8Array | Buffer | null): Messag
   }
   try {
     if (typeof data === "string") {
-      return parseJSON(data) as Message;
+      return parseJSON(data, reviver) as Message;
     }
 
     return data;
