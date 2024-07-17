@@ -43,7 +43,7 @@ const customBase64Strs = ["e30"];
  * @param {string} value
  * @return {*}  {boolean}
  */
-export function isBase64(value?: string | null | Message): value is string {
+export function isBase64<T = any>(value?: string | null | Message<T>): value is string {
   if (!value) {
     return false;
   }
@@ -68,15 +68,24 @@ export function isBase64(value?: string | null | Message): value is string {
   );
 }
 
-export function decodeMessage<T = any>(message: QueueWorkerRawMessage | Message): QueueWorkerDecodedMessage<T> {
+export function decodeMessage<T = any>(message: QueueWorkerRawMessage<T> | Message): QueueWorkerDecodedMessage<T> {
   let data: Message<T>;
 
   if (isBase64(message.data)) {
     // pubsub
     data = decodeData<T>(message.data);
   } else {
-    // tasks / http
-    data = message as Message<T>;
+    // tasks / http / raw
+    const _message = isMessage<T>(message) ? message : isMessage<T>(message.data) ? message.data : undefined;
+    if (!_message) {
+      throw new BadRequestException(ERROR_INVALID_MESSAGE_FORMAT);
+    }
+
+    data = _message;
+  }
+
+  if (!data) {
+    throw new BadRequestException(ERROR_INVALID_MESSAGE_FORMAT);
   }
 
   return {
@@ -87,8 +96,35 @@ export function decodeMessage<T = any>(message: QueueWorkerRawMessage | Message)
   };
 }
 
-function getMessageId(raw: QueueWorkerRawMessage): string {
-  return raw.messageId ?? raw.headers?.["x-cloudtasks-taskname"] ?? "";
+export function isDecodedMessage<T = any>(
+  message: QueueWorkerRawMessage<T> | QueueWorkerDecodedMessage<T> | Message<T>,
+): message is QueueWorkerDecodedMessage<T> {
+  return "raw" in message;
+}
+
+export function isMessage<T>(message?: QueueWorkerRawMessage<T> | Message<T> | null): message is Message<T> {
+  if (!message) {
+    return false;
+  }
+
+  const keys = Object.keys(message);
+  return keys.length <= 2 && keys.includes("name");
+}
+
+function getMessageId<T>(raw: QueueWorkerRawMessage<T> | Message<T>): string {
+  if (!raw) {
+    return "";
+  }
+
+  if ("messageId" in raw) {
+    return raw.messageId ?? "";
+  }
+
+  if ("headers" in raw && raw.headers?.["x-cloudtasks-taskname"]) {
+    return raw.headers["x-cloudtasks-taskname"];
+  }
+
+  return "";
 }
 
 function decodeData<T = any>(data?: string | Uint8Array | Buffer | null): Message<T> {
