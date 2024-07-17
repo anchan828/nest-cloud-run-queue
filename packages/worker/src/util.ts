@@ -74,9 +74,13 @@ export function decodeMessage<T = any>(message: QueueWorkerRawMessage<T> | Messa
   if (isBase64(message.data)) {
     // pubsub
     data = decodeData<T>(message.data);
+  } else if (isTaskMessage<T>(message)) {
+    // tasks
+    data = { data: message.data, name: message.name };
   } else {
-    // tasks / http / raw
+    // http / raw
     const _message = isMessage<T>(message) ? message : isMessage<T>(message.data) ? message.data : undefined;
+
     if (!_message) {
       throw new BadRequestException(ERROR_INVALID_MESSAGE_FORMAT);
     }
@@ -102,13 +106,24 @@ export function isDecodedMessage<T = any>(
   return "raw" in message;
 }
 
+export function isTaskMessage<T>(
+  message?: QueueWorkerRawMessage<T> | Message<T> | null,
+): message is Message<T> & { headers?: Record<string, string> } {
+  if (!message) {
+    return false;
+  }
+
+  const keys = Object.keys(message);
+  return keys.length <= 3 && keys.includes("name") && keys.includes("headers");
+}
+
 export function isMessage<T>(message?: QueueWorkerRawMessage<T> | Message<T> | null): message is Message<T> {
   if (!message) {
     return false;
   }
 
   const keys = Object.keys(message);
-  return keys.length <= 2 && keys.includes("name");
+  return keys.length <= 3 && keys.includes("name");
 }
 
 function getMessageId<T>(raw: QueueWorkerRawMessage<T> | Message<T>): string {
