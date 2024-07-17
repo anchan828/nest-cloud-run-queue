@@ -45,13 +45,13 @@ describe("QueueWorkerService", () => {
 
     it("should throw error if data invalid", async () => {
       await expect(service.execute({ data: "invalid" } as QueueWorkerRawMessage)).rejects.toThrow(
-        new BadRequestException(ERROR_QUEUE_WORKER_NAME_NOT_FOUND),
+        new BadRequestException(ERROR_INVALID_MESSAGE_FORMAT),
       );
     });
 
     it("should throw error if data is null", async () => {
       await expect(service.execute({ data: null } as QueueWorkerRawMessage)).rejects.toThrow(
-        new BadRequestException(ERROR_QUEUE_WORKER_NAME_NOT_FOUND),
+        new BadRequestException(ERROR_INVALID_MESSAGE_FORMAT),
       );
     });
 
@@ -134,13 +134,13 @@ describe("QueueWorkerService", () => {
   describe("tasks/http style", () => {
     it("should throw error if message is empty", async () => {
       await expect(service.execute({} as QueueWorkerRawMessage)).rejects.toThrow(
-        new BadRequestException(ERROR_QUEUE_WORKER_NAME_NOT_FOUND),
+        new BadRequestException(ERROR_INVALID_MESSAGE_FORMAT),
       );
     });
 
     it("should throw error if data is not message object", async () => {
       await expect(service.execute({ test: "test" } as QueueWorkerRawMessage)).rejects.toThrow(
-        ERROR_QUEUE_WORKER_NAME_NOT_FOUND,
+        ERROR_INVALID_MESSAGE_FORMAT,
       );
     });
 
@@ -245,8 +245,13 @@ describe("QueueWorkerService", () => {
   });
 
   describe("getWorkers", () => {
-    it("should get empty array (invalid message)", async () => {
-      expect(service.getWorkers({})).toEqual([]);
+    it("should throw error (invalid message)", async () => {
+      expect(() => {
+        service.getWorkers({});
+      }).toThrow(ERROR_INVALID_MESSAGE_FORMAT);
+    });
+    it("should get empty array (worker not found)", async () => {
+      expect(service.getWorkers({ name: "test" })).toEqual([]);
     });
 
     it("should get workers", async () => {

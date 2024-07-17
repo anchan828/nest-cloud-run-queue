@@ -10,7 +10,7 @@ import {
   QueueWorkerProcessResult,
   QueueWorkerRawMessage,
 } from "./interfaces";
-import { decodeMessage } from "./util";
+import { decodeMessage, isDecodedMessage } from "./util";
 import { Worker } from "./worker";
 
 @Injectable()
@@ -42,7 +42,7 @@ export class QueueWorkerService {
   public async execute<T = any>(
     meessage: QueueWorkerRawMessage<T> | QueueWorkerDecodedMessage<T> | Message<T>,
   ): Promise<QueueWorkerProcessResult<T>[]> {
-    const decodedMessage = this.isDecodedMessage(meessage) ? meessage : decodeMessage(meessage);
+    const decodedMessage = isDecodedMessage(meessage) ? meessage : decodeMessage(meessage);
 
     if (this.options.throwModuleError && !decodedMessage.data.name) {
       throw new BadRequestException(ERROR_QUEUE_WORKER_NAME_NOT_FOUND);
@@ -76,7 +76,7 @@ export class QueueWorkerService {
   public getWorkers<T = any>(
     meessage: QueueWorkerRawMessage<T> | QueueWorkerDecodedMessage<T> | Message<T>,
   ): Worker<T>[] {
-    const decodedMessage = this.isDecodedMessage(meessage) ? meessage : decodeMessage(meessage);
+    const decodedMessage = isDecodedMessage(meessage) ? meessage : decodeMessage(meessage);
     if (!decodedMessage.data.name) {
       return [];
     }
@@ -84,11 +84,5 @@ export class QueueWorkerService {
     return this.#allWorkers
       .filter((worker) => decodedMessage.data.name === worker.name)
       .map((metadata) => new Worker(decodedMessage, metadata, this.options));
-  }
-
-  private isDecodedMessage<T = any>(
-    message: QueueWorkerRawMessage<T> | QueueWorkerDecodedMessage<T> | Message<T>,
-  ): message is QueueWorkerDecodedMessage<T> {
-    return "raw" in message;
   }
 }
