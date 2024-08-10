@@ -2,10 +2,10 @@
 
 This is demo package.
 
-## Run demo site with docker-compose
+## Run demo site with docker compose
 
 ```bash
-$ docker-compose up
+$ docker compose up
 ```
 
 ## Check operations

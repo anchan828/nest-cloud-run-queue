@@ -22,7 +22,7 @@
     "dist"
   ],
   "scripts": {
-    "lint": "TIMING=1 eslint --ignore-path ../../.eslintignore '**/*.ts'",
+    "lint": "TIMING=1 eslint '**/*.ts'",
     "lint:fix": "npm run lint -- --fix",
     "start:demo": "ts-node-dev --respawn src/main.ts"
   },

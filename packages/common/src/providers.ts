@@ -2,7 +2,7 @@ import { Provider, Type } from "@nestjs/common";
 import { Abstract, ClassProvider, FactoryProvider } from "@nestjs/common/interfaces";
 import { ModuleAsyncOptions, ModuleOptions, ModuleOptionsFactory } from "./interfaces";
 
-type ProvideType = string | symbol | Type<any> | Abstract<any> | Function;
+type ProvideType = string | symbol | Type<any> | Abstract<any> | (() => any);
 
 export function createOptionProvider(provide: ProvideType, options: ModuleOptions): Provider {
   return { provide, useFactory: () => options };

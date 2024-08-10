@@ -1,5 +1,7 @@
 import { Type } from "@nestjs/common";
 import { ModuleMetadata } from "@nestjs/common/interfaces";
+
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export type ModuleOptions = {};
 export interface ModuleAsyncOptions<T extends ModuleOptions = ModuleOptions> extends Pick<ModuleMetadata, "imports"> {
   useClass?: Type<ModuleOptionsFactory<T>>;

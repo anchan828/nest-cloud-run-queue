@@ -17,7 +17,7 @@ export class PubSubPublisherService {
     const topic = this.pubsub.topic(topicName, Object.assign({}, this.options.publishConfig, options));
 
     const { attributes, ...data } = this.options.extraConfig?.prePublish
-      ? await this.options.extraConfig?.prePublish(message)
+      ? await this.options.extraConfig.prePublish(message)
       : message;
 
     const messageId = await topic.publishMessage({

@@ -18,7 +18,7 @@ Of course, these packages can work without using Cloud Run on workers since they
 
 See [https://github.com/anchan828/nest-cloud-run-queue/tree/master/packages/demo](https://github.com/anchan828/nest-cloud-run-queue/tree/master/packages/demo#readme)
 
-This demo uses an emulator, which runs PubSub and Tasks locally. Please see [docker-compose.yml](https://github.com/anchan828/nest-cloud-run-queue/blob/master/docker-compose.yml) if you are interested.
+This demo uses an emulator, which runs PubSub and Tasks locally. Please see [docker compose.yml](https://github.com/anchan828/nest-cloud-run-queue/blob/master/docker compose.yml) if you are interested.
 
 ## Packages
 
