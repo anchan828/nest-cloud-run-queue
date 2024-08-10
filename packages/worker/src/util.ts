@@ -62,7 +62,7 @@ export function isBase64<T = any>(value?: string | null | Message<T>): value is 
     return true;
   }
 
-  if ((len === 4 && ![2, 3].every((n) => value[n] === "=")) || !len || len % 4 !== 0 || /[^A-Z0-9+\/=]/i.test(value)) {
+  if ((len === 4 && ![2, 3].every((n) => value[n] === "=")) || !len || len % 4 !== 0 || /[^A-Z0-9+/=]/i.test(value)) {
     return false;
   }
 
