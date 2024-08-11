@@ -1,8 +1,10 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": "./src",
-    "outDir": "./dist"
+    "moduleResolution": "node"
   },
-  "exclude": ["node_modules", "coverage", "dist", "scripts"],
-  "extends": "../../tsconfig.base.json"
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }
