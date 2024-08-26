@@ -60,17 +60,21 @@ export class QueueWorkerExplorerService {
     const prototype = Object.getPrototypeOf(instance);
 
     for (const methodName of this.metadataScanner.getAllMethodNames(prototype)) {
-      const args = Reflect.getMetadata(
-        QUEUE_WORKER_PROCESS_DECORATOR,
-        prototype[methodName],
-      ) as QueueWorkerProcessDecoratorArgs;
+      const processor = Reflect.get(instance, methodName);
+
+      if (!processor) {
+        continue;
+      }
+
+      const args = Reflect.getMetadata(QUEUE_WORKER_PROCESS_DECORATOR, processor) as QueueWorkerProcessDecoratorArgs;
+
       if (args) {
         if (args.enabled === false) {
           continue;
         }
         metadata.push({
           priority: args.priority || 0,
-          processor: prototype[methodName].bind(instance),
+          processor,
           processorName: `${worker.className}.${methodName}`,
           workerName: worker.name,
         });

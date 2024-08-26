@@ -6,7 +6,6 @@ import {
   QueueWorkerName,
 } from "@anchan828/nest-cloud-run-queue-common";
 import { RequestMappingMetadata } from "@nestjs/common";
-import { Injectable } from "@nestjs/common/interfaces";
 
 export interface QueueWorkerModuleOptions extends ModuleOptions {
   /**
@@ -51,7 +50,7 @@ export type QueueWorkerProcessor = <T>(message: T, raw: QueueWorkerRawMessage) =
 
 export interface QueueWorkerMetadata {
   className: string;
-  instance: Injectable;
+  instance: any;
   processors: QueueWorkerProcessorMetadata[];
   name: QueueWorkerName;
   priority: number;
