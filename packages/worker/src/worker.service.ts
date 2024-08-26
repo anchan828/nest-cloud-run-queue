@@ -50,7 +50,7 @@ export class QueueWorkerService {
       throw new BadRequestException(ERROR_QUEUE_WORKER_NAME_NOT_FOUND);
     }
 
-    const workers = await this.getWorkers(decodedMessage);
+    const workers = this.getWorkers(decodedMessage);
 
     if (this.options.throwModuleError && workers.length === 0) {
       throw new BadRequestException(ERROR_WORKER_NOT_FOUND(decodedMessage.data.name));
