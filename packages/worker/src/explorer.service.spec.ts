@@ -1,3 +1,4 @@
+import { Inject } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import { QueueWorker, QueueWorkerProcess } from "./decorators";
 import { QueueWorkerExplorerService } from "./explorer.service";
@@ -12,24 +13,41 @@ describe("QueueWorkerExplorerService", () => {
 
   it("should get worker", async () => {
     @QueueWorker("TestWorker")
-    class TestWorker {}
+    class TestWorker {
+      constructor(@Inject("test") private readonly test: { test: string }) {}
+
+      @QueueWorkerProcess()
+      public async process(): Promise<{ test: string }> {
+        return this.test;
+      }
+    }
 
     @QueueWorker({ name: "TestWorker2" })
     class TestWorker2 {}
 
     const app = await Test.createTestingModule({
       imports: [QueueWorkerModule.register()],
-      providers: [TestWorker, TestWorker2],
+      providers: [TestWorker, TestWorker2, { provide: "test", useValue: { test: "test" } }],
     }).compile();
     const explorer = app.get<QueueWorkerExplorerService>(QueueWorkerExplorerService);
     expect(explorer).toBeDefined();
-    expect(explorer.explore()).toEqual([
+
+    const workers = explorer.explore();
+
+    expect(workers).toEqual([
       {
         className: "TestWorker",
         instance: expect.any(TestWorker),
         name: "TestWorker",
         priority: 0,
-        processors: [],
+        processors: [
+          {
+            priority: 0,
+            processor: expect.any(Function),
+            processorName: "TestWorker.process",
+            workerName: "TestWorker",
+          },
+        ],
       },
       {
         className: "TestWorker2",
@@ -39,6 +57,9 @@ describe("QueueWorkerExplorerService", () => {
         processors: [],
       },
     ]);
+
+    // Check to access the property
+    await expect(workers[0].processors[0].processor({}, {})).resolves.toEqual({ test: "test" });
   });
 
   it("should get multiple workers", async () => {
