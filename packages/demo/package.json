@@ -37,5 +37,5 @@
   "devDependencies": {
     "ts-node-dev": "2.0.0"
   },
-  "packageManager": "npm@10.8.3"
+  "packageManager": "npm@10.9.0"
 }
