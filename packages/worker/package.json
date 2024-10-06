@@ -1,6 +1,6 @@
 {
   "name": "@anchan828/nest-cloud-run-queue-worker",
-  "version": "3.1.17",
+  "version": "3.1.18",
   "description": "> TODO: description",
   "homepage": "https://github.com/anchan828/nest-cloud-run-queue/tree/master/packages/worker#readme",
   "bugs": {
@@ -33,7 +33,7 @@
     "watch": "tsc -w"
   },
   "dependencies": {
-    "@anchan828/nest-cloud-run-queue-common": "^3.1.17"
+    "@anchan828/nest-cloud-run-queue-common": "^3.1.18"
   },
   "devDependencies": {
     "@nestjs/common": "10.4.4",
