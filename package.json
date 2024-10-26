@@ -43,7 +43,7 @@
     "@nestjs/platform-express": "10.4.5",
     "@nestjs/testing": "10.4.5",
     "@types/glob": "8.1.0",
-    "@types/jest": "29.5.13",
+    "@types/jest": "29.5.14",
     "@types/node": "22.7.8",
     "@types/prettier": "3.0.0",
     "@types/rimraf": "4.0.5",
