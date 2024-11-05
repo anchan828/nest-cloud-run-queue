@@ -5,7 +5,6 @@ import { ERROR_QUEUE_WORKER_NAME_NOT_FOUND, ERROR_WORKER_NOT_FOUND, QUEUE_WORKER
 import { QueueWorkerExplorerService } from "./explorer.service";
 import {
   QueueWorkerDecodedMessage,
-  QueueWorkerMetadata,
   QueueWorkerModuleOptions,
   QueueWorkerProcessResult,
   QueueWorkerRawMessage,
@@ -15,14 +14,7 @@ import { Worker } from "./worker";
 
 @Injectable()
 export class QueueWorkerService {
-  #_allWorkers: QueueWorkerMetadata[] | undefined;
-
-  get #allWorkers(): QueueWorkerMetadata[] {
-    if (!this.#_allWorkers) {
-      this.#_allWorkers = this.explorerService.explore();
-    }
-    return this.#_allWorkers;
-  }
+  #_allWorkers: Worker<any>[] | undefined;
 
   constructor(
     @Inject(QUEUE_WORKER_MODULE_OPTIONS)
@@ -59,10 +51,20 @@ export class QueueWorkerService {
     const results: QueueWorkerProcessResult<T>[] = [];
 
     for (const worker of workers) {
-      results.push(...(await worker.execute()));
+      results.push(...(await worker.execute(decodedMessage)));
     }
 
     return results;
+  }
+
+  /**
+   * Get all workers. If you want to get a specific worker, use `getWorkers` method.
+   */
+  public getAllWorkers(): Worker<any>[] {
+    if (!this.#_allWorkers) {
+      this.#_allWorkers = this.explorerService.explore().map((metadata) => new Worker(metadata, this.options));
+    }
+    return this.#_allWorkers;
   }
 
   /**
@@ -85,8 +87,6 @@ export class QueueWorkerService {
       return [];
     }
 
-    return this.#allWorkers
-      .filter((worker) => decodedMessage.data.name === worker.name)
-      .map((metadata) => new Worker(decodedMessage, metadata, this.options));
+    return this.getAllWorkers().filter((worker) => decodedMessage.data.name === worker.name);
   }
 }

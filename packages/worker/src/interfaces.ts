@@ -58,7 +58,8 @@ export interface QueueWorkerMetadata {
 
 export interface QueueWorkerProcessorMetadata extends QueueWorkerProcessDecoratorArgs {
   workerName: QueueWorkerName;
-  processorName: string;
+  workerClassName: string;
+  methodName: string;
   processor: QueueWorkerProcessor;
 }
 export type QueueWorkerExtraConfig = {

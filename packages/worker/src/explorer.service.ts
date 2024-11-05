@@ -75,8 +75,9 @@ export class QueueWorkerExplorerService {
         metadata.push({
           priority: args.priority || 0,
           processor: methodRef.bind(instance),
-          processorName: `${worker.className}.${methodName}`,
+          methodName,
           workerName: worker.name,
+          workerClassName: worker.className,
         });
       }
     }
