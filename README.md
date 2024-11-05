@@ -203,6 +203,21 @@ class WorkerController {
 }
 ```
 
+## Get all workers
+
+If you want to set something up using worker metadata, you can retrieve all workers and process them.
+
+```ts
+async function bootstrap(): Promise<void> {
+  const app = await NestFactory.create(WorkerAppModule);
+  const service = app.get(QueueWorkerService);
+  const allWorkers = service.getAllWorkers();
+  const allProcessors = allWorkers.flatMap((w) => w.processors);
+
+  // Do somethings...
+}
+```
+
 ## Using Cloud Scheduler
 
 You can use Cloud Scheduler as trigger.
