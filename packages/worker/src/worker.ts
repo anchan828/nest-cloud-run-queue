@@ -8,20 +8,28 @@ import {
 } from "./interfaces";
 
 export class Worker<T> {
+  /**
+   * Worker name.
+   */
   get name(): string {
     return this.metadata.name;
   }
 
+  /**
+   * Worker priority. The lower the number, the higher the priority.
+   */
   get priority(): number {
     return this.metadata.priority;
   }
 
+  /**
+   * Class name with QueueWorker decorator.
+   */
   get className(): string {
     return this.metadata.className;
   }
 
   constructor(
-    private readonly message: QueueWorkerDecodedMessage<T>,
     private readonly metadata: QueueWorkerMetadata,
     private readonly options: QueueWorkerModuleOptions,
   ) {}
@@ -29,11 +37,11 @@ export class Worker<T> {
   /**
    * Execute all processors in the worker. If you want to execute a each processor, use `getProcessors` method.
    */
-  public async execute(): Promise<QueueWorkerProcessResult[]> {
+  public async execute(message: QueueWorkerDecodedMessage<T>): Promise<QueueWorkerProcessResult[]> {
     const results: QueueWorkerProcessResult[] = [];
     const processors = this.getProcessors();
     for (const processor of processors) {
-      results.push(await processor.execute());
+      results.push(await processor.execute(message));
     }
     return results;
   }
@@ -42,25 +50,48 @@ export class Worker<T> {
    * Get all processors in the worker. Use this method to execute manually when you want to execute only on specific conditions using metadata such as class name or processor name.
    */
   public getProcessors(): Processor<T>[] {
-    return this.metadata.processors.map((processor) => new Processor(this.message, processor, this.options));
+    return this.metadata.processors.map((processor) => new Processor(processor, this.options));
   }
 }
 
 export class Processor<T> {
+  /**
+   * Processor name. This is `#{worker.className}.${processor.methodName}`.
+   */
   get name(): string {
-    return this.metadata.processorName;
+    return `${this.workerClassName}.${this.methodName}`;
   }
 
+  /**
+   * Processor priority. The lower the number, the higher the priority.
+   */
   get priority(): number {
     return this.metadata.priority;
   }
+
+  /**
+   * The name of the processor that has this worker.
+   */
 
   get workerName(): string {
     return this.metadata.workerName;
   }
 
+  /**
+   * The class name of the worker that has this processor.
+   */
+  get workerClassName(): string {
+    return this.metadata.workerClassName;
+  }
+
+  /**
+   * The method name of the processor with QueueWorkerProcess.
+   */
+  get methodName(): string {
+    return this.metadata.methodName;
+  }
+
   constructor(
-    private readonly message: QueueWorkerDecodedMessage<T>,
     private readonly metadata: QueueWorkerProcessorMetadata,
     private readonly options: QueueWorkerModuleOptions,
   ) {}
@@ -68,19 +99,19 @@ export class Processor<T> {
   /**
    * Execute the processor.
    */
-  public async execute(): Promise<QueueWorkerProcessResult<T>> {
+  public async execute(message: QueueWorkerDecodedMessage<T>): Promise<QueueWorkerProcessResult<T>> {
     const maxRetryAttempts = this.options.maxRetryAttempts ?? 1;
 
     const resultBase: QueueWorkerProcessResultBase<T> = {
-      data: this.message.data.data,
-      processorName: this.metadata.processorName,
-      raw: this.message.raw,
+      data: message.data.data,
+      processorName: this.name,
+      raw: message.raw,
       workerName: this.metadata.workerName,
     };
 
     for (let i = 0; i < maxRetryAttempts; i++) {
       try {
-        await this.metadata.processor(this.message.data.data, this.message.raw);
+        await this.metadata.processor(message.data.data, message.raw);
         i = maxRetryAttempts;
       } catch (error: any) {
         if (maxRetryAttempts === i + 1) {

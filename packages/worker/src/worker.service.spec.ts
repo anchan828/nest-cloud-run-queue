@@ -81,8 +81,14 @@ describe("QueueWorkerService", () => {
           name: "name",
           priority: 0,
           processors: [
-            { priority: 0, processor, processorName: "className.processorName", workerName: "name" },
-            { priority: 1, processor: processorMock, processorName: "className.processorName2", workerName: "name" },
+            { priority: 0, processor, methodName: "processorName", workerName: "name", workerClassName: "className" },
+            {
+              priority: 1,
+              processor: processorMock,
+              methodName: "processorName2",
+              workerName: "name",
+              workerClassName: "className",
+            },
           ],
         },
       ] as QueueWorkerMetadata[]);
@@ -169,8 +175,14 @@ describe("QueueWorkerService", () => {
           name: "name",
           priority: 0,
           processors: [
-            { priority: 0, processor, processorName: "processor", workerName: "worker" },
-            { priority: 1, processor: processorMock, processorName: "processor", workerName: "worker" },
+            { priority: 0, processor, methodName: "processor", workerName: "worker", workerClassName: "Woker" },
+            {
+              priority: 1,
+              processor: processorMock,
+              methodName: "processor1",
+              workerName: "worker",
+              workerClassName: "Woker",
+            },
           ],
         },
       ] as QueueWorkerMetadata[]);
@@ -199,7 +211,7 @@ describe("QueueWorkerService", () => {
       {
         name: "name",
         processors: [
-          { priority: 0, processor: mock, processorName: "processor", workerName: "worker" },
+          { priority: 0, processor: mock, methodName: "processor", workerName: "worker", workerClassName: "Worker" },
         ] as QueueWorkerProcessorMetadata[],
       },
     ] as QueueWorkerMetadata[]);
@@ -209,7 +221,7 @@ describe("QueueWorkerService", () => {
       {
         data: { prop: 1 },
         error: expect.any(Error),
-        processorName: "processor",
+        processorName: "Worker.processor",
         raw: { attributes: { attr: 2 }, data: "eyJkYXRhIjp7InByb3AiOjF9LCJuYW1lIjoibmFtZSJ9", messageId: "1" },
         success: false,
         workerName: "worker",
@@ -229,8 +241,9 @@ describe("QueueWorkerService", () => {
           {
             priority: 0,
             processor: processorMock,
-            processorName: "processor",
+            methodName: "methodName",
             workerName: "worker",
+            workerClassName: "Worker",
           } as QueueWorkerProcessorMetadata,
         ],
       },
@@ -265,8 +278,9 @@ describe("QueueWorkerService", () => {
             {
               priority: 0,
               processor: processorMock,
-              processorName: "processor",
+              methodName: "processor",
               workerName: "name",
+              workerClassName: "Worker",
             } as QueueWorkerProcessorMetadata,
           ],
         },
@@ -274,11 +288,6 @@ describe("QueueWorkerService", () => {
 
       expect(service.getWorkers({ data: { prop: 1 }, name: "name" })).toEqual([
         {
-          message: {
-            data: { data: { prop: 1 }, name: "name" },
-            id: "",
-            raw: { data: { prop: 1 }, name: "name" },
-          },
           metadata: {
             name: "name",
             priority: 0,
@@ -286,8 +295,9 @@ describe("QueueWorkerService", () => {
               {
                 priority: 0,
                 processor: processorMock,
-                processorName: "processor",
+                methodName: "processor",
                 workerName: "name",
+                workerClassName: "Worker",
               },
             ],
           },
