@@ -62,7 +62,7 @@
     "ts-jest": "29.2.5",
     "ts-node": "10.9.2",
     "turbo": "2.3.3",
-    "typescript": "5.7.2",
+    "typescript": "5.7.3",
     "typescript-eslint": "^8.8.1"
   },
   "packageManager": "npm@10.9.2"
