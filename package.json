@@ -44,7 +44,7 @@
     "@nestjs/testing": "10.4.15",
     "@types/glob": "8.1.0",
     "@types/jest": "29.5.14",
-    "@types/node": "22.10.8",
+    "@types/node": "22.10.9",
     "@types/prettier": "3.0.0",
     "@types/rimraf": "4.0.5",
     "@types/supertest": "6.0.2",
