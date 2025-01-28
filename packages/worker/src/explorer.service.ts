@@ -28,13 +28,16 @@ export class QueueWorkerExplorerService {
 
   private getWorkers(): QueueWorkerMetadata[] {
     const metadata: QueueWorkerMetadata[] = [];
-    for (const classInstanceWrapper of this.discoveryService
-      .getProviders()
-      .filter((instanceWrapper) => instanceWrapper.instance?.constructor)) {
-      const args = Reflect.getMetadata(
-        QUEUE_WORKER_DECORATOR,
-        classInstanceWrapper.instance.constructor,
-      ) as QueueWorkerDecoratorArgs;
+    for (const classInstanceWrapper of this.discoveryService.getProviders()) {
+      const instance = classInstanceWrapper.instance;
+      const metatype = classInstanceWrapper.metatype;
+
+      if (!instance || !metatype) {
+        continue;
+      }
+
+      const args = Reflect.getMetadata(QUEUE_WORKER_DECORATOR, instance.constructor) as QueueWorkerDecoratorArgs;
+      
       if (args && Array.isArray(args.names)) {
         if (args.enabled === false) {
           continue;
@@ -42,8 +45,8 @@ export class QueueWorkerExplorerService {
 
         for (const name of args.names) {
           metadata.push({
-            className: classInstanceWrapper.metatype.name,
-            instance: classInstanceWrapper.instance,
+            className: metatype.name,
+            instance: instance,
             name,
             priority: args.priority || 0,
             processors: [],
