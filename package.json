@@ -31,8 +31,8 @@
     "start:demo": "turbo run start:demo --filter=@anchan828/nest-cloud-run-queue-demo"
   },
   "devDependencies": {
-    "@commitlint/cli": "19.7.1",
-    "@commitlint/config-conventional": "19.7.1",
+    "@commitlint/cli": "19.8.0",
+    "@commitlint/config-conventional": "19.8.0",
     "@compodoc/compodoc": "1.1.26",
     "@eslint/compat": "^1.2.0",
     "@eslint/js": "^9.12.0",
@@ -48,7 +48,7 @@
     "@types/prettier": "3.0.0",
     "@types/rimraf": "4.0.5",
     "@types/supertest": "6.0.2",
-    "eslint": "9.21.0",
+    "eslint": "9.22.0",
     "eslint-plugin-sort-keys-fix": "1.1.2",
     "glob": "11.0.1",
     "husky": "9.1.7",
