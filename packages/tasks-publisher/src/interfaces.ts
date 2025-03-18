@@ -20,6 +20,6 @@ export type TasksPublisherModuleOptionsFactory = ModuleOptionsFactory<TasksPubli
 
 export type PublishConfig = Omit<google.cloud.tasks.v2.ITask, "name">;
 
-export type PublishOptions = { queue?: string } & PublishConfig;
+export type PublishOptions = { queue?: string, deduplicationId?: string, } & PublishConfig;
 
 export type PublishData<T> = Message<T>;

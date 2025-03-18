@@ -16,9 +16,12 @@ export class TasksPublisherService {
       ? await this.options.extraConfig?.prePublish(message)
       : message;
 
+    const queue = options?.queue || this.options.queue;
+
     const [task] = await this.client.createTask({
-      parent: options?.queue || this.options.queue,
+      parent: queue,
       task: {
+        name: options?.deduplicationId ? `${queue}/${options.deduplicationId}` : undefined,
         ...this.options.publishConfig,
         ...options,
         httpRequest: {
