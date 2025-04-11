@@ -37,7 +37,7 @@
     "@google-cloud/pubsub": "^4.7.2"
   },
   "devDependencies": {
-    "@nestjs/common": "11.0.13",
+    "@nestjs/common": "11.0.16",
     "rxjs": "7.8.2"
   },
   "peerDependencies": {
