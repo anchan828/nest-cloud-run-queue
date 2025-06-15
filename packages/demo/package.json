@@ -1,6 +1,6 @@
 {
   "name": "@anchan828/nest-cloud-run-queue-demo",
-  "version": "3.4.12",
+  "version": "3.4.13",
   "private": true,
   "description": "> TODO: description",
   "homepage": "https://github.com/anchan828/nest-cloud-run-queue/tree/master/packages/common#readme",
@@ -27,9 +27,9 @@
     "start:demo": "ts-node-dev --respawn src/main.ts"
   },
   "dependencies": {
-    "@anchan828/nest-cloud-run-queue-pubsub-publisher": "^3.4.12",
-    "@anchan828/nest-cloud-run-queue-tasks-publisher": "^3.4.12",
-    "@anchan828/nest-cloud-run-queue-worker": "^3.4.12",
+    "@anchan828/nest-cloud-run-queue-pubsub-publisher": "^3.4.13",
+    "@anchan828/nest-cloud-run-queue-tasks-publisher": "^3.4.13",
+    "@anchan828/nest-cloud-run-queue-worker": "^3.4.13",
     "@nestjs/common": "^11.0.0",
     "@nestjs/core": "^11.0.0",
     "@nestjs/platform-express": "^11.0.0"
