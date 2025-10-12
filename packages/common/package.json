@@ -42,7 +42,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "packageManager": "npm@11.6.1",
+  "packageManager": "npm@11.6.2",
   "exports": {
     ".": {
       "import": {
